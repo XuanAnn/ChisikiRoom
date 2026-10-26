@@ -36,6 +36,7 @@ import { MessageSearchPanel } from './MessageSearchPanel';
 import { useWorkspaceActivity, type WorkspaceTab } from './useWorkspaceActivity';
 import './workspace-design.css';
 export function ChatWorkspace({ user, onLogout }: { user: User; onLogout: () => void }) {
+  const [modal, modalHolder] = Modal.useModal();
   const [rooms, setRooms] = useState<Room[]>([]);
   const [roomId, setRoomId] = useState('');
   const [members, setMembers] = useState<Member[]>([]);
@@ -246,7 +247,7 @@ export function ChatWorkspace({ user, onLogout }: { user: User; onLogout: () => 
       onLogout();
       return;
     }
-    Modal.confirm({
+    modal.confirm({
       title: 'Bản nháp chưa lưu',
       content:
         'Máy chủ chưa lưu được bản nháp hoặc đang có xung đột. Bạn có thể ở lại để giữ nội dung đang gõ.',
@@ -341,7 +342,7 @@ export function ChatWorkspace({ user, onLogout }: { user: User; onLogout: () => 
   }
 
   function leaveRoom() {
-    Modal.confirm({
+    modal.confirm({
       title: 'Rời phòng này?',
       content: 'Quyền chủ phòng sẽ chuyển cho thành viên tiếp theo.',
       okText: 'Rời phòng',
@@ -424,6 +425,20 @@ export function ChatWorkspace({ user, onLogout }: { user: User; onLogout: () => 
             reactions={reactions}
             onReply={setReplyTarget}
             onChanged={applyMessageChange}
+            canModerate={(message) => {
+              if (active.kind === 'DIRECT') {
+                return false;
+              }
+              if (active.ownerId === user.id) {
+                return true;
+              }
+              const sender = members.find((member) => member.id === message.senderId);
+              return (
+                active.myRole === 'ADMIN' &&
+                message.senderId !== active.ownerId &&
+                sender?.role !== 'ADMIN'
+              );
+            }}
           />
           {activity.conflict && (
             <Alert
@@ -538,6 +553,7 @@ export function ChatWorkspace({ user, onLogout }: { user: User; onLogout: () => 
 
   return (
     <div className="chat-workspace">
+      {modalHolder}
       <ChatSidebar
         user={user}
         friends={friends}

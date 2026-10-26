@@ -21,6 +21,7 @@ export function MessageTimeline({
   reactions,
   onReply,
   onChanged,
+  canModerate,
 }: {
   room: Room;
   messages: ChatMessage[];
@@ -31,6 +32,7 @@ export function MessageTimeline({
   reactions: Reactions;
   onReply: (message: ChatMessage) => void;
   onChanged: (message: ChatMessage) => void;
+  canModerate: (message: ChatMessage) => boolean;
 }) {
   const [editing, setEditing] = useState<ChatMessage | null>(null);
   const [editText, setEditText] = useState('');
@@ -39,7 +41,7 @@ export function MessageTimeline({
   const [error, setError] = useState('');
   const [pins, setPins] = useState<ChatMessage[]>([]);
   const [pinsOpen, setPinsOpen] = useState(false);
-  const canPin = room.kind === 'DIRECT' || room.ownerId === userId;
+  const canPin = room.kind === 'DIRECT' || room.ownerId === userId || room.myRole === 'ADMIN';
   useEffect(() => {
     let current = true;
     async function refreshPins() {
@@ -258,11 +260,9 @@ export function MessageTimeline({
                         trigger={['click']}
                         menu={{
                           items: [
-                            ...(ownMessage
-                              ? [
-                                  { key: 'edit', label: 'Sửa tin nhắn' },
-                                  { key: 'delete', label: 'Xóa tin nhắn', danger: true },
-                                ]
+                            ...(ownMessage ? [{ key: 'edit', label: 'Sửa tin nhắn' }] : []),
+                            ...(ownMessage || canModerate(message)
+                              ? [{ key: 'delete', label: 'Xóa tin nhắn', danger: true }]
                               : []),
                             ...(canPin
                               ? [

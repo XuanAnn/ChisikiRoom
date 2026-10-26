@@ -16,9 +16,14 @@ public class ChatService {
     private final ChatRepository repository;
     private final Events events;
 
-    public ChatService(ChatRepository repository, Events events) {
+    public ChatService(
+        ChatRepository repository,
+        Events events,
+        org.springframework.context.ApplicationEventPublisher publisher
+    ) {
         this.repository = repository;
         this.events = events;
+        this.publisher = publisher;
     }
 
     public record Room(
@@ -29,10 +34,11 @@ public class ChatService {
         boolean joined,
         int memberCount,
         String kind,
-        UUID peerId
+        UUID peerId,
+        String myRole
     ) {}
 
-    public record Member(UUID id, String displayName) {}
+    public record Member(UUID id, String displayName, String role) {}
 
     public record Reply(
         long id,
@@ -84,9 +90,38 @@ public class ChatService {
             members.contains(user),
             members.size(),
             roomEntity.kind,
-            peer
+            peer,
+            role(roomEntity.id, user, roomEntity.ownerId)
         );
     }
+
+    private String role(UUID room, UUID user, UUID owner) {
+        if (user == null) {
+            return null;
+        }
+        return repository
+            .findMembership(room, user)
+            .map(member -> owner.equals(user) ? "OWNER" : member.role)
+            .orElse(null);
+    }
+
+    public boolean canManage(UUID room, UUID user) {
+        var target = repository
+            .findRoom(room)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        String role = role(room, user, target.ownerId);
+        return !target.kind.equals("DIRECT") && ("OWNER".equals(role) || "ADMIN".equals(role));
+    }
+
+    public void requireNotBlocked(UUID room, UUID user) {
+        if (repository.ban(room, user).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Bạn đã bị chặn khỏi nhóm");
+        }
+    }
+
+    public record MembershipRevoked(UUID roomId, UUID userId) {}
+
+    private final org.springframework.context.ApplicationEventPublisher publisher;
 
     public void requireMember(UUID room, UUID user) {
         if (!repository.findMembership(room, user).isPresent()) {
@@ -100,6 +135,9 @@ public class ChatService {
             .orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy phòng")
             );
+        if (roomEntity.archived && user != null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Nhóm đã đóng");
+        }
         return new Room(
             roomEntity.id,
             roomEntity.name,
@@ -108,7 +146,8 @@ public class ChatService {
             false,
             0,
             roomEntity.kind,
-            null
+            null,
+            role(roomEntity.id, user, roomEntity.ownerId)
         );
     }
 
@@ -174,6 +213,7 @@ public class ChatService {
     @Transactional
     public void join(UUID room, UUID user) {
         Room roomEntity = lockRoom(room, user);
+        requireNotBlocked(room, user);
         if (memberIds(room).contains(user)) {
             return;
         }
@@ -196,12 +236,16 @@ public class ChatService {
                 "Chat bạn bè chỉ dành cho hai người"
             );
         }
-        if (!roomEntity.ownerId().equals(owner)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Chỉ chủ phòng được mời");
+        if (!canManage(room, owner)) {
+            throw new ResponseStatusException(
+                HttpStatus.FORBIDDEN,
+                "Chỉ chủ nhóm hoặc quản trị viên được mời"
+            );
         }
         if (repository.findUser(user).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy người dùng");
         }
+        requireNotBlocked(room, user);
         if (!memberIds(room).contains(user) && repository.findInvitation(room, user).isEmpty()) {
             GroupInvitationEntity invitation = new GroupInvitationEntity();
             invitation.roomId = room;
@@ -237,6 +281,7 @@ public class ChatService {
     @Transactional
     public void respondInvitation(UUID room, UUID user, boolean accept) {
         Room target = lockRoom(room, user);
+        requireNotBlocked(room, user);
         Optional<GroupInvitationEntity> invitation = repository.findInvitation(room, user);
         if (invitation.isEmpty()) {
             if (accept && repository.findMembership(room, user).isPresent()) {
@@ -288,11 +333,24 @@ public class ChatService {
         var remaining = memberIds(room);
         var entity = repository.findRoom(room).orElseThrow();
         if (remaining.isEmpty()) {
-            repository.deleteRoom(entity);
+            entity.archived = true;
         } else if (roomEntity.ownerId().equals(user)) {
-            entity.ownerId = remaining.getFirst();
+            var candidates = repository.findMemberProfiles(room);
+            entity.ownerId = candidates
+                .stream()
+                .filter(member -> member.role().equals("ADMIN"))
+                .findFirst()
+                .orElse(candidates.getFirst())
+                .id();
+            repository.findMembership(room, entity.ownerId).orElseThrow().role = "MEMBER";
         }
         events.send(members, "ROOM_CHANGED", Map.of("roomId", room));
+        membershipRevoked(room, user);
+    }
+
+    public void membershipRevoked(UUID room, UUID user) {
+        events.send(List.of(user), "ROOM_MEMBERSHIP_REVOKED", Map.of("roomId", room));
+        publisher.publishEvent(new MembershipRevoked(room, user));
     }
 
     public List<UUID> memberIds(UUID room) {
@@ -301,10 +359,17 @@ public class ChatService {
 
     public List<Member> members(UUID room, UUID user) {
         requireMember(room, user);
+        UUID owner = repository.findRoom(room).orElseThrow().ownerId;
         return repository
             .findMemberProfiles(room)
             .stream()
-            .map(profile -> new Member(profile.id(), profile.displayName()))
+            .map(profile ->
+                new Member(
+                    profile.id(),
+                    profile.displayName(),
+                    profile.id().equals(owner) ? "OWNER" : profile.role()
+                )
+            )
             .toList();
     }
 
@@ -404,13 +469,20 @@ public class ChatService {
         return result;
     }
 
-    private MessageEntity editable(UUID room, UUID user, long id) {
-        lockRoom(room, user);
+    private MessageEntity editable(UUID room, UUID user, long id, boolean moderation) {
+        Room target = lockRoom(room, user);
         requireMember(room, user);
         MessageEntity message = repository
             .findMessage(id, room)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        if (!message.senderId.equals(user)) {
+        boolean moderator = false;
+        if (moderation && !target.kind().equals("DIRECT") && canManage(room, user)) {
+            String senderRole = role(room, message.senderId, target.ownerId());
+            moderator =
+                target.ownerId().equals(user) ||
+                (!"OWNER".equals(senderRole) && !"ADMIN".equals(senderRole));
+        }
+        if (!message.senderId.equals(user) && !moderator) {
             throw new ResponseStatusException(
                 HttpStatus.FORBIDDEN,
                 "Chỉ được sửa hoặc xóa tin của mình"
@@ -421,7 +493,7 @@ public class ChatService {
 
     @Transactional
     public ChatMessage edit(UUID room, UUID user, long id, String content) {
-        MessageEntity message = editable(room, user, id);
+        MessageEntity message = editable(room, user, id, false);
         if (message.deletedAt != null) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Tin nhắn đã bị xóa");
         }
@@ -441,7 +513,7 @@ public class ChatService {
 
     @Transactional
     public ChatMessage delete(UUID room, UUID user, long id) {
-        MessageEntity message = editable(room, user, id);
+        MessageEntity message = editable(room, user, id, true);
         if (message.deletedAt == null) {
             message.content = "";
             message.revision++;
@@ -463,8 +535,11 @@ public class ChatService {
     public ChatMessage pin(UUID room, UUID user, long id, boolean pinned) {
         Room target = lockRoom(room, user);
         requireMember(room, user);
-        if (!target.kind().equals("DIRECT") && !target.ownerId().equals(user)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Chỉ chủ nhóm được ghim tin");
+        if (!target.kind().equals("DIRECT") && !canManage(room, user)) {
+            throw new ResponseStatusException(
+                HttpStatus.FORBIDDEN,
+                "Chỉ chủ nhóm hoặc quản trị viên được ghim tin"
+            );
         }
         MessageEntity message = repository
             .findMessage(id, room)

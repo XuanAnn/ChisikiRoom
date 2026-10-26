@@ -120,16 +120,25 @@ public class CallService {
         }
         var members = chatService.memberIds(callEntity.roomId);
         int removed = 0;
+        List<UUID> revokedUsers = new ArrayList<>();
         for (var participant : participants(callEntity.id)) {
             if (
                 participant.lastSeen.isBefore(now().minusSeconds(CallPolicy.DISCONNECT_SECONDS)) ||
                 !members.contains(participant.userId)
             ) {
                 repository.deleteParticipant(participant);
+                revokedUsers.add(participant.userId);
                 removed++;
             }
         }
         repository.flush();
+        if (!revokedUsers.isEmpty()) {
+            events.send(
+                revokedUsers,
+                "CALL_ENDED",
+                Map.of("callId", callEntity.id, "roomId", callEntity.roomId)
+            );
+        }
         if (
             participants(callEntity.id).isEmpty() ||
             (!callEntity.answered &&
@@ -325,6 +334,16 @@ public class CallService {
         var call = lock(id, user);
         expire(call);
         requireParticipant(call, user);
+    }
+
+    @Transactional(
+        propagation = org.springframework.transaction.annotation.Propagation.REQUIRES_NEW
+    )
+    public void cleanupRoomMembership(UUID room) {
+        chatService.lockRoom(room, null);
+        repository
+            .findByRoom(room)
+            .ifPresent(call -> repository.lockCall(call.id).ifPresent(this::expire));
     }
 
     public List<UUID> activeIds() {

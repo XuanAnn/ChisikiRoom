@@ -19,7 +19,7 @@ public class ChatRepository {
     public List<ChatRoomEntity> findVisibleRooms(UUID userId) {
         return persistence.list(
             ChatRoomEntity.class,
-            "from ChatRoomEntity r where r.privateRoom=false or exists(select m.userId from RoomMemberEntity m where m.roomId=r.id and m.userId=:user) order by r.createdAt,r.id",
+            "from ChatRoomEntity r where r.archived=false and not exists(select ban.userId from GroupBanEntity ban where ban.roomId=r.id and ban.userId=:user) and (r.privateRoom=false or exists(select m.userId from RoomMemberEntity m where m.roomId=r.id and m.userId=:user)) order by r.createdAt,r.id",
             "user",
             userId
         );
@@ -59,7 +59,7 @@ public class ChatRepository {
         return persistence
             .list(
                 Object[].class,
-                "select i.roomId,r.name,u.displayName,i.createdAt from GroupInvitationEntity i, ChatRoomEntity r, UserEntity u where i.userId=:user and i.roomId=r.id and i.inviterId=u.id order by i.createdAt desc",
+                "select i.roomId,r.name,u.displayName,i.createdAt from GroupInvitationEntity i, ChatRoomEntity r, UserEntity u where i.userId=:user and i.roomId=r.id and r.archived=false and i.inviterId=u.id order by i.createdAt desc",
                 "user",
                 userId
             )
@@ -97,6 +97,27 @@ public class ChatRepository {
                 afterId
             )
             .orElse(0L);
+    }
+
+    public Optional<GroupBanEntity> ban(UUID room, UUID user) {
+        return persistence.find(GroupBanEntity.class, new GroupBanEntity.Key(room, user));
+    }
+
+    public void insertBan(GroupBanEntity ban) {
+        persistence.insert(ban);
+    }
+
+    public void deleteBan(GroupBanEntity ban) {
+        persistence.delete(ban);
+    }
+
+    public List<GroupBanEntity> bans(UUID room) {
+        return persistence.list(
+            GroupBanEntity.class,
+            "from GroupBanEntity b where b.roomId=:room order by b.createdAt desc",
+            "room",
+            room
+        );
     }
 
     public Optional<RoomMemberEntity> findMembership(UUID roomId, UUID userId) {
@@ -172,18 +193,18 @@ public class ChatRepository {
         );
     }
 
-    public record MemberProfile(UUID id, String displayName) {}
+    public record MemberProfile(UUID id, String displayName, String role) {}
 
     public List<MemberProfile> findMemberProfiles(UUID roomId) {
         return persistence
             .list(
                 Object[].class,
-                "select u.id,u.displayName from UserEntity u, RoomMemberEntity m where u.id=m.userId and m.roomId=:room order by m.joinedAt,u.id",
+                "select u.id,u.displayName,m.role from UserEntity u, RoomMemberEntity m where u.id=m.userId and m.roomId=:room order by m.joinedAt,u.id",
                 "room",
                 roomId
             )
             .stream()
-            .map(row -> new MemberProfile((UUID) row[0], (String) row[1]))
+            .map(row -> new MemberProfile((UUID) row[0], (String) row[1], (String) row[2]))
             .toList();
     }
 

@@ -14,7 +14,7 @@
   margin: 12px 0;
 }
 .ranking-panel p {
-  color: #a2abc2;
+  color: #b5bac1;
   font-size: 13px;
   line-height: 1.7;
 }
@@ -22,8 +22,8 @@
   margin-bottom: 28px;
 }
 .ranked-matchmaking {
-  background: linear-gradient(120deg, #302740, #202838);
-  border: 1px solid #494059;
+  background: linear-gradient(120deg, #2b2d31, #232428);
+  border: 1px solid #3f4147;
   padding: 24px;
   border-radius: 18px;
 }
@@ -48,7 +48,7 @@
   align-items: center;
   gap: 16px;
   padding: 16px;
-  background: #222533;
+  background: #232428;
   border-radius: 12px;
 }
 .ranked-history > div > div {

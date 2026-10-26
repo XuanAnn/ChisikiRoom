@@ -26,3 +26,8 @@ Ngày 26/10/2026, người dùng đồng ý tiếp tục ranking toàn hệ th�
 Cùng đợt, người dùng yêu cầu người được mời vào nhóm phải chấp nhận mới vào. Yêu cầu này thay thế hành vi mời là thêm trực tiếp trước đây. Bản 0.7.0 lưu lời mời chờ, cho chấp nhận/từ chối và chỉ thêm membership sau khi chấp nhận.
 
 Ngày 26/10/2026, tiếp tục lộ trình chat nâng cao trong 0.8.0. Mặc định triển khai: mỗi người sửa/xóa tin của mình; chủ nhóm ghim, hai bên chat riêng đều được ghim; giới hạn năm tin ghim. Bản nháp văn bản và mốc đọc lưu server, lựa chọn reply đang soạn chỉ giữ trong phiên.
+
+
+Ngày 26/10/2026, triển khai quản lý nhóm theo lộ trình. Mặc định 0.9.0: chỉ chủ nhóm quản lý vai trò/chuyển chủ/bỏ chặn/chế độ riêng tư; admin quản lý tên, lời mời, ghim, tin và thành viên thường. Chuyển chủ giữ chủ cũ làm admin. Các quyền được kiểm tra trên server.
+
+Người dùng yêu cầu giữ layout cũ và đổi màu giống ảnh Discord đính kèm. Bản 0.9.0 chỉ đổi bảng màu của bố cục hiện tại, không sao chép thanh server hoặc thay đổi cách chia cột/video.

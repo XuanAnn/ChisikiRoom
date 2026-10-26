@@ -153,6 +153,12 @@ function route(action, body) {
     saveDraft: ['PUT', `/api/chat-rooms/${id}/state/draft`],
     markRead: ['PUT', `/api/chat-rooms/${id}/state/read`],
     pinnedMessages: ['GET', `/api/chat-rooms/${id}/pinned`],
+    updateGroup: ['PUT', `/api/groups/${id}`],
+    setGroupRole: ['PUT', `/api/groups/${id}/role`],
+    transferGroup: ['POST', `/api/groups/${id}/transfer`],
+    removeGroupMember: ['POST', `/api/groups/${id}/remove`],
+    groupBans: ['GET', `/api/groups/${id}/bans`],
+    unblockGroupMember: ['POST', `/api/groups/${id}/unblock`],
     messages: [
       'GET',
       `/api/chat-rooms/${id}/messages${body.before && /^\d+$/.test(String(body.before)) ? '?before=' + body.before : ''}`,
@@ -540,7 +546,7 @@ function openWindow(kind = 'main', id) {
     resizable: !isIncoming,
     maximizable: !isIncoming,
     alwaysOnTop: isIncoming,
-    backgroundColor: '#171922',
+    backgroundColor: '#1a1a1e',
     title: 'ChisikiRoom',
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),

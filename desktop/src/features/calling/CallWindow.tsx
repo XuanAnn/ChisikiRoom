@@ -19,6 +19,8 @@ export function CallWindow({ id }: { id: string }) {
   const [busy, setBusy] = useState(false);
   const [left, setLeft] = useState(false);
   const camera = useRef(false);
+  const revokedRooms = useRef(new Set<string>());
+  const callRoom = useRef('');
   const mounted = useRef(true);
   const stopped = useRef(false);
   const media = usePeerMedia(
@@ -29,6 +31,13 @@ export function CallWindow({ id }: { id: string }) {
   );
   camera.current = media.camera;
   function accept(next: RoomCall) {
+    callRoom.current = next.roomId;
+    if (revokedRooms.current.has(next.roomId)) {
+      stopped.current = true;
+      setLeft(true);
+      setError('Bạn không còn là thành viên nhóm. Cuộc gọi đã dừng.');
+      return;
+    }
     if (!mounted.current || stopped.current) {
       return;
     }
@@ -85,6 +94,14 @@ export function CallWindow({ id }: { id: string }) {
     };
     const timer = setInterval(() => void sync(), 2500);
     const unsub = window.chisiki?.onEvent((event) => {
+      if (event.type === 'ROOM_MEMBERSHIP_REVOKED') {
+        revokedRooms.current.add(event.data.roomId);
+        if (callRoom.current === event.data.roomId) {
+          stopped.current = true;
+          setLeft(true);
+          setError('Bạn không còn là thành viên nhóm. Cuộc gọi đã dừng.');
+        }
+      }
       if (
         event.data?.callId === id &&
         (event.type === 'CALL_CHANGED' || event.type === 'CALL_ENDED')

@@ -14,14 +14,24 @@ export function BattleWindow({ id }: { id: string }) {
   const [user, setUser] = useState<User | null>(null);
   const [ready, setReady] = useState(false);
   const [error, setError] = useState('');
+  const [revoked, setRevoked] = useState(false);
+  const revokedRooms = useRef(new Set<string>());
+  const battleRoom = useRef<string | null>(null);
+  const revokedRef = useRef(false);
   const [busy, setBusy] = useState(false);
   const [now, setNow] = useState(Date.now());
   const offset = useRef(0);
   const state = useRef({ camera: false, ready: false });
   const mounted = useRef(true);
-  const media = useBattleMedia(id, user?.id || '', battle?.players || []);
+  const media = useBattleMedia(id, revoked ? '' : user?.id || '', battle?.players || []);
   state.current = { camera: media.camera, ready };
   function accept(snapshot: Battle) {
+    battleRoom.current = snapshot.roomId;
+    if (snapshot.roomId && revokedRooms.current.has(snapshot.roomId)) {
+      revokedRef.current = true;
+      setRevoked(true);
+      return;
+    }
     if (!mounted.current) {
       return;
     }
@@ -40,7 +50,7 @@ export function BattleWindow({ id }: { id: string }) {
       .then(accept)
       .catch((e) => setError(errorMessage(e)));
     const heartbeat = async () => {
-      if (inFlight) {
+      if (inFlight || revokedRef.current) {
         return;
       }
       inFlight = true;
@@ -57,6 +67,13 @@ export function BattleWindow({ id }: { id: string }) {
     const timer = setInterval(() => void heartbeat(), 2500);
     const clock = setInterval(() => setNow(Date.now()), 100);
     const unsub = window.chisiki?.onEvent((event) => {
+      if (event.type === 'ROOM_MEMBERSHIP_REVOKED') {
+        revokedRooms.current.add(event.data.roomId);
+        if (battleRoom.current === event.data.roomId) {
+          revokedRef.current = true;
+          setRevoked(true);
+        }
+      }
       if (event.data?.battleId === id && event.type !== 'MEDIA_SIGNAL') {
         request<Battle>('battle', { id })
           .then(accept)
@@ -79,7 +96,7 @@ export function BattleWindow({ id }: { id: string }) {
     }
   }, [media.camera]);
   useEffect(() => {
-    if (user) {
+    if (user && !revoked) {
       request<Battle>('heartbeat', { id, camera: media.camera, ready })
         .then(accept)
         .catch((e) => setError(errorMessage(e)));
@@ -139,6 +156,16 @@ export function BattleWindow({ id }: { id: string }) {
           </span>
           <Tag color={player.ready ? 'green' : 'default'}>{cameraLabel}</Tag>
         </div>
+      </div>
+    );
+  }
+  if (revoked) {
+    return (
+      <div className="battle-window">
+        <Alert
+          type="warning"
+          message="Bạn không còn là thành viên nhóm. Battle và camera đã dừng."
+        />
       </div>
     );
   }
@@ -246,7 +273,7 @@ export function BattleWindow({ id }: { id: string }) {
               <Progress
                 percent={(remaining / 15) * 100}
                 showInfo={false}
-                strokeColor={remaining < 5 ? '#ef8383' : '#a490ef'}
+                strokeColor={remaining < 5 ? '#ef8383' : '#5865f2'}
               />
               <h1>{round.text}</h1>
               <div className="answer-grid">

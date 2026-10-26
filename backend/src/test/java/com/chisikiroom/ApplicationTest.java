@@ -1355,6 +1355,215 @@ class ApplicationTest {
         call("GET", "/api/chat-rooms/state", null, null, 401);
     }
 
+    @Test
+    void groupRolesRespectHierarchyConsentAndOwnershipTransfer() throws Exception {
+        var owner = account();
+        var admin = account();
+        var member = account();
+        var outsider = account();
+        String id = room(owner, false);
+        String group = "/api/groups/" + id;
+        for (var account : List.of(admin, member)) {
+            call("POST", "/api/chat-rooms/" + id + "/join", account.token(), null, 200);
+        }
+        call("PUT", group, member.token(), Map.of("name", "Hijack", "privateRoom", false), 403);
+        call(
+            "PUT",
+            group + "/role",
+            owner.token(),
+            Map.of("userId", admin.id(), "role", "ADMIN"),
+            200
+        );
+        assertEquals(
+            "ADMIN",
+            call("GET", "/api/chat-rooms/" + id + "/members", admin.token(), null, 200)
+                .findValuesAsText("role")
+                .stream()
+                .filter("ADMIN"::equals)
+                .findFirst()
+                .orElseThrow()
+        );
+        call(
+            "PUT",
+            group,
+            admin.token(),
+            Map.of("name", "Renamed by admin", "privateRoom", false),
+            200
+        );
+        call("PUT", group, admin.token(), Map.of("name", "Private", "privateRoom", true), 403);
+        call(
+            "PUT",
+            group + "/role",
+            admin.token(),
+            Map.of("userId", member.id(), "role", "ADMIN"),
+            403
+        );
+        call(
+            "POST",
+            group + "/remove",
+            admin.token(),
+            Map.of("userId", owner.id(), "block", true),
+            409
+        );
+        call(
+            "POST",
+            "/api/chat-rooms/" + id + "/invite",
+            admin.token(),
+            Map.of("userId", outsider.id()),
+            200
+        );
+        call("GET", "/api/chat-rooms/" + id + "/messages", outsider.token(), null, 403);
+        call(
+            "POST",
+            "/api/group-invitations/" + id + "/respond",
+            outsider.token(),
+            Map.of("accept", true),
+            200
+        );
+        long memberMessage = call(
+            "POST",
+            "/api/chat-rooms/" + id + "/messages",
+            member.token(),
+            Map.of("content", "Moderated", "requestId", UUID.randomUUID()),
+            200
+        )
+            .path("id")
+            .asLong();
+        call(
+            "PUT",
+            "/api/chat-rooms/" + id + "/messages/" + memberMessage,
+            admin.token(),
+            Map.of("content", "Cannot rewrite"),
+            403
+        );
+        call(
+            "DELETE",
+            "/api/chat-rooms/" + id + "/messages/" + memberMessage,
+            admin.token(),
+            null,
+            200
+        );
+        call("POST", group + "/transfer", owner.token(), Map.of("userId", admin.id()), 200);
+        call(
+            "PUT",
+            group + "/role",
+            owner.token(),
+            Map.of("userId", member.id(), "role", "ADMIN"),
+            403
+        );
+        call(
+            "PUT",
+            group + "/role",
+            admin.token(),
+            Map.of("userId", owner.id(), "role", "MEMBER"),
+            200
+        );
+        call(
+            "PUT",
+            group,
+            owner.token(),
+            Map.of("name", "No longer manager", "privateRoom", false),
+            403
+        );
+        call("PUT", group, admin.token(), Map.of("name", "New owner", "privateRoom", true), 200);
+    }
+
+    @Test
+    void blockedMemberCannotRejoinReadFilesOrUseBattleMedia() throws Exception {
+        var owner = account();
+        var guest = account();
+        String room = room(owner, false);
+        UUID ownerId = UUID.fromString(owner.id());
+        UUID guestId = UUID.fromString(guest.id());
+        call("POST", "/api/chat-rooms/" + room + "/join", guest.token(), null, 200);
+        String callId = call(
+            "POST",
+            "/api/chat-rooms/" + room + "/call",
+            owner.token(),
+            Map.of(),
+            200
+        )
+            .path("id")
+            .asText();
+        call("POST", "/api/calls/" + callId + "/join", guest.token(), Map.of(), 200);
+        UUID battle = battles
+            .create(
+                UUID.fromString(room),
+                UUID.fromString("9e590000-0000-4000-8000-000000000001"),
+                ownerId
+            )
+            .id();
+        battles.join(battle, guestId);
+        battles.heartbeat(battle, ownerId, true, true);
+        battles.heartbeat(battle, guestId, true, true);
+        battles.start(battle, ownerId);
+        call(
+            "POST",
+            "/api/groups/" + room + "/remove",
+            owner.token(),
+            Map.of("userId", guest.id(), "block", true),
+            200
+        );
+        call("POST", "/api/chat-rooms/" + room + "/join", guest.token(), null, 403);
+        call(
+            "POST",
+            "/api/chat-rooms/" + room + "/invite",
+            owner.token(),
+            Map.of("userId", guest.id()),
+            403
+        );
+        call("GET", "/api/chat-rooms/" + room + "/messages", guest.token(), null, 403);
+        call("GET", "/api/documents?roomId=" + room, guest.token(), null, 403);
+        call("POST", "/api/chat-rooms/" + room + "/call", guest.token(), Map.of(), 403);
+        call("GET", "/api/battles/" + battle, guest.token(), null, 403);
+        call("GET", "/api/battles/" + battle + "/ice-servers", guest.token(), null, 403);
+        assertEquals("FINISHED", battles.snapshot(battle, ownerId).status());
+        call("GET", "/api/calls/" + callId, guest.token(), null, 403);
+        assertEquals(
+            1,
+            call("GET", "/api/calls/" + callId, owner.token(), null, 200)
+                .path("participants")
+                .size()
+        );
+        assertEquals(
+            1,
+            call("GET", "/api/groups/" + room + "/bans", owner.token(), null, 200).size()
+        );
+        call(
+            "POST",
+            "/api/groups/" + room + "/unblock",
+            owner.token(),
+            Map.of("userId", guest.id()),
+            200
+        );
+        call("POST", "/api/chat-rooms/" + room + "/join", guest.token(), null, 200);
+        assertTrue(
+            call("GET", "/api/chat-rooms/" + room + "/members", guest.token(), null, 200)
+                .findValuesAsText("role")
+                .contains("MEMBER")
+        );
+    }
+
+    @Test
+    void lastMemberLeavingArchivesGroupWithoutDeletingMessages() throws Exception {
+        var owner = account();
+        String room = room(owner, false);
+        call(
+            "POST",
+            "/api/chat-rooms/" + room + "/messages",
+            owner.token(),
+            Map.of("content", "Keep history", "requestId", UUID.randomUUID()),
+            200
+        );
+        call("POST", "/api/chat-rooms/" + room + "/leave", owner.token(), null, 200);
+        assertFalse(
+            call("GET", "/api/chat-rooms", owner.token(), null, 200)
+                .findValuesAsText("id")
+                .contains(room)
+        );
+        call("POST", "/api/chat-rooms/" + room + "/join", owner.token(), null, 404);
+    }
+
     record Match(Account a, Account b, UUID id, UUID quiz) {}
 
     Match match() throws Exception {

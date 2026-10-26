@@ -1,7 +1,7 @@
 .practice-window {
   height: 100vh;
   overflow: auto;
-  background: #171922;
+  background: #1a1a1e;
 }
 .practice-window > header {
   padding: 20px 28px;
@@ -24,7 +24,7 @@
 }
 .practice-navigation {
   padding: 18px;
-  background: #202431;
+  background: #232428;
   border-radius: 16px;
 }
 .practice-numbers {
@@ -34,14 +34,14 @@
 }
 .practice-numbers button {
   padding: 10px;
-  border: 1px solid #46506a;
+  border: 1px solid #949ba4;
   border-radius: 8px;
-  background: #252938;
-  color: #c6cce0;
+  background: #232428;
+  color: #dbdee1;
   cursor: pointer;
 }
 .practice-numbers button.answered {
-  background: #443767;
+  background: #3f4147;
 }
 .practice-numbers button.correct {
   background: #235343;
@@ -50,7 +50,7 @@
   background: #613d43;
 }
 .practice-numbers button.selected {
-  outline: 2px solid #bca5ff;
+  outline: 2px solid #b8bdfb;
 }
 .practice-question {
   min-width: 0;
@@ -67,8 +67,8 @@
 }
 .practice-question .ant-radio-wrapper {
   margin: 0;
-  background: #252938;
-  border: 1px solid #3b4256;
+  background: #232428;
+  border: 1px solid #3f4147;
   border-radius: 12px;
   padding: 18px;
   font-size: 16px;
@@ -88,11 +88,11 @@
   margin: 22px 28px 0;
   padding: 22px;
   border-radius: 16px;
-  background: #29243c;
+  background: #2b2d31;
 }
 .practice-result > strong {
   font-size: 34px;
-  color: #c9b4ff;
+  color: #b8bdfb;
 }
 .practice-result > div {
   flex: 1;
@@ -106,7 +106,7 @@
   align-items: center;
   gap: 14px;
   padding: 14px;
-  border: 1px solid #343a4e;
+  border: 1px solid #3f4147;
   border-radius: 12px;
 }
 .practice-history-row > div {
@@ -115,7 +115,7 @@
 }
 .practice-history-row p {
   font-size: 12px;
-  color: #949db5;
+  color: #b5bac1;
   margin: 5px 0;
 }
 .practice-launch {
@@ -140,13 +140,13 @@
 }
 
 .practice-question .ant-radio-wrapper-disabled {
-  color: #cbd2e6;
+  color: #dbdee1;
 }
 .learning-progress {
   margin: 20px 0;
   padding: 22px;
-  border: 1px solid #3b3a51;
-  background: #222332;
+  border: 1px solid #3f4147;
+  background: #232428;
   border-radius: 16px;
 }
 .learning-statistics {
@@ -164,7 +164,7 @@
   flex: 1;
 }
 .learning-goal p {
-  color: #9da5be;
+  color: #b5bac1;
   font-size: 12px;
 }
 @media (max-width: 900px) {

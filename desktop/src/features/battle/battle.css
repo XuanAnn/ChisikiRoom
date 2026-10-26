@@ -31,8 +31,8 @@
 .video-tile {
   position: relative;
   aspect-ratio: 16/10;
-  background: #252938;
-  border: 1px solid #353c52;
+  background: #232428;
+  border: 1px solid #3f4147;
   border-radius: 12px;
   overflow: hidden;
 }
@@ -47,7 +47,7 @@
   left: 0;
   right: 0;
   padding: 9px 10px;
-  background: #111a;
+  background: #111113aa;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -66,13 +66,13 @@
 }
 .media-controls small {
   font-size: 10px;
-  color: #747f99;
+  color: #949ba4;
 }
 .score-panel {
   width: 240px;
   flex-shrink: 0;
   padding: 25px 20px;
-  background: #1c1f2a;
+  background: #1a1a1e;
   overflow: auto;
 }
 .score-row {
@@ -86,7 +86,7 @@
   flex: 1;
 }
 .score-row > b {
-  color: #b6a1ff;
+  color: #b8bdfb;
   font-size: 20px;
 }
 .score-panel > .muted {
@@ -99,7 +99,7 @@
 }
 .lobby-panel > .anticon {
   font-size: 38px;
-  color: #b39bff;
+  color: #b8bdfb;
 }
 .lobby-panel h1 {
   font-size: 34px;
@@ -117,7 +117,7 @@
 }
 .round-top > b {
   font-size: 22px;
-  color: #b8a2fa;
+  color: #b8bdfb;
 }
 .round-panel h1 {
   font-size: 30px;
@@ -140,7 +140,7 @@
   text-align: left;
 }
 .answer-option b {
-  color: #ad99e3;
+  color: #b8bdfb;
   margin-right: 10px;
 }
 .answer-option span {
@@ -158,14 +158,14 @@
   display: flex;
   gap: 20px;
   padding: 18px;
-  border-bottom: 1px solid #30374a;
+  border-bottom: 1px solid #2b2d31;
 }
 .result-row > span {
   flex: 1;
 }
 .result-row > b,
 .result-row > strong {
-  color: #b8a4ff;
+  color: #b8bdfb;
 }
 .global-error {
   position: fixed;
@@ -179,7 +179,7 @@
   align-items: center;
   gap: 12px;
   padding: 12px 24px;
-  border-bottom: 1px solid #2b3143;
+  border-bottom: 1px solid #2b2d31;
   overflow-x: auto;
   flex-shrink: 0;
 }
@@ -187,9 +187,9 @@
   display: flex;
   gap: 10px;
   align-items: center;
-  background: #30283f;
-  color: #d6c4ff;
-  border: 1px solid #584071;
+  background: #2b2d31;
+  color: #b8bdfb;
+  border: 1px solid #5865f2;
   border-radius: 9px;
   padding: 9px 12px;
   white-space: nowrap;
@@ -228,15 +228,15 @@
 .battle-side-videos .battle-self-preview {
   width: 80%;
   justify-self: end;
-  border-color: #a490ef;
+  border-color: #b8bdfb;
 }
 .battle-camera-off {
   position: absolute;
   inset: 0;
   display: grid;
   place-items: center;
-  background: #292b3d;
-  color: #afa0ff;
+  background: #2b2d31;
+  color: #b8bdfb;
   font-size: 32px;
 }
 .battle-window .video-caption > span {

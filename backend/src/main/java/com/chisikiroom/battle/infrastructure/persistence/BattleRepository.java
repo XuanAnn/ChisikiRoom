@@ -15,6 +15,15 @@ public class BattleRepository {
         this.persistence = persistence;
     }
 
+    public List<UUID> roomBattleIds(UUID room) {
+        return persistence.list(
+            UUID.class,
+            "select b.id from BattleEntity b where b.roomId=:room and b.status in ('WAITING','IN_PROGRESS') order by b.id",
+            "room",
+            room
+        );
+    }
+
     public Optional<BattleEntity> lockBattle(UUID battleId) {
         return persistence.lock(BattleEntity.class, battleId);
     }

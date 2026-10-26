@@ -1,0 +1,9 @@
+ALTER TABLE chat_rooms ADD COLUMN archived BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE chat_room_members ADD COLUMN role VARCHAR(10) NOT NULL DEFAULT 'MEMBER';
+CREATE TABLE group_bans (
+    room_id UUID NOT NULL REFERENCES chat_rooms(id),
+    user_id UUID NOT NULL REFERENCES users(id),
+    blocked_by UUID NOT NULL REFERENCES users(id),
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY(room_id,user_id)
+);

@@ -169,3 +169,13 @@ Lỗi video một chiều được khắc phục bằng cách để một peer t
 - Migration V14/V15/V16; database kiểm thử nâng V15 → V16 giữ dữ liệu. Build và format:check đạt. V1–V13 giữ nguyên.
 
 - Bản Windows đóng gói 0.8.0 chạy chat-actions.spec đạt (12,1 giây). Database thật đã nâng V16 và health UP.
+
+
+## 0.9.0 — quản lý nhóm và màu theo ảnh Discord
+
+- 44 kiểm thử backend đạt. Vai trò/hệ thống quyền, cấm admin tự nâng quyền/tác động lên chủ, đổi tên/chế độ nhóm, lời mời vẫn cần chấp nhận, chuyển chủ/thu hồi quản trị, chặn/bỏ chặn, thu hồi quyền chat/tài liệu/call/Battle/media, đóng nhóm rỗng mà giữ lịch sử.
+- Cleanup membership sau commit chạy transaction mới cho Battle và call; participant bị thu hồi được loại khỏi call, nhận CALL_ENDED riêng, Battle chốt/loại người chơi theo số còn lại. REST/media kiểm tra membership trước khi cho truy cập.
+- Năm desktop unit đạt. Các bài gọi P2P, chat actions, ranking/invite và sidebar vẫn đạt. Case mới groups.spec chạy bản đóng gói Windows đạt (11,8 giây): cấp admin, admin đổi tên nhưng không đổi riêng tư, bật camera cuộc gọi rồi bị chặn và dừng video, bỏ chặn/rejoin, chuyển chủ nhóm.
+- Sửa hộp thoại xác nhận dùng Modal.useModal để hoạt động với React 19 và nhận đúng theme/context.
+- Giữ các thuộc tính layout; đổi giá trị màu CSS và Ant Design tokens theo ảnh người dùng. Đã xem ảnh discord-colors-preview.png (ba vùng, không overlay) và group-management-preview.png trong .runtime.
+- PostgreSQL integration verify-lan đạt, gồm bản nháp CAS, STOMP, file, Battle/call đồng thời. Migration V17; V1–V16 giữ nguyên. Build và format:check đạt.

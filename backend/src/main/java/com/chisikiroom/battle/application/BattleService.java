@@ -111,6 +111,10 @@ public class BattleService {
     }
 
     private BattlePlayerEntity player(UUID id, UUID user) {
+        BattleEntity target = battle(id, false);
+        if (target.roomId != null) {
+            chatService.requireMember(target.roomId, user);
+        }
         return repository
             .findPlayer(id, user)
             .orElseThrow(() ->
@@ -154,6 +158,9 @@ public class BattleService {
     public Snapshot snapshot(UUID id, UUID user) {
         var battleEntity = battle(id, false);
         var people = players(id);
+        if (battleEntity.roomId != null) {
+            chatService.requireMember(battleEntity.roomId, user);
+        }
         if (people.stream().noneMatch(player -> player.id().equals(user))) {
             if (battleEntity.roomId == null) {
                 throw new ResponseStatusException(HttpStatus.FORBIDDEN);
@@ -280,6 +287,7 @@ public class BattleService {
     @Transactional
     public Snapshot join(UUID id, UUID user) {
         var battleEntity = battle(id, true);
+        pruneMembership(battleEntity);
         if (battleEntity.rankedLevel != null) {
             player(id, user);
             if (!player(id, user).status.equals("ACTIVE")) {
@@ -361,6 +369,8 @@ public class BattleService {
     @Transactional
     public Snapshot start(UUID id, UUID user) {
         var battleEntity = battle(id, true);
+        pruneMembership(battleEntity);
+        player(id, user);
         if (!battleEntity.ownerId.equals(user)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Chỉ chủ trận được bắt đầu");
         }
@@ -518,12 +528,62 @@ public class BattleService {
         return snapshot(id, user);
     }
 
+    public void requireMediaPlayer(UUID id, UUID user) {
+        var participant = player(id, user);
+        if (!participant.status.equals("ACTIVE")) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void revokeRoomMember(UUID room) {
+        for (UUID id : repository.roomBattleIds(room)) {
+            pruneMembership(battle(id, true));
+        }
+    }
+
+    private void pruneMembership(BattleEntity battle) {
+        if (battle.roomId == null || !Set.of("WAITING", "IN_PROGRESS").contains(battle.status)) {
+            return;
+        }
+        Set<UUID> members = new HashSet<>(chatService.memberIds(battle.roomId));
+        boolean changed = false;
+        for (var participant : entities(battle.id)) {
+            if (participant.status.equals("ACTIVE") && !members.contains(participant.userId)) {
+                participant.status = "FORFEITED";
+                participant.ready = false;
+                participant.camera = false;
+                changed = true;
+            }
+        }
+        if (!changed) {
+            return;
+        }
+        var remaining = entities(battle.id)
+            .stream()
+            .filter(player -> player.status.equals("ACTIVE"))
+            .toList();
+        if (battle.status.equals("WAITING")) {
+            if (remaining.isEmpty()) {
+                battle.status = "CANCELLED";
+            } else if (
+                remaining.stream().noneMatch(player -> player.userId.equals(battle.ownerId))
+            ) {
+                battle.ownerId = remaining.getFirst().userId;
+            }
+        } else if (remaining.size() < 2) {
+            finish(battle.id, "FINISHED");
+        }
+        event(battle.id, "PLAYER_FORFEITED");
+    }
+
     @Transactional
     public void tick(UUID id) {
         tickLocked(battle(id, true));
     }
 
     private void tickLocked(BattleEntity battleEntity) {
+        pruneMembership(battleEntity);
         if (!battleEntity.status.equals("IN_PROGRESS")) {
             return;
         }

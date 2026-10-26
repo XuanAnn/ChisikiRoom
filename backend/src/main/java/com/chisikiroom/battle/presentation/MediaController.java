@@ -39,17 +39,7 @@ public class MediaController {
     ) {}
 
     private void requireActive(UUID battle, UUID user) {
-        if (
-            battles
-                .players(battle)
-                .stream()
-                .noneMatch(p -> p.id().equals(user) && p.status().equals("ACTIVE"))
-        ) {
-            throw new ResponseStatusException(
-                HttpStatus.FORBIDDEN,
-                "Bạn không có quyền truyền media trong trận"
-            );
-        }
+        battles.requireMediaPlayer(battle, user);
     }
 
     @PostMapping("/signal")

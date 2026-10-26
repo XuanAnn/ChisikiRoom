@@ -3,6 +3,7 @@ import { CloseOutlined, LockOutlined, TeamOutlined, UserAddOutlined } from '@ant
 import { type Room, type Member, type Quiz } from '../../lib/api';
 import { UserAvatar } from '../../components/UserAvatar';
 import { DocumentsPanel } from './DocumentsPanel';
+import { GroupManagementPanel } from '../community/GroupManagementPanel';
 import { BattleCards } from '../battle/BattleCards';
 
 type Props = {
@@ -44,11 +45,12 @@ export function RoomContextPanel(props: Props) {
             ? 'Nhóm riêng tư'
             : 'Nhóm công khai'}
       </p>
-      {!isDirect && props.room.ownerId === props.userId && (
+      {!isDirect && (props.room.ownerId === props.userId || props.room.myRole === 'ADMIN') && (
         <Button className="context-invite" icon={<UserAddOutlined />} onClick={props.onInvite}>
           Mời thành viên
         </Button>
       )}
+      <GroupManagementPanel room={props.room} userId={props.userId} />
       <Tabs
         activeKey={props.tab}
         onChange={props.onTabChange}
@@ -65,6 +67,9 @@ export function RoomContextPanel(props: Props) {
                     <div>
                       {member.displayName}
                       {member.id === props.room.ownerId && !isDirect && <small>Chủ phòng</small>}
+                      {member.role === 'ADMIN' && member.id !== props.room.ownerId && (
+                        <small>Quản trị viên</small>
+                      )}
                       {member.id === props.userId && <small>Bạn</small>}
                     </div>
                   </div>

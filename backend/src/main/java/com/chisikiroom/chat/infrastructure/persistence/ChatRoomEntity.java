@@ -25,6 +25,9 @@ public class ChatRoomEntity {
     @Column(name = "created_at", nullable = false)
     public OffsetDateTime createdAt = OffsetDateTime.now();
 
+    @Column(nullable = false)
+    public boolean archived;
+
     @Column(name = "kind", nullable = false, length = 10)
     public String kind = "GROUP";
 }

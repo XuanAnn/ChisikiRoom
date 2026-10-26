@@ -4,7 +4,7 @@
   padding: 26px;
   display: flex;
   flex-direction: column;
-  background: #171922;
+  background: #1a1a1e;
 }
 .call-window header {
   display: flex;
@@ -28,7 +28,7 @@
   min-width: 0;
   min-height: 0;
   aspect-ratio: auto;
-  background: #222632;
+  background: #232428;
   border-radius: 14px;
 }
 .call-grid .self-preview {
@@ -38,7 +38,7 @@
   right: 14px;
   bottom: 14px;
   z-index: 2;
-  border: 2px solid #a490ef;
+  border: 2px solid #b8bdfb;
   box-shadow: 0 8px 28px #0008;
 }
 .call-grid.call-group .self-preview {
@@ -56,8 +56,8 @@
 .call-waiting {
   display: grid;
   place-items: center;
-  background: #292b3d;
-  color: #afa0ff;
+  background: #2b2d31;
+  color: #b8bdfb;
 }
 .camera-off {
   position: absolute;
@@ -120,19 +120,19 @@
   gap: 14px;
   padding: 28px;
   text-align: center;
-  background: radial-gradient(ellipse at 50% 15%, #35305a 0, #171922 65%);
+  background: radial-gradient(ellipse at 50% 15%, #3f4147 0, #1a1a1e 65%);
 }
 .incoming-avatar {
   padding: 14px;
-  border: 1px solid #8c7cdf45;
+  border: 1px solid #b8bdfb45;
   border-radius: 50%;
-  box-shadow: 0 0 0 12px #9c8afd0a;
+  box-shadow: 0 0 0 12px #b8bdfb0a;
 }
 .incoming-avatar .avatar {
   width: 76px;
   height: 76px;
   font-size: 30px;
-  background: #6659a5;
+  background: #5865f2;
   color: white;
 }
 .incoming-call-window h1 {
@@ -149,17 +149,17 @@
 .incoming-call-window h2 {
   font-size: 15px;
   font-weight: 500;
-  color: #c4b4ff;
+  color: #b8bdfb;
   margin: 0;
 }
 .incoming-call-window p {
   font-size: 13px;
-  color: #a3a8bd;
+  color: #b5bac1;
   margin: 0;
 }
 .incoming-privacy {
   font-size: 11px;
-  color: #8c93ab;
+  color: #b5bac1;
   margin: 8px 0;
 }
 .incoming-actions {

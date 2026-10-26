@@ -221,7 +221,19 @@ function App() {
     <ConfigProvider
       theme={{
         algorithm: theme.darkAlgorithm,
-        token: { colorPrimary: '#9484ff', borderRadius: 10, fontFamily: 'Segoe UI, sans-serif' },
+        token: {
+          colorPrimary: '#5865f2',
+          colorInfo: '#5865f2',
+          colorBgBase: '#111113',
+          colorBgContainer: '#232428',
+          colorBgElevated: '#232428',
+          colorBgLayout: '#1a1a1e',
+          colorText: '#dbdee1',
+          colorTextSecondary: '#949ba4',
+          colorBorder: '#3f4147',
+          borderRadius: 10,
+          fontFamily: 'Segoe UI, sans-serif',
+        },
       }}
     >
       {renderContent()}

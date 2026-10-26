@@ -18,6 +18,9 @@ public class RoomMemberEntity {
     @Column(name = "user_id", nullable = false)
     public UUID userId;
 
+    @Column(nullable = false, length = 10)
+    public String role = "MEMBER";
+
     @Column(name = "last_read_id", nullable = false)
     public Long lastReadId = 0L;
 

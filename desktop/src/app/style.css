@@ -3,8 +3,8 @@
 }
 body {
   margin: 0;
-  background: #171922;
-  color: #eeeef5;
+  background: #1a1a1e;
+  color: #f2f3f5;
   font-family: 'Segoe UI', sans-serif;
 }
 .app {
@@ -13,13 +13,13 @@ body {
 }
 .rail {
   width: 72px;
-  background: #101118;
+  background: #111113;
   display: flex;
   align-items: center;
   gap: 30px;
   flex-direction: column;
   padding: 22px 0;
-  color: #777e94;
+  color: #949ba4;
   font-size: 23px;
 }
 .brand {
@@ -27,14 +27,14 @@ body {
   height: 46px;
   display: grid;
   place-items: center;
-  background: #9b8aff;
-  color: #171323;
+  background: #b8bdfb;
+  color: #1a1a1e;
   border-radius: 16px;
   font-weight: 800;
 }
 aside {
   width: 244px;
-  background: #1c1e29;
+  background: #1a1a1e;
   position: relative;
   padding: 27px 18px;
 }
@@ -46,34 +46,34 @@ aside h2 span {
   display: block;
   font-size: 9px;
   letter-spacing: 3px;
-  color: #8c91a6;
+  color: #b5bac1;
   margin-top: 9px;
 }
 .workspace {
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 1.4px;
-  color: #73798f;
+  color: #949ba4;
   margin-bottom: 18px;
 }
 aside p {
   display: flex;
   align-items: center;
   gap: 12px;
-  color: #9298ad;
+  color: #b5bac1;
   padding: 13px 12px;
   margin: 5px 0;
   font-size: 14px;
 }
 .selected {
-  background: #363149;
+  background: #2b2d31;
   border-radius: 8px;
-  color: #c1b5ff !important;
+  color: #b8bdfb !important;
 }
 .aside-note {
   margin-top: 50px;
   padding: 18px 12px;
-  color: #666d82;
+  color: #949ba4;
   font-size: 13px;
   line-height: 1.9;
 }
@@ -82,7 +82,7 @@ footer {
   bottom: 0;
   left: 0;
   right: 0;
-  background: #161821;
+  background: #1a1a1e;
   padding: 17px;
   display: flex;
   gap: 12px;
@@ -91,7 +91,7 @@ footer {
 }
 .avatar {
   border-radius: 50%;
-  background: #49405e;
+  background: #3f4147;
   width: 36px;
   height: 36px;
   display: grid;
@@ -99,7 +99,7 @@ footer {
 }
 small {
   display: block;
-  color: #7e859c;
+  color: #949ba4;
   font-size: 11px;
   margin-top: 4px;
 }
@@ -109,7 +109,7 @@ main {
 }
 header {
   height: 76px;
-  border-bottom: 1px solid #292c3a;
+  border-bottom: 1px solid #2b2d31;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -119,7 +119,7 @@ header {
 .badge {
   font-size: 10px;
   letter-spacing: 2px;
-  color: #8d94a9;
+  color: #b5bac1;
 }
 .welcome {
   max-width: 1120px;
@@ -134,7 +134,7 @@ header {
 .eyebrow {
   font-size: 10px;
   letter-spacing: 2px;
-  color: #a99bf5;
+  color: #b8bdfb;
   font-weight: 600;
 }
 h1 {
@@ -144,13 +144,13 @@ h1 {
   margin: 24px 0;
 }
 em {
-  color: #a99bf5;
+  color: #b8bdfb;
   font-style: normal;
 }
 .intro p {
   font-size: 15px;
   line-height: 1.9;
-  color: #969db2;
+  color: #b5bac1;
   max-width: 350px;
 }
 .features {
@@ -158,17 +158,17 @@ em {
   flex-wrap: wrap;
   gap: 18px;
   margin-top: 40px;
-  color: #a4aabd;
+  color: #b5bac1;
   font-size: 11px;
 }
 .features .anticon {
-  color: #b0a1ff;
+  color: #b8bdfb;
   margin-right: 6px;
 }
 .auth {
   padding: 30px;
-  background: #202330;
-  border: 1px solid #323648;
+  background: #232428;
+  border: 1px solid #2b2d31;
   border-radius: 18px;
   box-shadow: 0 20px 60px #0002;
 }
@@ -178,7 +178,7 @@ em {
 }
 .auth > p {
   font-size: 13px;
-  color: #8f97ac;
+  color: #b5bac1;
 }
 .auth form {
   margin-top: 18px;

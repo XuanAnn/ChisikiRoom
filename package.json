@@ -1,6 +1,6 @@
 {
   "name": "chisikiroom",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "private": true,
   "scripts": {
     "format": "prettier --write \"backend/src/**/*.java\" \"backend/src/**/*.yml\" \"desktop/src/**/*.{ts,tsx,css}\" \"desktop/electron/**/*.cjs\" \"desktop/tests/**/*.cjs\" \"desktop/*.{ts,json,html,yml}\" \"scripts/**/*.cjs\" package.json .prettierrc.json compose.yaml",

@@ -26,7 +26,7 @@
 }
 .group-chat-section {
   padding-top: 12px;
-  border-top: 1px solid #303447;
+  border-top: 1px solid #2b2d31;
 }
 .sidebar-section-heading {
   display: flex;
@@ -36,7 +36,7 @@
   flex-shrink: 0;
   padding: 0 6px;
   margin-bottom: 6px;
-  color: #8992aa;
+  color: #b5bac1;
 }
 .sidebar-section-heading h3 {
   flex: 1;
@@ -48,10 +48,10 @@
 }
 .sidebar-section-heading > span {
   font-size: 10px;
-  color: #737e98;
+  color: #949ba4;
 }
 .sidebar-section-heading .ant-btn {
-  color: #a2abc0;
+  color: #b5bac1;
 }
 .sidebar-scroll-list {
   flex: 1;
@@ -69,7 +69,7 @@
   height: 0;
 }
 .sidebar-scroll-list:focus-visible {
-  outline: 1px solid #9484ff;
+  outline: 1px solid #b8bdfb;
   outline-offset: -1px;
   border-radius: 8px;
 }
@@ -85,23 +85,23 @@
   border: 0;
   border-radius: 9px;
   background: transparent;
-  color: #929db6;
+  color: #b5bac1;
   text-align: left;
   font-size: 13px;
 }
 .friend-chat-link:hover,
 .group-chat-link:hover {
-  background: #292d3d;
-  color: #e2e3ef;
+  background: #2b2d31;
+  color: #dbdee1;
 }
 .friend-chat-link.active,
 .group-chat-link.active {
-  background: #363149;
-  color: #d7ccff;
+  background: #2b2d31;
+  color: #f2f3f5;
 }
 .friend-chat-link:focus-visible,
 .group-chat-link:focus-visible {
-  outline: 1px solid #ac9af8;
+  outline: 1px solid #b8bdfb;
   outline-offset: -1px;
 }
 .friend-chat-link:disabled {
@@ -132,8 +132,8 @@
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  background: #687086;
-  border: 2px solid #1c1e29;
+  background: #949ba4;
+  border: 2px solid #1a1a1e;
 }
 .friend-presence.online {
   background: #75cfaa;
@@ -143,7 +143,7 @@
   place-items: center;
   flex-shrink: 0;
   width: 29px;
-  color: #8d96ad;
+  color: #b5bac1;
   font-size: 23px;
 }
 .sidebar-group-symbol .anticon {
@@ -152,19 +152,19 @@
 .group-chat-link > small {
   flex-shrink: 0;
   margin: 0;
-  color: #7e89a2;
+  color: #949ba4;
   font-size: 10px;
 }
 .sidebar-opening {
   font-size: 14px;
-  color: #b9a5ff;
+  color: #b8bdfb;
 }
 .sidebar-chat-section .sidebar-list-empty {
   margin: 8px 6px;
   padding: 10px 4px;
   font-size: 11px;
   line-height: 1.8;
-  color: #717c94;
+  color: #949ba4;
 }
 .room-sidebar > .chat-sidebar-footer {
   position: static;

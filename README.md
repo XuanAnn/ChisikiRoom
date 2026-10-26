@@ -1,6 +1,6 @@
 # ChisikiRoom
 
-Ứng dụng desktop học tập theo đặc tả v1.1. Bản desktop **0.8.0 cho Windows/LAN** bố trí lại giao diện với trang tổng quan, sidebar bạn bè/nhóm, chat ở giữa và công cụ phòng bên phải. Cân bằng trò chuyện/gọi video với quiz, Battle và tài liệu. Cuộc gọi 1–1 ưu tiên video đối phương, camera cá nhân thu nhỏ; nhóm dùng lưới tự co giãn và ô camera cá nhân nhỏ. Battle bố trí camera phía trên và bên phải, tự thu gọn trên cửa sổ nhỏ. Video tự phát khi nhận được luồng, kể cả luồng đến chậm hoặc kết nối lại; không cần bấm Phát video. Có sẵn 10 bộ tiếng Nhật N5–N4 (100 câu) dùng chung, chọn ngay cho Battle hoặc lưu bản sao cá nhân. Backend hiện tại 0.8.0, schema V16.
+Ứng dụng desktop học tập theo đặc tả v1.1. Bản desktop **0.9.0 cho Windows/LAN** bố trí lại giao diện với trang tổng quan, sidebar bạn bè/nhóm, chat ở giữa và công cụ phòng bên phải. Cân bằng trò chuyện/gọi video với quiz, Battle và tài liệu. Cuộc gọi 1–1 ưu tiên video đối phương, camera cá nhân thu nhỏ; nhóm dùng lưới tự co giãn và ô camera cá nhân nhỏ. Battle bố trí camera phía trên và bên phải, tự thu gọn trên cửa sổ nhỏ. Video tự phát khi nhận được luồng, kể cả luồng đến chậm hoặc kết nối lại; không cần bấm Phát video. Có sẵn 10 bộ tiếng Nhật N5–N4 (100 câu) dùng chung, chọn ngay cho Battle hoặc lưu bản sao cá nhân. Backend hiện tại 0.9.0, schema V17.
 
 Chức năng mới: tìm tin nhắn trong lịch sử phòng, lọc bạn bè/nhóm/quiz/tài liệu, sắp xếp quiz, bộ đếm tin chưa đọc và bản nháp riêng theo phòng được lưu vào database, mời thành viên từ danh sách bạn bè. `Ctrl+K` tìm bạn bè/nhóm; `Ctrl+F` tìm tin nhắn trong phòng đang mở.
 
@@ -108,3 +108,17 @@ Mời vào nhóm chỉ tạo lời mời chờ. Người nhận mở Lời mời
 - Trạng thái đọc lưu trên server, mốc đọc chỉ tăng. Tin chưa đọc không tính tin tự gửi/tin đã xóa; mở phòng có focus đánh dấu đến tin đã tải. Thống kê được đồng bộ định kỳ và khi có sự kiện/kết nối lại.
 
 Cần desktop/backend 0.8.0 để có đầy đủ các thao tác và thông tin này. Bản nháp chỉ giữ nội dung văn bản; lựa chọn tin đang trích dẫn không được phục hồi sau khi khởi động lại.
+
+
+## Quản lý nhóm và bảng màu (0.9.0)
+
+Giữ bố cục ba vùng, vị trí điều khiển và grid video; đổi màu theo ảnh Discord người dùng cung cấp: sidebar #111113, nền chính #1a1a1e, vùng phụ #232428, viền #3f4147, chữ #dbdee1 và điểm nhấn #5865f2. Màu thông báo lỗi/thành công được giữ riêng.
+
+Quản lý nhóm nằm trong bảng thông tin bên phải:
+
+- Chủ nhóm cấp/thu hồi quản trị, chuyển chủ nhóm, đổi tên/chế độ công khai/riêng tư, loại/chặn/bỏ chặn thành viên.
+- Quản trị viên đổi tên, mời thành viên (vẫn cần người nhận chấp nhận), ghim tin, xóa tin của thành viên thường và loại/chặn thành viên thường. Không được tự cấp quyền hoặc tác động lên chủ nhóm/quản trị viên khác.
+- Chuyển chủ nhóm giữ chủ cũ làm quản trị viên; chủ mới có thể thu hồi quyền này. Chủ nhóm rời nhóm sẽ ưu tiên chuyển quyền cho quản trị viên, nếu không có thì thành viên còn lại theo thứ tự tham gia.
+- Loại khỏi nhóm không chặn tham gia lại nhóm công khai; Chặn khỏi nhóm ngăn cả tham gia lại và nhận lời mời. Chỉ chủ nhóm được bỏ chặn. Bỏ chặn không tự thêm lại thành viên hoặc khôi phục vai trò cũ.
+- Mất tư cách thành viên thu hồi quyền REST/signaling ngay; sự kiện realtime dừng camera/cuộc gọi/Battle của cửa sổ liên quan. Cleanup sau commit loại người đó khỏi cuộc gọi và Battle; signaling vẫn kiểm tra quyền server.
+- Khi người cuối rời, nhóm được đóng/ẩn thay vì xóa lịch sử và làm lỗi khóa ngoại. Chưa có giao diện mở lại nhóm đã đóng.

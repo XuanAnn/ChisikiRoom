@@ -8,8 +8,14 @@ export type Room = {
   memberCount: number;
   kind: 'GROUP' | 'DIRECT';
   peerId: string | null;
+  myRole?: 'OWNER' | 'ADMIN' | 'MEMBER' | null;
 };
-export type Member = { id: string; displayName: string; online?: boolean };
+export type Member = {
+  id: string;
+  displayName: string;
+  online?: boolean;
+  role?: 'OWNER' | 'ADMIN' | 'MEMBER';
+};
 export type RoomCall = {
   id: string;
   roomId: string;
