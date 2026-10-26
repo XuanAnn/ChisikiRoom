@@ -26,3 +26,4 @@
 - The user authorizes automatic commits and pushes after completed changes pass the relevant checks.
 - Review the diff and staged files before committing. Keep secrets, local runtime data, database backups and build artifacts out of Git.
 - Push to the current working branch and report the commit and push result. Never force-push or rewrite remote history without explicit authorization.
+- Keep commit messages short and clear, stating the main change without unnecessary detail.
