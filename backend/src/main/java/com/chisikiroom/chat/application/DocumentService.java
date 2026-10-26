@@ -1,7 +1,7 @@
 package com.chisikiroom.chat.application;
 
-import com.chisikiroom.chat.infrastructure.persistence.DocumentEntity;
-import com.chisikiroom.chat.infrastructure.persistence.DocumentRepository;
+import com.chisikiroom.chat.infrastructure.persistence.entity.DocumentEntity;
+import com.chisikiroom.chat.infrastructure.persistence.repository.DocumentRepository;
 import com.chisikiroom.common.infrastructure.storage.UploadStorage;
 import com.chisikiroom.realtime.application.Events;
 import java.io.IOException;

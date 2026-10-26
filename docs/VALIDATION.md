@@ -179,3 +179,11 @@ Lỗi video một chiều được khắc phục bằng cách để một peer t
 - Sửa hộp thoại xác nhận dùng Modal.useModal để hoạt động với React 19 và nhận đúng theme/context.
 - Giữ các thuộc tính layout; đổi giá trị màu CSS và Ant Design tokens theo ảnh người dùng. Đã xem ảnh discord-colors-preview.png (ba vùng, không overlay) và group-management-preview.png trong .runtime.
 - PostgreSQL integration verify-lan đạt, gồm bản nháp CAS, STOMP, file, Battle/call đồng thời. Migration V17; V1–V16 giữ nguyên. Build và format:check đạt.
+
+
+## Persistence package refactor sau 0.9.0
+
+- Tách 28 JPA entity vào entity/, 13 repository vào repository/, 10 composite key thành các file key/*Id.java trong từng module. Cập nhật imports của service/worker/test; tên entity JPQL giữ nguyên.
+- Đối chiếu phần khai báo mapping của cả 28 entity với commit trước: giữ nguyên toàn bộ bảng/cột, trường, generated ID; chỉ @IdClass trỏ lớp ID mới có cùng cấu trúc/equality/hashCode.
+- Build/package và 44 kiểm thử backend đạt. PostgreSQL integration verify-lan đạt (STOMP, quyền, upload, chat riêng đồng thời, call/Battle last seat, score ledger/outbox, draft CAS).
+- format:check đạt; không có lớp entity cũ còn sót trong thư mục target/classes. Không sửa SQL/migration, schema vẫn V17, desktop 0.9.0 tiếp tục dùng được.

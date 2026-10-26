@@ -1,7 +1,7 @@
 package com.chisikiroom.chat.application;
 
-import com.chisikiroom.chat.infrastructure.persistence.ReactionEntity;
-import com.chisikiroom.chat.infrastructure.persistence.ReactionRepository;
+import com.chisikiroom.chat.infrastructure.persistence.entity.ReactionEntity;
+import com.chisikiroom.chat.infrastructure.persistence.repository.ReactionRepository;
 import com.chisikiroom.realtime.application.Events;
 import java.util.List;
 import java.util.Map;

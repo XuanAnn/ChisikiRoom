@@ -1,7 +1,7 @@
 package com.chisikiroom.practice.application;
 
-import com.chisikiroom.practice.infrastructure.persistence.PracticeAttemptEntity;
-import com.chisikiroom.practice.infrastructure.persistence.PracticeAttemptRepository;
+import com.chisikiroom.practice.infrastructure.persistence.entity.PracticeAttemptEntity;
+import com.chisikiroom.practice.infrastructure.persistence.repository.PracticeAttemptRepository;
 import com.chisikiroom.quiz.application.QuizService;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

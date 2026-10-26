@@ -64,3 +64,5 @@ Backend 0.3.3 moves chat, Battle and calling queries into `ChatRepository`, `Bat
 `ai-service/` is reserved for a later FastAPI integration. It is not launched by Compose. Root `compose.yaml` remains the entry point to preserve existing volume naming and LAN startup commands; deployment assets belong in `infrastructure/`.
 
 Ranking 0.7.0 dùng phòng Battle riêng room_id NULL, có ranked_level rõ ràng, chỉ hai người đã ghép được join; worker riêng điều phối tự bắt đầu và chốt rating. Battle không phụ thuộc ngược ranking. Xem [Ranking](RANKING.md).
+
+Persistence được tách thành `infrastructure/persistence/entity`, `key`, `repository` trong từng feature. Tên entity dùng trong JPQL và mapping bảng/cột giữ nguyên; DTO/API không phụ thuộc vị trí package của JPA entity. Xem [Persistence](PERSISTENCE.md).

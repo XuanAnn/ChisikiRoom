@@ -1,8 +1,8 @@
 package com.chisikiroom.community.application;
 
-import com.chisikiroom.community.infrastructure.persistence.FriendRequestEntity;
-import com.chisikiroom.community.infrastructure.persistence.FriendsRepository;
-import com.chisikiroom.identity.infrastructure.persistence.UserEntity;
+import com.chisikiroom.community.infrastructure.persistence.entity.FriendRequestEntity;
+import com.chisikiroom.community.infrastructure.persistence.repository.FriendsRepository;
+import com.chisikiroom.identity.infrastructure.persistence.entity.UserEntity;
 import com.chisikiroom.realtime.application.Events;
 import com.chisikiroom.realtime.application.UserPresence;
 import java.util.List;

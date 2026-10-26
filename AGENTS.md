@@ -27,3 +27,10 @@
 - Review the diff and staged files before committing. Keep secrets, local runtime data, database backups and build artifacts out of Git.
 - Push to the current working branch and report the commit and push result. Never force-push or rewrite remote history without explicit authorization.
 - Keep commit messages short and clear, stating the main change without unnecessary detail.
+
+# Persistence packages
+
+- Keep JPA entity classes in each feature's `infrastructure/persistence/entity` package.
+- Keep named top-level composite ID classes in `infrastructure/persistence/key`; avoid nested `Entity.Key` classes.
+- Keep feature repositories in `infrastructure/persistence/repository`.
+- Preserve JPA mappings, lock ordering and transaction behavior during package refactors; do not introduce a schema migration for a Java-only move.

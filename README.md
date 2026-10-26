@@ -122,3 +122,5 @@ Quản lý nhóm nằm trong bảng thông tin bên phải:
 - Loại khỏi nhóm không chặn tham gia lại nhóm công khai; Chặn khỏi nhóm ngăn cả tham gia lại và nhận lời mời. Chỉ chủ nhóm được bỏ chặn. Bỏ chặn không tự thêm lại thành viên hoặc khôi phục vai trò cũ.
 - Mất tư cách thành viên thu hồi quyền REST/signaling ngay; sự kiện realtime dừng camera/cuộc gọi/Battle của cửa sổ liên quan. Cleanup sau commit loại người đó khỏi cuộc gọi và Battle; signaling vẫn kiểm tra quyền server.
 - Khi người cuối rời, nhóm được đóng/ẩn thay vì xóa lịch sử và làm lỗi khóa ngoại. Chưa có giao diện mở lại nhóm đã đóng.
+
+Backend tổ chức persistence riêng theo từng module: `entity/` chứa JPA entity, `key/` chứa khóa chính kép có tên rõ nghĩa, `repository/` chứa truy vấn. Chi tiết và giải thích infrastructure: [Persistence](docs/PERSISTENCE.md).

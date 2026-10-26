@@ -1,8 +1,8 @@
 package com.chisikiroom.identity.application;
 
 import com.chisikiroom.common.infrastructure.storage.UploadStorage;
-import com.chisikiroom.identity.infrastructure.persistence.ProfileRepository;
-import com.chisikiroom.identity.infrastructure.persistence.UserEntity;
+import com.chisikiroom.identity.infrastructure.persistence.entity.UserEntity;
+import com.chisikiroom.identity.infrastructure.persistence.repository.ProfileRepository;
 import com.chisikiroom.realtime.application.Events;
 import com.chisikiroom.realtime.application.UserPresence;
 import java.io.ByteArrayInputStream;

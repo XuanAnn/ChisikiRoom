@@ -1,7 +1,7 @@
 package com.chisikiroom.battle.infrastructure;
 
 import com.chisikiroom.battle.application.BattleService;
-import com.chisikiroom.battle.infrastructure.persistence.*;
+import com.chisikiroom.battle.infrastructure.persistence.entity.BattleEventEntity;
 import com.chisikiroom.common.infrastructure.JpaStore;
 import java.util.*;
 import org.slf4j.*;

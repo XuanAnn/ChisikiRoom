@@ -139,13 +139,13 @@ class ApplicationTest {
             transaction.executeWithoutResult(status -> {
                 store
                     .find(
-                        com.chisikiroom.identity.infrastructure.persistence.UserEntity.class,
+                        com.chisikiroom.identity.infrastructure.persistence.entity.UserEntity.class,
                         user
                     )
                     .orElseThrow()
                     .displayName = "Must roll back";
                 var session =
-                    new com.chisikiroom.identity.infrastructure.persistence.UserSessionEntity();
+                    new com.chisikiroom.identity.infrastructure.persistence.entity.UserSessionEntity();
                 session.tokenHash = hash;
                 session.userId = user;
                 session.expiresAt = java.time.OffsetDateTime.now().plusDays(1);
@@ -159,7 +159,7 @@ class ApplicationTest {
                 "Test User",
                 store
                     .find(
-                        com.chisikiroom.identity.infrastructure.persistence.UserEntity.class,
+                        com.chisikiroom.identity.infrastructure.persistence.entity.UserEntity.class,
                         user
                     )
                     .orElseThrow()
@@ -168,7 +168,7 @@ class ApplicationTest {
             assertTrue(
                 store
                     .find(
-                        com.chisikiroom.identity.infrastructure.persistence.UserSessionEntity.class,
+                        com.chisikiroom.identity.infrastructure.persistence.entity.UserSessionEntity.class,
                         hash
                     )
                     .isEmpty()
@@ -203,7 +203,7 @@ class ApplicationTest {
                         "Test User",
                         store
                             .find(
-                                com.chisikiroom.identity.infrastructure.persistence.UserEntity.class,
+                                com.chisikiroom.identity.infrastructure.persistence.entity.UserEntity.class,
                                 id
                             )
                             .orElseThrow()
@@ -217,7 +217,7 @@ class ApplicationTest {
                     }
                     return store
                         .lock(
-                            com.chisikiroom.identity.infrastructure.persistence.UserEntity.class,
+                            com.chisikiroom.identity.infrastructure.persistence.entity.UserEntity.class,
                             id
                         )
                         .orElseThrow()
@@ -231,7 +231,7 @@ class ApplicationTest {
                         status ->
                             store
                                 .lock(
-                                    com.chisikiroom.identity.infrastructure.persistence.UserEntity.class,
+                                    com.chisikiroom.identity.infrastructure.persistence.entity.UserEntity.class,
                                     id
                                 )
                                 .orElseThrow()

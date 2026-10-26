@@ -1,7 +1,7 @@
 package com.chisikiroom.practice.application;
 
-import com.chisikiroom.practice.infrastructure.persistence.LearningRepository;
-import com.chisikiroom.practice.infrastructure.persistence.PracticeAttemptRepository;
+import com.chisikiroom.practice.infrastructure.persistence.repository.LearningRepository;
+import com.chisikiroom.practice.infrastructure.persistence.repository.PracticeAttemptRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.constraints.*;

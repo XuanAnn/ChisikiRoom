@@ -1,7 +1,7 @@
 package com.chisikiroom.quiz.application;
 
-import com.chisikiroom.quiz.infrastructure.persistence.QuestionSetEntity;
-import com.chisikiroom.quiz.infrastructure.persistence.QuestionSetRepository;
+import com.chisikiroom.quiz.infrastructure.persistence.entity.QuestionSetEntity;
+import com.chisikiroom.quiz.infrastructure.persistence.repository.QuestionSetRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
