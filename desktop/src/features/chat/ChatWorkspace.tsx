@@ -26,6 +26,8 @@ import { ProfilePanel } from '../auth/ProfilePanel';
 import { ChatSidebar } from './ChatSidebar';
 import { CallPanel, IncomingCalls } from '../calling/CallPanel';
 import { WorkspaceOverview } from './WorkspaceOverview';
+import { GroupInvitationsPanel } from '../community/GroupInvitationsPanel';
+import { RankingPanel } from '../ranking/RankingPanel';
 import { QuizLibrary } from '../quiz/QuizLibrary';
 import { RoomContextPanel } from './RoomContextPanel';
 import { MessageTimeline } from './MessageTimeline';
@@ -294,6 +296,9 @@ export function ChatWorkspace({ user, onLogout }: { user: User; onLogout: () => 
   }
 
   function renderContent() {
+    if (tab === 'ranking') {
+      return <RankingPanel />;
+    }
     if (tab === 'quiz') {
       return <QuizLibrary quizzes={quizzes} />;
     }
@@ -420,6 +425,10 @@ export function ChatWorkspace({ user, onLogout }: { user: User; onLogout: () => 
 
   let heading = 'Không gian học tập';
   let subtitle = 'Kết nối, chia sẻ và cùng nhau tiến bộ';
+  if (tab === 'ranking') {
+    heading = 'Xếp hạng toàn hệ thống';
+    subtitle = 'Đấu 1–1 · N5 / N4 · Không tính điểm luyện tập';
+  }
   if (tab === 'quiz') {
     heading = 'Bộ câu hỏi của bạn';
     subtitle = 'Xây dựng kiến thức theo cách của bạn';
@@ -430,6 +439,12 @@ export function ChatWorkspace({ user, onLogout }: { user: User; onLogout: () => 
       ? 'Cuộc trò chuyện bạn bè'
       : `${active.memberCount} thành viên · ${active.privateRoom ? 'Nhóm riêng tư' : 'Nhóm công khai'}`;
   }
+  const sectionNames: Record<WorkspaceTab, string> = {
+    home: 'Tổng quan',
+    chat: 'Trò chuyện',
+    quiz: 'Thư viện câu hỏi',
+    ranking: 'Xếp hạng',
+  };
   const availableFriends = friends.filter(
     (friend) => !members.some((member) => member.id === friend.id),
   );
@@ -447,6 +462,7 @@ export function ChatWorkspace({ user, onLogout }: { user: User; onLogout: () => 
         unread={activity.unread}
         drafts={activity.drafts}
         onShowHome={() => setTab('home')}
+        onShowRanking={() => setTab('ranking')}
         onShowChat={() => setTab('chat')}
         onShowQuizzes={() => {
           setTab('quiz');
@@ -528,11 +544,15 @@ export function ChatWorkspace({ user, onLogout }: { user: User; onLogout: () => 
             <span className={online === 'online' ? 'live-dot' : 'live-dot offline'} />
             {online === 'online' ? 'Đã kết nối' : 'Đang kết nối lại…'}
             <span className="breadcrumb-separator">/</span>
-            <span>
-              {tab === 'quiz' ? 'Thư viện cá nhân' : tab === 'home' ? 'Tổng quan' : 'Trò chuyện'}
-            </span>
+            <span>{sectionNames[tab]}</span>
           </div>
           <Space size={4}>
+            <GroupInvitationsPanel
+              onJoined={async (id) => {
+                await loadRooms();
+                selectRoom(id);
+              }}
+            />
             <FriendsPanel user={user} />
             <ProfilePanel user={user} />
             {tab === 'chat' && active?.joined && !isDirect && (
@@ -604,7 +624,7 @@ export function ChatWorkspace({ user, onLogout }: { user: User; onLogout: () => 
       <Modal
         open={inviteOpen}
         title="Mời thành viên"
-        okText="Mời"
+        okText="Gửi lời mời"
         cancelText="Hủy"
         okButtonProps={{ disabled: !inviteId }}
         confirmLoading={busy}
@@ -619,7 +639,7 @@ export function ChatWorkspace({ user, onLogout }: { user: User; onLogout: () => 
         }
       >
         <p className="muted">
-          Chọn một người bạn để mời vào nhóm. Họ có thể trò chuyện, tham gia cuộc gọi và Battle.
+          Chọn một người bạn để gửi lời mời. Họ chỉ vào nhóm sau khi chấp nhận.
         </p>
         {!manualInvite && (
           <Select

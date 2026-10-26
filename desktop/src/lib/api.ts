@@ -52,7 +52,9 @@ export type BattlePlayer = {
 };
 export type Battle = {
   id: string;
-  roomId: string;
+  roomId: string | null;
+  rankedResult?: string | null;
+  rankedLevel?: string | null;
   ownerId: string;
   title: string;
   status: string;
@@ -142,4 +144,39 @@ export type LearningProgress = {
   dailyGoal: number;
   date: string;
   timezone: string;
+};
+
+export type RankEntry = {
+  userId: string;
+  displayName: string;
+  rating: number;
+  deviation: number;
+  games: number;
+  wins: number;
+  draws: number;
+  provisional: boolean;
+  lastPlayedAt: string | null;
+};
+export type RankBoard = {
+  level: string;
+  season: { id: number; startsAt: string; endsAt: string };
+  me: RankEntry;
+  leaders: RankEntry[];
+};
+export type RankedQueue = {
+  status: 'IDLE' | 'QUEUED' | 'MATCHED';
+  level: string | null;
+  battleId: string | null;
+  joinedAt: string | null;
+};
+export type RankedHistory = {
+  battleId: string;
+  level: string;
+  season: number;
+  opponent: string;
+  status: string;
+  outcome: string | null;
+  before: number | null;
+  after: number | null;
+  createdAt: string;
 };

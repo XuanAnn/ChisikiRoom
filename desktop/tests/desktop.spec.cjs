@@ -81,7 +81,9 @@ test('Electron chat, separate quiz editor and two-peer battle media', async () =
     await pageA.getByRole('button', { name: /Mời thành viên$/ }).click();
     await pageA.getByRole('combobox', { name: 'Chọn bạn bè để mời' }).click();
     await pageA.locator('.ant-select-dropdown').getByText('Chi UI', { exact: true }).click();
-    await pageA.getByRole('button', { name: 'Mời', exact: true }).click();
+    await pageA.getByRole('button', { name: 'Gửi lời mời', exact: true }).click();
+    await expect(pageA.locator('.context-members .member')).toHaveCount(2);
+    await api(`/api/group-invitations/${room.id}/respond`, friend.token, { accept: true });
     await expect(pageA.locator('.context-members .member')).toHaveCount(3);
     await pageA.locator('.workspace-heading').click();
     await pageA.screenshot({ path: path.resolve(__dirname, '../../.runtime/chat-preview.png') });

@@ -6,9 +6,9 @@
 | --- | --- | --- |
 | 1 | Luyện tập cá nhân, chấm điểm, giải thích, lưu bài và ôn câu sai | Đã triển khai trong 0.6.0 |
 | 2 | Tiến độ, lịch sử và mục tiêu mỗi ngày | Đã triển khai trong 0.6.0 |
-| 3 | Ranking toàn hệ thống, Glicko-2, ghép 1–1, hai bảng N5/N4 | Chưa triển khai |
+| 3 | Ranking toàn hệ thống, Glicko-2, ghép 1–1, hai bảng N5/N4 | Bản đầu đã triển khai 0.7.0; cần mở rộng ngân hàng và nghiệm thu thực tế |
 | 4 | Chat: sửa/xóa, trả lời, ghim, lưu trạng thái đọc và bản nháp | Chưa triển khai |
-| 5 | Nhóm: thông tin, vai trò, loại thành viên, kiểm duyệt | Chưa triển khai |
+| 5 | Nhóm: thông tin, vai trò, loại thành viên, kiểm duyệt | Lời mời cần chấp nhận đã có 0.7.0; các công cụ quản trị còn lại chưa triển khai |
 | 6 | Cuộc gọi: chọn thiết bị, chia sẻ màn hình, lịch sử | Chưa triển khai |
 | 7 | Tài liệu: preview, quota, xóa và dọn file an toàn | Chưa triển khai |
 | 8 | Tài khoản: đổi/khôi phục mật khẩu, nhớ đăng nhập, quản lý phiên | Chưa triển khai |

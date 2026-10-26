@@ -146,3 +146,15 @@ Lỗi video một chiều được khắc phục bằng cách để một peer t
 - Electron: desktop.spec và practice.spec đạt (22,4 giây). Thử chọn đáp án, đóng cửa sổ rồi mở lại từ lịch sử, nộp bài một câu đúng được 10%, hiện giải thích và tạo bài ôn 9 câu còn lại. Đổi mục tiêu 5 câu và kiểm tra API thống kê 1 lượt/1 câu đã chọn.
 - TypeScript/Vite build, format:check đạt. Đã xem ảnh cửa sổ luyện tập trong .runtime/practice-preview.png.
 - Bản 0.6.0 chỉ hoàn thành hai phần đầu của lộ trình; ranking/chat nâng cao/quản lý nhóm và các phần tiếp theo chưa được triển khai trong bản này.
+
+
+## 0.7.0 — ranking và chấp nhận lời mời nhóm
+
+- 38 kiểm thử backend đạt. Glicko-2 khớp ví dụ gốc; inactivity tăng RD, giữ rating. Kiểm tra ghép đúng trình độ, chống người thứ ba, tự bắt đầu khi đủ camera/sẵn sàng, hủy lobby không tính hạng, bỏ cuộc tính thua, kết quả bất biến sau đóng cửa sổ, tick lặp không cộng hai lần, chống ghép lại tức thì, 5 trận vào bảng chính và mùa mới soft reset. Bốn người join đồng thời tạo đúng hai cặp; hai worker chốt đồng thời vẫn mỗi người một lượt rating.
+- Lời mời nhóm: pending không thêm membership, gửi lặp không trùng; người khác không thể nhận thay; trước chấp nhận bị từ chối truy cập chat/thành viên/tài liệu/gọi. Từ chối vẫn ở ngoài nhóm; chấp nhận lặp không tạo membership trùng.
+- Electron: gọi P2P, chat/quiz/Battle, luyện tập và sidebar đạt. Hai case mới ranking.spec đạt sau chỉnh selector camera theo accessible name: tự mở hai Battle, bật camera/sẵn sàng và tự bắt đầu, bỏ cuộc cập nhật rating/lịch sử; lời mời nhận realtime, từ chối, mời lại, chấp nhận rồi mới xuất hiện trong phòng. Ảnh đã xem tại ranking-preview.png và group-invitation-preview.png trong .runtime.
+- PostgreSQL integration verify-lan đạt: quyền phòng, STOMP, reconnect, tài liệu, direct chat đồng thời, tranh chấp ghế gọi/Battle, một tài khoản không vào hai cuộc gọi và score ledger/outbox.
+- Build, format:check và 3 kiểm thử session đạt. Migration V12/V13 thử trên PostgreSQL; database thật được sao lưu trước nâng cấp. Backend 0.7.0 dùng schema V13.
+- Chưa nghiệm thu ranking/camera trên nhiều máy vật lý. Ngân hàng 40 câu là bản đầu, cần mở rộng để giảm học thuộc và đánh giá chất lượng ghép trận khi có đủ người chơi.
+
+- Bản đóng gói Windows 0.7.0: ranking.spec gồm hai luồng ranking/lời mời nhóm đạt trực tiếp trên release/win-unpacked/ChisikiRoom.exe (14,2 giây). Database thật V13 có đúng 20 câu ranking N5 và 20 câu N4.

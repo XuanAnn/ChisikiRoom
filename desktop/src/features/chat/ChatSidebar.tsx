@@ -7,6 +7,7 @@ import {
   PlusOutlined,
   TeamOutlined,
   HomeOutlined,
+  TrophyOutlined,
   SearchOutlined,
 } from '@ant-design/icons';
 import { type Member, type Room, type User } from '../../lib/api';
@@ -28,6 +29,7 @@ type Props = {
   openingFriend: string | null;
   onShowChat: () => void;
   onShowQuizzes: () => void;
+  onShowRanking: () => void;
   onCreateGroup: () => void;
   onSelectRoom: (id: string) => void;
   onOpenFriend: (friend: Member) => void;
@@ -66,6 +68,12 @@ export function ChatSidebar(props: Props) {
         onClick={props.onShowQuizzes}
       >
         <BookOutlined /> Bộ câu hỏi
+      </button>
+      <button
+        className={tab === 'ranking' ? 'sidebar-link selected' : 'sidebar-link'}
+        onClick={props.onShowRanking}
+      >
+        <TrophyOutlined /> Xếp hạng
       </button>
       <Input
         className="sidebar-search"

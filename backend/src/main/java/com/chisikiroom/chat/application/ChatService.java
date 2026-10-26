@@ -189,9 +189,61 @@ public class ChatService {
         if (repository.findUser(user).isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy người dùng");
         }
-        if (!memberIds(room).contains(user)) {
-            addMember(room, user);
+        if (!memberIds(room).contains(user) && repository.findInvitation(room, user).isEmpty()) {
+            GroupInvitationEntity invitation = new GroupInvitationEntity();
+            invitation.roomId = room;
+            invitation.userId = user;
+            invitation.inviterId = owner;
+            repository.insertInvitation(invitation);
+            events.send(List.of(user), "GROUP_INVITED", Map.of("roomId", room));
         }
+    }
+
+    public record GroupInvitation(
+        UUID roomId,
+        String roomName,
+        String inviterName,
+        OffsetDateTime createdAt
+    ) {}
+
+    public List<GroupInvitation> invitations(UUID user) {
+        return repository
+            .invitations(user)
+            .stream()
+            .map(invitation ->
+                new GroupInvitation(
+                    invitation.roomId(),
+                    invitation.roomName(),
+                    invitation.inviterName(),
+                    invitation.createdAt()
+                )
+            )
+            .toList();
+    }
+
+    @Transactional
+    public void respondInvitation(UUID room, UUID user, boolean accept) {
+        Room target = lockRoom(room, user);
+        Optional<GroupInvitationEntity> invitation = repository.findInvitation(room, user);
+        if (invitation.isEmpty()) {
+            if (accept && repository.findMembership(room, user).isPresent()) {
+                return;
+            }
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy lời mời nhóm");
+        }
+        if (target.kind().equals("DIRECT")) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
+        if (accept && repository.findMembership(room, user).isEmpty()) {
+            addMember(room, user);
+        } else {
+            repository.deleteInvitation(invitation.get());
+        }
+        events.send(
+            List.of(user, target.ownerId()),
+            "GROUP_INVITATION_CHANGED",
+            Map.of("roomId", room)
+        );
     }
 
     private void add(UUID room, UUID user) {
@@ -202,6 +254,7 @@ public class ChatService {
     }
 
     private void addMember(UUID room, UUID user) {
+        repository.findInvitation(room, user).ifPresent(repository::deleteInvitation);
         add(room, user);
         events.send(memberIds(room), "ROOM_CHANGED", Map.of("roomId", room));
     }

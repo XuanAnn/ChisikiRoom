@@ -90,6 +90,7 @@ test('friend call invitation and three-person group P2P outside Battle', async (
   });
   for (const member of [b, c]) {
     await api(`/api/chat-rooms/${group.id}/invite`, a.token, { userId: member.user.id });
+    await api(`/api/group-invitations/${group.id}/respond`, member.token, { accept: true });
   }
   const apps = [];
   try {

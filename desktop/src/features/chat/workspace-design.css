@@ -1319,3 +1319,15 @@
     margin-top: 16px;
   }
 }
+
+.group-invitation {
+  padding: 18px;
+  margin: 16px 0;
+  border: 1px solid #41465d;
+  border-radius: 12px;
+  background: #252938;
+}
+.group-invitation p {
+  color: #a2acc4;
+  font-size: 13px;
+}

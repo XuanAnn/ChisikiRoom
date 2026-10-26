@@ -355,6 +355,13 @@ class ApplicationTest {
             Map.of("userId", stranger.id()),
             403
         );
+        call(
+            "POST",
+            "/api/group-invitations/" + id + "/respond",
+            guest.token(),
+            Map.of("accept", true),
+            200
+        );
         call("GET", "/api/chat-rooms/" + id + "/members", guest.token(), null, 200);
         call("POST", "/api/chat-rooms/" + id + "/leave", owner.token(), null, 200);
         var rooms = call("GET", "/api/chat-rooms", guest.token(), null, 200);
@@ -788,6 +795,280 @@ class ApplicationTest {
             clock.time.set(originalTime);
         }
         call("GET", "/api/learning-progress", null, null, 401);
+    }
+
+    void clearRankingQueue() {
+        var users = transaction.execute(status ->
+            store.list(UUID.class, "select q.userId from RankedQueueEntity q")
+        );
+        for (UUID user : users) {
+            ranking.cancel(user);
+        }
+    }
+
+    @Autowired
+    com.chisikiroom.ranking.application.RankingService ranking;
+
+    @Test
+    void rankedQueueMatchesLevelsProtectsSeatsAndRatesForfeitExactlyOnce() throws Exception {
+        clearRankingQueue();
+        var first = account();
+        var second = account();
+        var stranger = account();
+        UUID firstId = UUID.fromString(first.id());
+        UUID secondId = UUID.fromString(second.id());
+        call("GET", "/api/ranking", null, null, 401);
+        call("POST", "/api/ranking/queue", first.token(), Map.of("level", "N3"), 400);
+        assertEquals("QUEUED", ranking.join(firstId, "N5").status());
+        assertEquals("QUEUED", ranking.join(secondId, "N4").status());
+        ranking.cancel(secondId);
+        var paired = ranking.join(secondId, "N5");
+        assertEquals("MATCHED", paired.status());
+        UUID battleId = paired.battleId();
+        assertEquals(battleId, ranking.state(firstId).battleId());
+        var lobby = battles.snapshot(battleId, firstId);
+        assertNull(lobby.roomId());
+        assertEquals(10, lobby.totalQuestions());
+        assertEquals(2, lobby.players().size());
+        call("GET", "/api/battles/" + battleId, stranger.token(), null, 403);
+        call("POST", "/api/battles/" + battleId + "/join", stranger.token(), null, 403);
+        battles.heartbeat(battleId, firstId, true, true);
+        battles.heartbeat(battleId, secondId, true, true);
+        ranking.tick();
+        assertEquals("IN_PROGRESS", battles.snapshot(battleId, firstId).status());
+        call("DELETE", "/api/ranking/queue", first.token(), null, 409);
+        battles.leave(battleId, secondId);
+        assertEquals(first.id(), battles.snapshot(battleId, firstId).rankedResult());
+        // Closing the winner's window after the finish must not change the frozen outcome.
+        battles.leave(battleId, firstId);
+        ranking.tick();
+        var winner = ranking.board(firstId, "N5").me();
+        var loser = ranking.board(secondId, "N5").me();
+        assertEquals(1, winner.games());
+        assertEquals(1, winner.wins());
+        assertTrue(winner.rating() > 1500);
+        assertTrue(loser.rating() < 1500);
+        assertEquals(0, ranking.board(firstId, "N4").me().games());
+        assertTrue(
+            ranking
+                .board(firstId, "N5")
+                .leaders()
+                .stream()
+                .noneMatch(entry -> entry.userId().equals(firstId))
+        );
+        ranking.tick();
+        assertEquals(winner.rating(), ranking.board(firstId, "N5").me().rating());
+        assertEquals("WIN", ranking.history(firstId).getFirst().outcome());
+        assertEquals("LOSS", ranking.history(secondId).getFirst().outcome());
+        assertEquals("IDLE", ranking.state(firstId).status());
+        // Immediate rematches cannot farm rating.
+        ranking.join(firstId, "N5");
+        assertEquals("QUEUED", ranking.join(secondId, "N5").status());
+        ranking.cancel(firstId);
+        ranking.cancel(secondId);
+    }
+
+    @Test
+    void rankedLobbyCancellationAndQueueExpiryDoNotAwardPoints() throws Exception {
+        clearRankingQueue();
+        var first = account();
+        var second = account();
+        UUID firstId = UUID.fromString(first.id());
+        UUID secondId = UUID.fromString(second.id());
+        ranking.join(firstId, "N5");
+        var match = ranking.join(secondId, "N5");
+        ranking.cancel(firstId);
+        assertEquals("IDLE", ranking.state(secondId).status());
+        assertEquals("VOID", ranking.history(firstId).getFirst().outcome());
+        assertEquals(0, ranking.board(firstId, "N5").me().games());
+        var before = clock.time.get();
+        try {
+            ranking.join(firstId, "N4");
+            clock.advance(21);
+            ranking.tick();
+            assertEquals("IDLE", ranking.state(firstId).status());
+            ranking.join(firstId, "N4");
+            ranking.join(secondId, "N4");
+            clock.advance(61);
+            ranking.tick();
+            assertEquals("IDLE", ranking.state(firstId).status());
+            assertEquals(0, ranking.board(firstId, "N4").me().games());
+        } finally {
+            clock.time.set(before);
+        }
+    }
+
+    @Test
+    void fifthRankedGameEntersGlobalBoardAndNextSeasonSoftResets() throws Exception {
+        clearRankingQueue();
+        var host = account();
+        UUID hostId = UUID.fromString(host.id());
+        for (int index = 0; index < 5; index++) {
+            UUID guestId = UUID.fromString(account().id());
+            ranking.join(hostId, "N4");
+            UUID matchId = ranking.join(guestId, "N4").battleId();
+            if (matchId == null) {
+                clock.advance(90);
+                ranking.heartbeat(hostId);
+                ranking.heartbeat(guestId);
+                ranking.tick();
+                matchId = ranking.state(guestId).battleId();
+            }
+            battles.heartbeat(matchId, hostId, true, true);
+            battles.heartbeat(matchId, guestId, true, true);
+            ranking.tick();
+            battles.leave(matchId, guestId);
+            ranking.tick();
+        }
+        var before = ranking.board(hostId, "N4");
+        assertEquals(5, before.me().games());
+        assertFalse(before.me().provisional());
+        assertTrue(
+            before
+                .leaders()
+                .stream()
+                .anyMatch(entry -> entry.userId().equals(hostId))
+        );
+        var original = clock.time.get();
+        try {
+            clock.advance(56 * 86400L);
+            var after = ranking.board(hostId, "N4");
+            assertEquals(before.season().id() + 1, after.season().id());
+            assertEquals(0, after.me().games());
+            assertEquals((before.me().rating() + 1500) / 2, after.me().rating());
+            assertTrue(after.me().provisional());
+            assertEquals(5, ranking.history(hostId).size());
+        } finally {
+            clock.time.set(original);
+        }
+    }
+
+    @Test
+    void groupInvitationRequiresRecipientConsentAndCanBeDeclined() throws Exception {
+        var owner = account();
+        var invited = account();
+        var stranger = account();
+        String roomId = room(owner, true);
+        call(
+            "POST",
+            "/api/chat-rooms/" + roomId + "/invite",
+            owner.token(),
+            Map.of("userId", invited.id()),
+            200
+        );
+        call(
+            "POST",
+            "/api/chat-rooms/" + roomId + "/invite",
+            owner.token(),
+            Map.of("userId", invited.id()),
+            200
+        );
+        assertEquals(1, call("GET", "/api/group-invitations", invited.token(), null, 200).size());
+        assertEquals(0, call("GET", "/api/group-invitations", stranger.token(), null, 200).size());
+        assertEquals(
+            1,
+            call("GET", "/api/chat-rooms/" + roomId + "/members", owner.token(), null, 200).size()
+        );
+        call("GET", "/api/chat-rooms/" + roomId + "/messages", invited.token(), null, 403);
+        call("GET", "/api/chat-rooms/" + roomId + "/members", invited.token(), null, 403);
+        call("GET", "/api/documents?roomId=" + roomId, invited.token(), null, 403);
+        call("POST", "/api/chat-rooms/" + roomId + "/call", invited.token(), Map.of(), 403);
+        call(
+            "POST",
+            "/api/group-invitations/" + roomId + "/respond",
+            stranger.token(),
+            Map.of("accept", true),
+            404
+        );
+        call(
+            "POST",
+            "/api/group-invitations/" + roomId + "/respond",
+            invited.token(),
+            Map.of("accept", false),
+            200
+        );
+        assertEquals(0, call("GET", "/api/group-invitations", invited.token(), null, 200).size());
+        call("GET", "/api/chat-rooms/" + roomId + "/messages", invited.token(), null, 403);
+        call(
+            "POST",
+            "/api/chat-rooms/" + roomId + "/invite",
+            owner.token(),
+            Map.of("userId", invited.id()),
+            200
+        );
+        call(
+            "POST",
+            "/api/group-invitations/" + roomId + "/respond",
+            invited.token(),
+            Map.of("accept", true),
+            200
+        );
+        call(
+            "POST",
+            "/api/group-invitations/" + roomId + "/respond",
+            invited.token(),
+            Map.of("accept", true),
+            200
+        );
+        assertEquals(
+            2,
+            call("GET", "/api/chat-rooms/" + roomId + "/members", owner.token(), null, 200).size()
+        );
+        assertEquals(0, call("GET", "/api/group-invitations", invited.token(), null, 200).size());
+        call("GET", "/api/chat-rooms/" + roomId + "/messages", invited.token(), null, 200);
+    }
+
+    @Test
+    void simultaneousRankedQueuesAndSettlementNeverDuplicateAPlayerOrRating() throws Exception {
+        clearRankingQueue();
+        List<UUID> users = new ArrayList<>();
+        for (int index = 0; index < 4; index++) {
+            users.add(UUID.fromString(account().id()));
+        }
+        try (var pool = java.util.concurrent.Executors.newFixedThreadPool(4)) {
+            var gate = new java.util.concurrent.CountDownLatch(1);
+            var tasks = users
+                .stream()
+                .map(user ->
+                    pool.submit(() -> {
+                        gate.await();
+                        return ranking.join(user, "N5");
+                    })
+                )
+                .toList();
+            gate.countDown();
+            for (var task : tasks) {
+                task.get();
+            }
+        }
+        Set<UUID> matches = new HashSet<>();
+        for (UUID user : users) {
+            matches.add(ranking.state(user).battleId());
+        }
+        assertEquals(2, matches.size());
+        assertFalse(matches.contains(null));
+        for (UUID match : matches) {
+            UUID participant = users
+                .stream()
+                .filter(user -> match.equals(ranking.state(user).battleId()))
+                .findFirst()
+                .orElseThrow();
+            var lobby = battles.snapshot(match, participant);
+            for (var player : lobby.players()) {
+                battles.heartbeat(match, player.id(), true, true);
+            }
+            ranking.tick();
+            battles.leave(match, lobby.players().get(1).id());
+        }
+        try (var pool = java.util.concurrent.Executors.newFixedThreadPool(2)) {
+            var first = pool.submit(() -> ranking.tick());
+            var second = pool.submit(() -> ranking.tick());
+            first.get();
+            second.get();
+        }
+        for (UUID user : users) {
+            assertEquals(1, ranking.board(user, "N5").me().games());
+        }
     }
 
     record Match(Account a, Account b, UUID id, UUID quiz) {}
@@ -1248,6 +1529,13 @@ class ApplicationTest {
                 "/api/chat-rooms/" + room + "/invite",
                 a.token(),
                 Map.of("userId", member.id()),
+                200
+            );
+            call(
+                "POST",
+                "/api/group-invitations/" + room + "/respond",
+                member.token(),
+                Map.of("accept", true),
                 200
             );
         }

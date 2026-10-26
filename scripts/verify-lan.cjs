@@ -78,6 +78,7 @@ async function eventually(check) {
   await api(`/api/chat-rooms/${room.id}/messages`, outsider.token, undefined, 'GET', 403);
   for (const person of [b, c, d, e]) {
     await api(`/api/chat-rooms/${room.id}/invite`, a.token, { userId: person.user.id });
+    await api(`/api/group-invitations/${room.id}/respond`, person.token, { accept: true });
   }
   const [sa, sb] = await Promise.all([connect(a.token), connect(b.token)]);
   await connect('invalid-token', '/user/queue/events', true);
@@ -273,6 +274,8 @@ async function eventually(check) {
   });
   await api(`/api/chat-rooms/${firstCallRoom.id}/invite`, a.token, { userId: c.user.id });
   await api(`/api/chat-rooms/${secondCallRoom.id}/invite`, b.token, { userId: c.user.id });
+  await api(`/api/group-invitations/${firstCallRoom.id}/respond`, c.token, { accept: true });
+  await api(`/api/group-invitations/${secondCallRoom.id}/respond`, c.token, { accept: true });
   const firstCall = await api(`/api/chat-rooms/${firstCallRoom.id}/call`, a.token, {});
   const secondCall = await api(`/api/chat-rooms/${secondCallRoom.id}/call`, b.token, {});
   const concurrentJoins = await Promise.all(

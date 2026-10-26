@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-export type WorkspaceTab = 'home' | 'chat' | 'quiz';
+export type WorkspaceTab = 'home' | 'chat' | 'quiz' | 'ranking';
 
 /** Session-local unread counters and drafts. Message content is not stored on disk. */
 export function useWorkspaceActivity(userId: string, roomId: string, tab: WorkspaceTab) {

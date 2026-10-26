@@ -70,7 +70,9 @@ public class BattleService {
         long sequence,
         OffsetDateTime serverTime,
         List<Player> players,
-        RoundView round
+        RoundView round,
+        String rankedResult,
+        String rankedLevel
     ) {}
 
     OffsetDateTime now() {
@@ -189,7 +191,9 @@ public class BattleService {
             battleEntity.sequence,
             now(),
             people,
-            view
+            view,
+            battleEntity.rankedResult,
+            battleEntity.rankedLevel
         );
     }
 
@@ -210,6 +214,61 @@ public class BattleService {
         return snapshot(battleEntity.id, user);
     }
 
+    @Transactional
+    public Snapshot createRanked(
+        UUID first,
+        UUID second,
+        String level,
+        List<QuizService.Question> questions
+    ) {
+        BattleEntity entity = new BattleEntity();
+        entity.id = UUID.randomUUID();
+        entity.ownerId = first;
+        entity.questionSetId = UUID.fromString("9e590000-0000-4000-8000-000000000001");
+        entity.title = "Xếp hạng " + level + " · 1–1";
+        entity.rankedLevel = level;
+        entity.questionSnapshot = encode(questions);
+        repository.insertBattle(entity);
+        addPlayer(entity.id, first);
+        addPlayer(entity.id, second);
+        event(entity.id, "RANKED_MATCHED");
+        return snapshot(entity.id, first);
+    }
+
+    @Transactional
+    public void tryStartRanked(UUID id) {
+        BattleEntity entity = battle(id, true);
+        if (entity.rankedLevel == null || !entity.status.equals("WAITING")) {
+            return;
+        }
+        List<BattlePlayerEntity> players = entities(id);
+        boolean allReady =
+            players.size() == 2 &&
+            players
+                .stream()
+                .allMatch(
+                    player ->
+                        player.status.equals("ACTIVE") &&
+                        player.ready &&
+                        player.camera &&
+                        !player.lastSeen.isBefore(now().minusSeconds(10))
+                );
+        if (allReady) {
+            start(id, entity.ownerId);
+        }
+    }
+
+    @Transactional
+    public void cancelRanked(UUID id) {
+        BattleEntity entity = battle(id, true);
+        if (entity.rankedLevel == null) {
+            throw error("Không phải trận xếp hạng");
+        }
+        if (entity.status.equals("WAITING")) {
+            finish(id, "CANCELLED");
+        }
+    }
+
     private void addPlayer(UUID id, UUID user) {
         var player = new BattlePlayerEntity();
         player.battleId = id;
@@ -221,6 +280,13 @@ public class BattleService {
     @Transactional
     public Snapshot join(UUID id, UUID user) {
         var battleEntity = battle(id, true);
+        if (battleEntity.rankedLevel != null) {
+            player(id, user);
+            if (!player(id, user).status.equals("ACTIVE")) {
+                throw error("Bạn đã rời trận xếp hạng");
+            }
+            return snapshot(id, user);
+        }
         if (battleEntity.roomId == null) {
             throw error("Phòng trò chuyện không còn tồn tại");
         }
@@ -318,14 +384,20 @@ public class BattleService {
         ) {
             throw error("Cần ít nhất 2 người, tất cả bật camera và sẵn sàng");
         }
-        var quiz = quizService.get(
-            battleEntity.questionSetId,
-            quizService.owner(battleEntity.questionSetId)
-        );
+        List<QuizService.Question> questions;
+        if (battleEntity.rankedLevel != null) {
+            questions = quizService.decode(battleEntity.questionSnapshot);
+        } else {
+            var quiz = quizService.get(
+                battleEntity.questionSetId,
+                quizService.owner(battleEntity.questionSetId)
+            );
+            questions = quiz.questions();
+            battleEntity.questionSnapshot = encode(questions);
+            battleEntity.title = quiz.title();
+        }
         battleEntity.status = "IN_PROGRESS";
-        battleEntity.questionSnapshot = encode(quiz.questions());
-        battleEntity.title = quiz.title();
-        openRound(id, 1, quiz.questions().getFirst());
+        openRound(id, 1, questions.getFirst());
         event(id, "BATTLE_STARTED");
         return snapshot(id, user);
     }
@@ -432,7 +504,9 @@ public class BattleService {
             .filter(item -> item.status.equals("ACTIVE"))
             .toList();
         if (battleEntity.status.equals("WAITING")) {
-            if (remaining.isEmpty()) {
+            if (battleEntity.rankedLevel != null) {
+                battleEntity.status = "CANCELLED";
+            } else if (remaining.isEmpty()) {
                 battleEntity.status = "CANCELLED";
             } else if (battleEntity.ownerId.equals(user)) {
                 battleEntity.ownerId = remaining.getFirst().userId;
@@ -507,7 +581,27 @@ public class BattleService {
     }
 
     private void finish(UUID id, String status) {
-        battle(id, false).status = status;
+        BattleEntity entity = battle(id, false);
+        if (entity.rankedLevel != null && entity.rankedResult == null) {
+            List<BattlePlayerEntity> activePlayers = entities(id)
+                .stream()
+                .filter(player -> player.status.equals("ACTIVE"))
+                .toList();
+            entity.rankedResult = "VOID";
+            if (status.equals("FINISHED") && activePlayers.size() == 1) {
+                entity.rankedResult = activePlayers.getFirst().userId.toString();
+            } else if (status.equals("FINISHED") && activePlayers.size() == 2) {
+                BattlePlayerEntity first = activePlayers.get(0);
+                BattlePlayerEntity second = activePlayers.get(1);
+                entity.rankedResult = "DRAW";
+                if (first.score > second.score) {
+                    entity.rankedResult = first.userId.toString();
+                } else if (second.score > first.score) {
+                    entity.rankedResult = second.userId.toString();
+                }
+            }
+        }
+        entity.status = status;
         event(id, "BATTLE_FINISHED");
     }
 

@@ -33,6 +33,48 @@ public class ChatRepository {
         return persistence.find(UserEntity.class, userId);
     }
 
+    public Optional<GroupInvitationEntity> findInvitation(UUID roomId, UUID userId) {
+        return persistence.find(
+            GroupInvitationEntity.class,
+            new GroupInvitationEntity.Key(roomId, userId)
+        );
+    }
+
+    public void insertInvitation(GroupInvitationEntity invitation) {
+        persistence.insert(invitation);
+    }
+
+    public void deleteInvitation(GroupInvitationEntity invitation) {
+        persistence.delete(invitation);
+    }
+
+    public record InvitationProfile(
+        UUID roomId,
+        String roomName,
+        String inviterName,
+        java.time.OffsetDateTime createdAt
+    ) {}
+
+    public List<InvitationProfile> invitations(UUID userId) {
+        return persistence
+            .list(
+                Object[].class,
+                "select i.roomId,r.name,u.displayName,i.createdAt from GroupInvitationEntity i, ChatRoomEntity r, UserEntity u where i.userId=:user and i.roomId=r.id and i.inviterId=u.id order by i.createdAt desc",
+                "user",
+                userId
+            )
+            .stream()
+            .map(row ->
+                new InvitationProfile(
+                    (UUID) row[0],
+                    (String) row[1],
+                    (String) row[2],
+                    (java.time.OffsetDateTime) row[3]
+                )
+            )
+            .toList();
+    }
+
     public Optional<RoomMemberEntity> findMembership(UUID roomId, UUID userId) {
         return persistence.find(RoomMemberEntity.class, new RoomMemberEntity.Key(roomId, userId));
     }

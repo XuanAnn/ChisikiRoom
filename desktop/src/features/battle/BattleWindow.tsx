@@ -96,6 +96,7 @@ export function BattleWindow({ id }: { id: string }) {
       setBusy(false);
     }
   }
+  const ranked = Boolean(battle?.rankedLevel);
   const round = battle?.round;
   const my = battle?.players.find((p) => p.id === user?.id);
   const active = battle?.players.filter((p) => p.status === 'ACTIVE') || [];
@@ -164,6 +165,7 @@ export function BattleWindow({ id }: { id: string }) {
           </div>
           <div className="media-controls">
             <Button
+              aria-label={media.camera ? 'Đổi / mở lại camera' : 'Bật camera'}
               icon={<VideoCameraOutlined />}
               disabled={!media.online || !user}
               onClick={media.enableCamera}
@@ -184,7 +186,9 @@ export function BattleWindow({ id }: { id: string }) {
               <ThunderboltOutlined />
               <h1>Sẵn sàng thử sức?</h1>
               <p className="muted">
-                Bật camera, đánh dấu sẵn sàng và chờ chủ trận bắt đầu.
+                {ranked
+                  ? 'Bật camera và đánh dấu sẵn sàng. Trận tự bắt đầu khi cả hai sẵn sàng.'
+                  : 'Bật camera, đánh dấu sẵn sàng và chờ chủ trận bắt đầu.'}
                 <br />
                 15 giây/câu · Đúng đầu tiên +10 · Đối thủ −5 · Một lượt trả lời
               </p>
@@ -196,7 +200,7 @@ export function BattleWindow({ id }: { id: string }) {
                 >
                   {ready ? 'Hủy sẵn sàng' : 'Tôi đã sẵn sàng'}
                 </Button>
-                {battle.ownerId === user?.id && (
+                {!ranked && battle.ownerId === user?.id && (
                   <Button
                     type="primary"
                     disabled={active.length < 2 || active.some((p) => !p.ready || !p.camera)}
@@ -212,6 +216,12 @@ export function BattleWindow({ id }: { id: string }) {
             <section className="results">
               <span className="eyebrow">KẾT QUẢ TRẬN ĐẤU</span>
               <h1>Kiến thức đã lên tiếng.</h1>
+              {ranked && (
+                <Alert
+                  type="info"
+                  message="Rating được cập nhật tự động. Xem thay đổi điểm trong Xếp hạng → Lịch sử đối đầu."
+                />
+              )}
               {sorted.map((p, i) => (
                 <div className="result-row" key={p.id}>
                   <b>#{sorted.findIndex((s) => s.score === p.score) + 1}</b>

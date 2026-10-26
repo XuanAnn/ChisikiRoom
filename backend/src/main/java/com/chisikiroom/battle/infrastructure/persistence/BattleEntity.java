@@ -25,6 +25,12 @@ public class BattleEntity {
     @Column(name = "title", nullable = false, length = 120)
     public String title;
 
+    @Column(name = "ranked_level", length = 2)
+    public String rankedLevel;
+
+    @Column(name = "ranked_result", length = 36)
+    public String rankedResult;
+
     @Column(name = "status", nullable = false, length = 20)
     public String status = "WAITING";
 

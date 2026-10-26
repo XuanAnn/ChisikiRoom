@@ -95,6 +95,7 @@ function route(action, body) {
     me: ['GET', '/api/auth/me'],
     logout: ['POST', '/api/auth/logout'],
     rooms: ['GET', '/api/chat-rooms'],
+    groupInvitations: ['GET', '/api/group-invitations'],
     createRoom: ['POST', '/api/chat-rooms'],
     quizzes: ['GET', '/api/question-sets'],
     createQuiz: ['POST', '/api/question-sets'],
@@ -102,6 +103,11 @@ function route(action, body) {
     practiceHistory: ['GET', '/api/practice'],
     learningProgress: ['GET', '/api/learning-progress'],
     saveLearningGoal: ['PUT', '/api/learning-progress/goal'],
+    rankedQueue: ['GET', '/api/ranking/queue'],
+    joinRankedQueue: ['POST', '/api/ranking/queue'],
+    rankedHeartbeat: ['POST', '/api/ranking/queue/heartbeat'],
+    cancelRankedQueue: ['DELETE', '/api/ranking/queue'],
+    rankedHistory: ['GET', '/api/ranking/history'],
   };
   fixed.createBattle = ['POST', '/api/battles'];
   fixed.openDirect = ['POST', '/api/chat-rooms/direct'];
@@ -112,6 +118,10 @@ function route(action, body) {
     inviteFriend: ['POST', '/api/friend-requests'],
     respondFriend: ['POST', '/api/friend-requests/respond'],
   });
+  if (action === 'ranking') {
+    const level = body?.level === 'N4' ? 'N4' : 'N5';
+    return ['GET', `/api/ranking?level=${level}`];
+  }
   if (action === 'searchUsers') {
     return ['GET', `/api/users?q=${encodeURIComponent(String(body?.q || '').slice(0, 60))}`];
   }
@@ -134,6 +144,7 @@ function route(action, body) {
     return ['GET', `/api/chat-rooms/${id}/messages/search?q=${query}${before}`];
   }
   const dynamic = {
+    respondGroupInvitation: ['POST', `/api/group-invitations/${id}/respond`],
     joinRoom: ['POST', `/api/chat-rooms/${id}/join`],
     leaveRoom: ['POST', `/api/chat-rooms/${id}/leave`],
     inviteMember: ['POST', `/api/chat-rooms/${id}/invite`],

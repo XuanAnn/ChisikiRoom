@@ -1,4 +1,4 @@
-# ChisikiRoom Windows LAN 0.5.0
+# ChisikiRoom Windows LAN 0.7.0
 
 ## Chạy máy chủ
 
@@ -52,7 +52,7 @@ Với bản mã nguồn, có thể nhấp đúp `Start-Desktop.cmd` để build 
 
 ## Gọi bạn bè và nhóm ngoài Battle
 
-1. Cập nhật backend và client cùng bản 0.5.0. Dừng backend cũ trước khi khởi động lại; schema hiện tại là V9. Khởi động backend sẽ nạp 10 bộ câu hỏi N5–N4 dùng chung qua ORM, không tạo trùng khi khởi động lại.
+1. Cập nhật backend và client cùng bản 0.7.0. Dừng backend cũ trước khi khởi động lại; schema hiện tại là V13. Khởi động backend sẽ nạp 10 bộ câu hỏi N5–N4 dùng chung qua ORM, không tạo trùng khi khởi động lại.
 2. Mở chat bạn bè hoặc nhóm đã tham gia, bấm **Gọi video**. Cửa sổ cuộc gọi mở riêng, không cần tạo Battle hay quiz.
 3. Người được mời thấy **hộp thoại cuộc gọi đến riêng**, có tên người gọi/nhóm, chuông hai âm và các nút **Nhận cuộc gọi**, **Từ chối**, **Tắt chuông**. Hoạt động khi cửa sổ chat thu nhỏ; đóng bằng X cũng bỏ qua/từ chối lời mời. Hộp thoại kết thúc khi bên gọi hủy hoặc hết thời gian. Có thể tham gia nhóm đang gọi bằng nút **Tham gia cuộc gọi**.
 4. Camera/mic mặc định tắt. Bấm bật thiết bị cần dùng; tắt camera không buộc rời cuộc gọi. Dùng tai nghe khi thử nhiều máy gần nhau để tránh vọng âm.
@@ -84,3 +84,5 @@ PostgreSQL lưu tài khoản, chat, quiz, trạng thái/điểm Battle và outbo
 Khi backend khởi động lại, worker đọc trạng thái trận/deadline đã lưu và xử lý tiếp; các lần chốt điểm được khóa và có ràng buộc chống trùng. Client reconnect lấy snapshot và lịch sử mới. Thời gian gián đoạn vẫn được tính vào deadline và grace, không tự dừng đồng hồ trận.
 
 Chưa triển khai: public hosting/HTTPS, TURN thực tế, SFU, quản trị kiểm duyệt, chỉnh sửa/xóa tin nhắn, trình xem nội dung tài liệu inline, quét malware, quota tổng dung lượng và tự cập nhật ứng dụng. Trước khi đưa public cần rate limiting, quản lý secrets/backup/monitoring và kiểm thử tải. Không coi bản LAN này là bản production trên Internet.
+
+Lời mời nhóm: người nhận mở nút Lời mời nhóm và Chấp nhận/Từ chối. Trước khi chấp nhận, lời mời không cấp quyền truy cập phòng.

@@ -1,0 +1,562 @@
+[
+  {
+    "id": "8e590000-0000-4000-8000-000000005000",
+    "level": "N5",
+    "question": {
+      "text": "Điền từ: わたし（　）学生です。",
+      "options": [
+        "は",
+        "を",
+        "で",
+        "へ"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000005001",
+    "level": "N5",
+    "question": {
+      "text": "Điền từ: これは だれ（　）かばんですか。",
+      "options": [
+        "の",
+        "を",
+        "へ",
+        "で"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000005002",
+    "level": "N5",
+    "question": {
+      "text": "Điền từ: あそこに 犬が（　）。",
+      "options": [
+        "います",
+        "あります",
+        "です",
+        "します"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000005003",
+    "level": "N5",
+    "question": {
+      "text": "Điền từ: へやに テレビが（　）。",
+      "options": [
+        "あります",
+        "います",
+        "いきます",
+        "きます"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000005004",
+    "level": "N5",
+    "question": {
+      "text": "Chọn nghĩa của えき.",
+      "options": [
+        "Nhà ga",
+        "Nhà thuốc",
+        "Bưu điện",
+        "Khách sạn"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000005005",
+    "level": "N5",
+    "question": {
+      "text": "Chọn cách đọc của 火曜日.",
+      "options": [
+        "かようび",
+        "すいようび",
+        "どようび",
+        "きんようび"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000005006",
+    "level": "N5",
+    "question": {
+      "text": "Chọn cách đọc của 小さい.",
+      "options": [
+        "ちいさい",
+        "おおきい",
+        "すくない",
+        "ほそい"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000005007",
+    "level": "N5",
+    "question": {
+      "text": "Chọn cách đọc của 先生.",
+      "options": [
+        "せんせい",
+        "がくせい",
+        "せんしゅう",
+        "せんげつ"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000005008",
+    "level": "N5",
+    "question": {
+      "text": "Chọn từ chỉ “năm nay”.",
+      "options": [
+        "ことし",
+        "らいねん",
+        "きょねん",
+        "まいとし"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000005009",
+    "level": "N5",
+    "question": {
+      "text": "Chọn từ chỉ “màu trắng”.",
+      "options": [
+        "しろ",
+        "くろ",
+        "あか",
+        "あお"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000005010",
+    "level": "N5",
+    "question": {
+      "text": "Điền từ: 昨日は とても（　）です。",
+      "options": [
+        "寒かった",
+        "寒い",
+        "寒く",
+        "寒くて"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000005011",
+    "level": "N5",
+    "question": {
+      "text": "Điền từ: いっしょに 映画を 見（　）か。",
+      "options": [
+        "ません",
+        "ました",
+        "たい",
+        "ています"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000005012",
+    "level": "N5",
+    "question": {
+      "text": "Điền trợ từ: 学校（　）家まで 歩きます。",
+      "options": [
+        "から",
+        "より",
+        "を",
+        "と"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000005013",
+    "level": "N5",
+    "question": {
+      "text": "Chọn cách đọc của 三人.",
+      "options": [
+        "さんにん",
+        "さんじん",
+        "みっつ",
+        "さんびと"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000005014",
+    "level": "N5",
+    "question": {
+      "text": "Chọn nghĩa của さかな.",
+      "options": [
+        "Cá",
+        "Thịt",
+        "Trứng",
+        "Sữa"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000005015",
+    "level": "N5",
+    "question": {
+      "text": "Chọn nghĩa của みぎ.",
+      "options": [
+        "Bên phải",
+        "Bên trái",
+        "Phía trước",
+        "Phía sau"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000005016",
+    "level": "N5",
+    "question": {
+      "text": "Đọc: 店は九時に開きます。八時にはまだ開いていません。 Cửa hàng mở lúc mấy giờ?",
+      "options": [
+        "9 giờ",
+        "8 giờ",
+        "7 giờ",
+        "10 giờ"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000005017",
+    "level": "N5",
+    "question": {
+      "text": "Đọc: 姉は二十五歳です。わたしは二十歳です。 Chị gái hơn người nói bao nhiêu tuổi?",
+      "options": [
+        "5 tuổi",
+        "20 tuổi",
+        "25 tuổi",
+        "45 tuổi"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000005018",
+    "level": "N5",
+    "question": {
+      "text": "Đọc: 牛乳はありません。水とお茶があります。 Đồ uống nào không có?",
+      "options": [
+        "Sữa",
+        "Nước",
+        "Trà",
+        "Cả nước và trà"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000005019",
+    "level": "N5",
+    "question": {
+      "text": "Chọn câu đáp phù hợp: おはようございます。",
+      "options": [
+        "おはようございます。",
+        "いただきます。",
+        "ただいま。",
+        "ごちそうさまでした。"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000004000",
+    "level": "N4",
+    "question": {
+      "text": "Điền từ: 日本語の新聞を 読む（　）ができます。",
+      "options": [
+        "こと",
+        "もの",
+        "ため",
+        "はず"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000004001",
+    "level": "N4",
+    "question": {
+      "text": "Điền từ: 宿題を（　）から、遊びに行きます。",
+      "options": [
+        "して",
+        "する",
+        "した",
+        "しよう"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000004002",
+    "level": "N4",
+    "question": {
+      "text": "Điền từ: ここに 車を（　）ないでください。",
+      "options": [
+        "止め",
+        "止まる",
+        "止まって",
+        "止めて"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000004003",
+    "level": "N4",
+    "question": {
+      "text": "Điền từ: もっと 日本語が（　）ようになりたいです。",
+      "options": [
+        "話せる",
+        "話して",
+        "話そう",
+        "話した"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000004004",
+    "level": "N4",
+    "question": {
+      "text": "Điền từ: この漢字の（　）方を 教えてください。",
+      "options": [
+        "読み",
+        "読む",
+        "読んで",
+        "読めば"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000004005",
+    "level": "N4",
+    "question": {
+      "text": "Điền từ: 週末は 掃除をしたり、買い物を（　）します。",
+      "options": [
+        "したり",
+        "して",
+        "した",
+        "する"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000004006",
+    "level": "N4",
+    "question": {
+      "text": "Chọn thể て của 遊ぶ.",
+      "options": [
+        "遊んで",
+        "遊びて",
+        "遊って",
+        "遊いて"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000004007",
+    "level": "N4",
+    "question": {
+      "text": "Chọn thể ない của 買う.",
+      "options": [
+        "買わない",
+        "買あない",
+        "買いない",
+        "買うない"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000004008",
+    "level": "N4",
+    "question": {
+      "text": "Chọn thể điều kiện ば của 安い.",
+      "options": [
+        "安ければ",
+        "安いば",
+        "安かったば",
+        "安くば"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000004009",
+    "level": "N4",
+    "question": {
+      "text": "Chọn thể ý chí của 食べる.",
+      "options": [
+        "食べよう",
+        "食べろう",
+        "食べるう",
+        "食べまよう"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000004010",
+    "level": "N4",
+    "question": {
+      "text": "Chọn cách đọc của 研究.",
+      "options": [
+        "けんきゅう",
+        "けんきょう",
+        "げんきゅう",
+        "けんぎゅう"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000004011",
+    "level": "N4",
+    "question": {
+      "text": "Chọn cách đọc của 注意.",
+      "options": [
+        "ちゅうい",
+        "ちょうい",
+        "しゅうい",
+        "ちゅい"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000004012",
+    "level": "N4",
+    "question": {
+      "text": "Chọn cách đọc của 不便.",
+      "options": [
+        "ふべん",
+        "ふびん",
+        "ぶべん",
+        "ふへん"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000004013",
+    "level": "N4",
+    "question": {
+      "text": "Chọn nghĩa của 連絡（れんらく）.",
+      "options": [
+        "Liên lạc",
+        "Luyện tập",
+        "Giải thích",
+        "Tham dự"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000004014",
+    "level": "N4",
+    "question": {
+      "text": "Chọn nghĩa của 残念（ざんねん）.",
+      "options": [
+        "Tiếc / đáng tiếc",
+        "An toàn",
+        "Tự do",
+        "Phức tạp"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000004015",
+    "level": "N4",
+    "question": {
+      "text": "Điền từ: 財布を 家に（　）しまいました。",
+      "options": [
+        "忘れて",
+        "忘れる",
+        "忘れた",
+        "忘れない"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000004016",
+    "level": "N4",
+    "question": {
+      "text": "Đọc: 予約した本が届きました。来週の水曜日までに取りに来てください。 Người nhận cần làm gì?",
+      "options": [
+        "Đến lấy sách chậm nhất thứ tư tuần sau",
+        "Trả sách vào thứ tư tuần này",
+        "Mua sách qua điện thoại",
+        "Đặt lại sách vào tuần sau"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000004017",
+    "level": "N4",
+    "question": {
+      "text": "Đọc: 昨日は忙しくて昼ごはんを食べられませんでした。今日は早く食べたいです。 Vì sao hôm qua người nói không ăn trưa?",
+      "options": [
+        "Vì bận",
+        "Vì không đói",
+        "Vì quên ví",
+        "Vì cửa hàng đóng cửa"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000004018",
+    "level": "N4",
+    "question": {
+      "text": "Đọc: この薬は食事の後で飲んでください。一日に三回です。 Khi nào uống thuốc?",
+      "options": [
+        "Sau bữa ăn",
+        "Trước bữa ăn",
+        "Chỉ trước khi ngủ",
+        "Chỉ khi thức dậy"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "id": "8e590000-0000-4000-8000-000000004019",
+    "level": "N4",
+    "question": {
+      "text": "Đọc: 駅まで歩くと二十分ですが、自転車なら十分です。 Đi xe đạp đến ga mất bao lâu?",
+      "options": [
+        "10 phút",
+        "20 phút",
+        "30 phút",
+        "5 phút"
+      ],
+      "correctIndex": 0
+    }
+  }
+]

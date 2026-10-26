@@ -21,12 +21,12 @@ backend/src/main/java/com/chisikiroom/
   identity/               Authentication, profiles, HTTP security
   community/              Friendship and presence
   chat/                   Membership, messages, documents, reactions
-  quiz/                   Owner-scoped question sets
+  quiz/                   Personal and shared question sets
   battle/                 Scoring, rounds, deadlines, recovery, durable outbox
   calling/                Consent, participants, call lifecycle
   realtime/               STOMP transport, after-commit notifications, ICE configuration
   common/                 Error mapping, authenticated user helper
-  ranking/                Reserved boundary; no ranking feature yet
+  ranking/                Global N5/N4 rating, matchmaking, seasons and settlement
 ```
 
 Inside a feature, `presentation` contains HTTP adapters, `application` orchestrates use cases and transactions, `domain` holds transport-independent policy, and `infrastructure` contains background workers and framework configuration. Authentication and quiz use cases are separate from controllers; Battle calls the quiz application service rather than its REST adapter. Shared media has no Battle scoring/readiness dependency.
@@ -62,3 +62,5 @@ Backend 0.3.3 moves chat, Battle and calling queries into `ChatRepository`, `Bat
 **Larger groups later:** introduce a media transport interface implemented by the P2P engine and an SFU adapter. Preserve calling membership/consent APIs; add server-issued SFU room credentials after authorization. Choose and validate an SFU with real usage measurements. This release does not include or claim SFU support.
 
 `ai-service/` is reserved for a later FastAPI integration. It is not launched by Compose. Root `compose.yaml` remains the entry point to preserve existing volume naming and LAN startup commands; deployment assets belong in `infrastructure/`.
+
+Ranking 0.7.0 dùng phòng Battle riêng room_id NULL, có ranked_level rõ ràng, chỉ hai người đã ghép được join; worker riêng điều phối tự bắt đầu và chốt rating. Battle không phụ thuộc ngược ranking. Xem [Ranking](RANKING.md).

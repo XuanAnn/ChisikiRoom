@@ -1,6 +1,6 @@
 # ChisikiRoom
 
-Ứng dụng desktop học tập theo đặc tả v1.1. Bản desktop **0.6.0 cho Windows/LAN** bố trí lại giao diện với trang tổng quan, sidebar bạn bè/nhóm, chat ở giữa và công cụ phòng bên phải. Cân bằng trò chuyện/gọi video với quiz, Battle và tài liệu. Cuộc gọi 1–1 ưu tiên video đối phương, camera cá nhân thu nhỏ; nhóm dùng lưới tự co giãn và ô camera cá nhân nhỏ. Battle bố trí camera phía trên và bên phải, tự thu gọn trên cửa sổ nhỏ. Video tự phát khi nhận được luồng, kể cả luồng đến chậm hoặc kết nối lại; không cần bấm Phát video. Có sẵn 10 bộ tiếng Nhật N5–N4 (100 câu) dùng chung, chọn ngay cho Battle hoặc lưu bản sao cá nhân. Backend hiện tại 0.6.0, schema V11.
+Ứng dụng desktop học tập theo đặc tả v1.1. Bản desktop **0.7.0 cho Windows/LAN** bố trí lại giao diện với trang tổng quan, sidebar bạn bè/nhóm, chat ở giữa và công cụ phòng bên phải. Cân bằng trò chuyện/gọi video với quiz, Battle và tài liệu. Cuộc gọi 1–1 ưu tiên video đối phương, camera cá nhân thu nhỏ; nhóm dùng lưới tự co giãn và ô camera cá nhân nhỏ. Battle bố trí camera phía trên và bên phải, tự thu gọn trên cửa sổ nhỏ. Video tự phát khi nhận được luồng, kể cả luồng đến chậm hoặc kết nối lại; không cần bấm Phát video. Có sẵn 10 bộ tiếng Nhật N5–N4 (100 câu) dùng chung, chọn ngay cho Battle hoặc lưu bản sao cá nhân. Backend hiện tại 0.7.0, schema V13.
 
 Chức năng mới: tìm tin nhắn trong lịch sử phòng, lọc bạn bè/nhóm/quiz/tài liệu, sắp xếp quiz, bộ đếm tin mới và bản nháp riêng theo phòng trong phiên hiện tại, mời thành viên từ danh sách bạn bè. `Ctrl+K` tìm bạn bè/nhóm; `Ctrl+F` tìm tin nhắn trong phòng đang mở.
 
@@ -89,3 +89,10 @@ Mở Bộ câu hỏi → Luyện tập. Không cần camera hoặc người chơ
 Thư viện có thống kê số bài hoàn thành, câu đúng/tổng câu đã nộp, tỷ lệ đúng và mục tiêu ngày (mặc định 20 câu, chỉnh 1–200). Câu bỏ qua tính sai trong tỷ lệ đúng, không tính vào mục tiêu ngày. Mục tiêu chỉ tính câu đã chọn ở bài đã nộp, theo ngày giờ Việt Nam. Bài ôn cũng là lượt học; các số liệu này không làm tăng ranking. Lịch sử hiển thị 50 lượt gần nhất, thống kê tổng hợp tính toàn bộ bài đã nộp của tài khoản.
 
 Các phần chưa triển khai được theo dõi tại [lộ trình](docs/IMPLEMENTATION_ROADMAP.md).
+
+
+## Ranking và lời mời nhóm (0.7.0)
+
+Xếp hạng có hai bảng toàn hệ thống N5/N4 và chế độ đấu 1–1 tự ghép, Glicko-2, năm trận phân hạng, mùa tám tuần. Hai người bật camera/sẵn sàng thì trận tự bắt đầu. Hủy lobby không tính hạng; rời trận đang chạy tính thua. Lịch sử lưu rating trước/sau. Chi tiết giới hạn ngân hàng 40 câu và mô hình tính điểm: [Ranking](docs/RANKING.md).
+
+Mời vào nhóm chỉ tạo lời mời chờ. Người nhận mở Lời mời nhóm trên thanh công cụ, chọn Chấp nhận hoặc Từ chối. Chưa chấp nhận thì chưa có quyền chat, tài liệu hay gọi trong nhóm. Lời mời lưu trong DB, khởi động lại vẫn thấy. Việc chủ phòng mời không tự thêm thành viên nữa; hai bên cần desktop 0.7.0 để có đủ giao diện này. Thành viên đã tồn tại vẫn giữ quyền.
