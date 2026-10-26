@@ -1,0 +1,140 @@
+.practice-window {
+  height: 100vh;
+  overflow: auto;
+  background: #171922;
+}
+.practice-window > header {
+  padding: 20px 28px;
+  height: auto;
+  min-height: 95px;
+  justify-content: space-between;
+  gap: 16px;
+}
+.practice-window h2 {
+  margin: 6px 0;
+}
+.practice-window > .ant-alert {
+  margin: 16px;
+}
+.practice-body {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 24px;
+  padding: 28px;
+}
+.practice-navigation {
+  padding: 18px;
+  background: #202431;
+  border-radius: 16px;
+}
+.practice-numbers {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.practice-numbers button {
+  padding: 10px;
+  border: 1px solid #46506a;
+  border-radius: 8px;
+  background: #252938;
+  color: #c6cce0;
+  cursor: pointer;
+}
+.practice-numbers button.answered {
+  background: #443767;
+}
+.practice-numbers button.correct {
+  background: #235343;
+}
+.practice-numbers button.incorrect {
+  background: #613d43;
+}
+.practice-numbers button.selected {
+  outline: 2px solid #bca5ff;
+}
+.practice-question {
+  min-width: 0;
+  padding: 12px;
+}
+.practice-question h1 {
+  font-size: 25px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.practice-question .ant-radio-group {
+  display: grid;
+  gap: 14px;
+}
+.practice-question .ant-radio-wrapper {
+  margin: 0;
+  background: #252938;
+  border: 1px solid #3b4256;
+  border-radius: 12px;
+  padding: 18px;
+  font-size: 16px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.practice-actions {
+  margin-top: 24px;
+}
+.practice-explanation {
+  margin-top: 22px;
+}
+.practice-result {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  margin: 22px 28px 0;
+  padding: 22px;
+  border-radius: 16px;
+  background: #29243c;
+}
+.practice-result > strong {
+  font-size: 34px;
+  color: #c9b4ff;
+}
+.practice-result > div {
+  flex: 1;
+}
+.practice-history {
+  display: grid;
+  gap: 10px;
+}
+.practice-history-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid #343a4e;
+  border-radius: 12px;
+}
+.practice-history-row > div {
+  flex: 1;
+  min-width: 0;
+}
+.practice-history-row p {
+  font-size: 12px;
+  color: #949db5;
+  margin: 5px 0;
+}
+.practice-launch {
+  margin-top: 10px;
+}
+@media (max-width: 760px) {
+  .practice-body {
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
+  .practice-numbers {
+    grid-template-columns: repeat(10, minmax(0, 1fr));
+  }
+  .practice-result {
+    flex-wrap: wrap;
+  }
+}
+
+.quiz-grid > article > .quiz-card {
+  width: 100%;
+  text-align: left;
+}

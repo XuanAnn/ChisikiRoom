@@ -98,6 +98,8 @@ function route(action, body) {
     createRoom: ['POST', '/api/chat-rooms'],
     quizzes: ['GET', '/api/question-sets'],
     createQuiz: ['POST', '/api/question-sets'],
+    startPractice: ['POST', '/api/practice'],
+    practiceHistory: ['GET', '/api/practice'],
   };
   fixed.createBattle = ['POST', '/api/battles'];
   fixed.openDirect = ['POST', '/api/chat-rooms/direct'];
@@ -139,6 +141,10 @@ function route(action, body) {
       `/api/chat-rooms/${id}/messages${body.before && /^\d+$/.test(String(body.before)) ? '?before=' + body.before : ''}`,
     ],
     sendMessage: ['POST', `/api/chat-rooms/${id}/messages`],
+    practice: ['GET', `/api/practice/${id}`],
+    savePractice: ['PUT', `/api/practice/${id}/answers`],
+    submitPractice: ['POST', `/api/practice/${id}/submit`],
+    retryMistakes: ['POST', `/api/practice/${id}/mistakes`],
     quiz: ['GET', `/api/question-sets/${id}`],
     saveQuiz: ['PUT', `/api/question-sets/${id}`],
   };
@@ -272,9 +278,9 @@ ipcMain.handle('open-window', async (event, kind, id) => {
   if (
     !authorized(event) ||
     !token ||
-    !['quiz', 'battle', 'call'].includes(kind) ||
+    !['quiz', 'battle', 'call', 'practice'].includes(kind) ||
     (id && !uuid(id)) ||
-    (['battle', 'call'].includes(kind) && !id)
+    (['battle', 'call', 'practice'].includes(kind) && !id)
   ) {
     return;
   }

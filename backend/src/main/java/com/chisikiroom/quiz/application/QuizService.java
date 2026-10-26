@@ -28,7 +28,8 @@ public class QuizService {
     public record Question(
         @NotBlank @Size(max = 2000) String text,
         @NotNull @Size(min = 2, max = 6) List<@NotBlank @Size(max = 500) String> options,
-        @Min(0) @Max(5) int correctIndex
+        @Min(0) @Max(5) int correctIndex,
+        @Size(max = 2000) String explanation
     ) {}
 
     public record Input(
@@ -98,7 +99,9 @@ public class QuizService {
     @Transactional
     public void installCatalog(List<CatalogEntry> entries) {
         for (CatalogEntry entry : entries) {
-            if (quizzes.existsById(entry.id())) {
+            Optional<QuestionSetEntity> existing = quizzes.findById(entry.id());
+            if (existing.isPresent()) {
+                fillMissingExplanations(existing.get(), entry.quiz());
                 continue;
             }
             QuestionSetEntity questionSet = new QuestionSetEntity();
@@ -106,6 +109,39 @@ public class QuizService {
             questionSet.ownerId = null;
             apply(questionSet, entry.quiz());
             quizzes.save(questionSet);
+        }
+    }
+
+    private void fillMissingExplanations(QuestionSetEntity existing, Input catalog) {
+        if (existing.ownerId != null) {
+            return;
+        }
+        List<Question> current = decode(existing.questions);
+        if (current.size() != catalog.questions().size()) {
+            return;
+        }
+        List<Question> updated = new ArrayList<>(current);
+        boolean changed = false;
+        for (int index = 0; index < current.size(); index++) {
+            Question question = current.get(index);
+            Question source = catalog.questions().get(index);
+            boolean missingExplanation =
+                question.explanation() == null || question.explanation().isBlank();
+            boolean sameQuestion =
+                question.text().equals(source.text()) &&
+                question.options().equals(source.options()) &&
+                question.correctIndex() == source.correctIndex();
+            if (missingExplanation && sameQuestion && source.explanation() != null) {
+                updated.set(index, source);
+                changed = true;
+            }
+        }
+        if (changed) {
+            try {
+                existing.questions = json.writeValueAsString(updated);
+            } catch (Exception exception) {
+                throw new IllegalStateException(exception);
+            }
         }
     }
 

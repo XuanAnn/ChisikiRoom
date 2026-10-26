@@ -1,10 +1,14 @@
 import { useState } from 'react';
 import { Button, Empty, Input, Select } from 'antd';
 import { ArrowRightOutlined, BookOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
-import { type Quiz } from '../../lib/api';
+import { request, errorMessage, type PracticeAttempt, type Quiz } from '../../lib/api';
+import { PracticeHistoryPanel } from '../practice/PracticeHistoryPanel';
+import { Alert } from 'antd';
 import { matchesSearch } from '../../lib/search';
 
 export function QuizLibrary({ quizzes }: { quizzes: Quiz[] }) {
+  const [error, setError] = useState('');
+  const [starting, setStarting] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [sort, setSort] = useState('newest');
   const filtered = quizzes
@@ -15,6 +19,18 @@ export function QuizLibrary({ quizzes }: { quizzes: Quiz[] }) {
       }
       return Date.parse(second.updatedAt) - Date.parse(first.updatedAt);
     });
+  async function startPractice(questionSetId: string) {
+    setStarting(questionSetId);
+    setError('');
+    try {
+      const attempt = await request<PracticeAttempt>('startPractice', { questionSetId });
+      await window.chisiki?.openWindow('practice', attempt.id);
+    } catch (exception) {
+      setError(errorMessage(exception));
+    } finally {
+      setStarting(null);
+    }
+  }
   const questionCount = quizzes.reduce((sum, quiz) => sum + quiz.questions.length, 0);
   return (
     <div className="quiz-library modern-library">
@@ -30,6 +46,8 @@ export function QuizLibrary({ quizzes }: { quizzes: Quiz[] }) {
           trong Battle.
         </p>
       </div>
+      <PracticeHistoryPanel />
+      {error && <Alert type="error" message={error} closable onClose={() => setError('')} />}
       <div className="library-filters">
         <Input
           prefix={<SearchOutlined />}
@@ -50,23 +68,34 @@ export function QuizLibrary({ quizzes }: { quizzes: Quiz[] }) {
       </div>
       <div className="quiz-grid">
         {filtered.map((quiz) => (
-          <button
-            key={quiz.id}
-            className="quiz-card"
-            onClick={() => window.chisiki?.openWindow('quiz', quiz.id)}
-          >
-            <span className="quiz-card-icon">
-              <BookOutlined />
-            </span>
-            <span className="quiz-count">
-              {quiz.questions.length} câu hỏi{quiz.ownerId === null ? ' · Có sẵn' : ''}
-            </span>
-            <h3>{quiz.title}</h3>
-            <p>Cập nhật {new Date(quiz.updatedAt).toLocaleDateString('vi-VN')}</p>
-            <span className="quiz-card-link">
-              {quiz.ownerId === null ? 'Xem / tạo bản sao' : 'Mở trình soạn'} <ArrowRightOutlined />
-            </span>
-          </button>
+          <article key={quiz.id}>
+            <button
+              className="quiz-card"
+              onClick={() => window.chisiki?.openWindow('quiz', quiz.id)}
+            >
+              <span className="quiz-card-icon">
+                <BookOutlined />
+              </span>
+              <span className="quiz-count">
+                {quiz.questions.length} câu hỏi{quiz.ownerId === null ? ' · Có sẵn' : ''}
+              </span>
+              <h3>{quiz.title}</h3>
+              <p>Cập nhật {new Date(quiz.updatedAt).toLocaleDateString('vi-VN')}</p>
+              <span className="quiz-card-link">
+                {quiz.ownerId === null ? 'Xem / tạo bản sao' : 'Mở trình soạn'}{' '}
+                <ArrowRightOutlined />
+              </span>
+            </button>
+            <Button
+              block
+              className="practice-launch"
+              loading={starting === quiz.id}
+              disabled={starting !== null && starting !== quiz.id}
+              onClick={() => void startPractice(quiz.id)}
+            >
+              Luyện tập
+            </Button>
+          </article>
         ))}
       </div>
       {!filtered.length && (

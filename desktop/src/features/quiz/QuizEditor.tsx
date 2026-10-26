@@ -130,6 +130,13 @@ export function QuizEditor({ quizId }: { quizId?: string }) {
             placeholder="Nhập nội dung câu hỏi…"
             onChange={(e) => edit({ text: e.target.value })}
           />
+          <label>GIẢI THÍCH ĐÁP ÁN (TÙY CHỌN)</label>
+          <Input.TextArea
+            value={q.explanation || ''}
+            maxLength={2000}
+            placeholder="Vì sao đáp án này đúng?"
+            onChange={(event) => edit({ explanation: event.target.value })}
+          />
           <p className="muted">Chọn nút tròn cạnh phương án đúng.</p>
           <Radio.Group
             value={q.correctIndex}

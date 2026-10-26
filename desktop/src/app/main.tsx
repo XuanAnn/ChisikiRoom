@@ -12,6 +12,11 @@ const QuizEditor = React.lazy(() =>
 const BattleWindow = React.lazy(() =>
   import('../features/battle/BattleWindow').then((module) => ({ default: module.BattleWindow })),
 );
+const PracticeWindow = React.lazy(() =>
+  import('../features/practice/PracticeWindow').then((module) => ({
+    default: module.PracticeWindow,
+  })),
+);
 const CallWindow = React.lazy(() =>
   import('../features/calling/CallWindow').then((module) => ({ default: module.CallWindow })),
 );
@@ -68,6 +73,9 @@ function App() {
     }
   }
   function renderContent() {
+    if (location.hash.startsWith('#practice/')) {
+      return <PracticeWindow id={location.hash.slice(10)} />;
+    }
     if (location.hash.startsWith('#incoming/')) {
       return <IncomingCallWindow id={location.hash.slice(10)} />;
     }

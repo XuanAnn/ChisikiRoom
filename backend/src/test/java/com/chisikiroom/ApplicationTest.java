@@ -548,6 +548,152 @@ class ApplicationTest {
         assertNull(snapshot.round().correctIndex());
     }
 
+    @Test
+    void practicePersistsDraftGradesSnapshotAndRetriesOnlyMistakes() throws Exception {
+        var owner = account();
+        var stranger = account();
+        var input = Map.of(
+            "title",
+            "Practice snapshot",
+            "questions",
+            List.of(
+                Map.of(
+                    "text",
+                    "One",
+                    "options",
+                    List.of("A", "B"),
+                    "correctIndex",
+                    0,
+                    "explanation",
+                    "A is correct"
+                ),
+                Map.of(
+                    "text",
+                    "Two",
+                    "options",
+                    List.of("C", "D"),
+                    "correctIndex",
+                    1,
+                    "explanation",
+                    "D is correct"
+                ),
+                Map.of("text", "Three", "options", List.of("E", "F"), "correctIndex", 0)
+            )
+        );
+        var quiz = call("POST", "/api/question-sets", owner.token(), input, 200);
+        String quizId = quiz.path("id").asText();
+        call("POST", "/api/practice", stranger.token(), Map.of("questionSetId", quizId), 404);
+        var draft = call(
+            "POST",
+            "/api/practice",
+            owner.token(),
+            Map.of("questionSetId", quizId),
+            200
+        );
+        String id = draft.path("id").asText();
+        assertTrue(draft.path("correctCount").isNull());
+        assertTrue(draft.path("questions").get(0).path("correctIndex").isNull());
+        assertTrue(draft.path("questions").get(0).path("explanation").isNull());
+        call("GET", "/api/practice/" + id, stranger.token(), null, 404);
+        call(
+            "PUT",
+            "/api/practice/" + id + "/answers",
+            stranger.token(),
+            Map.of("answers", List.of(0, 0, -1)),
+            404
+        );
+        call(
+            "POST",
+            "/api/practice/" + id + "/submit",
+            stranger.token(),
+            Map.of("answers", List.of(0, 0, -1)),
+            404
+        );
+        call("POST", "/api/practice/" + id + "/mistakes", owner.token(), null, 409);
+        call(
+            "PUT",
+            "/api/practice/" + id + "/answers",
+            owner.token(),
+            Map.of("answers", List.of(0)),
+            400
+        );
+        call(
+            "PUT",
+            "/api/practice/" + id + "/answers",
+            owner.token(),
+            Map.of("answers", List.of(2, 0, -1)),
+            400
+        );
+        call(
+            "PUT",
+            "/api/practice/" + id + "/answers",
+            owner.token(),
+            Map.of("answers", List.of(0, 0, -1)),
+            200
+        );
+        var restored = call("GET", "/api/practice/" + id, owner.token(), null, 200);
+        assertEquals(0, restored.path("answers").get(0).asInt());
+        var changedQuiz = Map.of(
+            "title",
+            "Changed",
+            "questions",
+            List.of(Map.of("text", "New", "options", List.of("X", "Y"), "correctIndex", 1))
+        );
+        call("PUT", "/api/question-sets/" + quizId, owner.token(), changedQuiz, 200);
+        var result = call(
+            "POST",
+            "/api/practice/" + id + "/submit",
+            owner.token(),
+            Map.of("answers", List.of(0, 0, -1)),
+            200
+        );
+        assertEquals(1, result.path("correctCount").asInt());
+        assertEquals("Practice snapshot", result.path("title").asText());
+        assertEquals("A is correct", result.path("questions").get(0).path("explanation").asText());
+        assertEquals(
+            result,
+            call(
+                "POST",
+                "/api/practice/" + id + "/submit",
+                owner.token(),
+                Map.of("answers", List.of(0, 1, 0)),
+                200
+            )
+        );
+        assertEquals(
+            result,
+            call(
+                "PUT",
+                "/api/practice/" + id + "/answers",
+                owner.token(),
+                Map.of("answers", List.of(0, 1, 0)),
+                200
+            )
+        );
+        var review = call("POST", "/api/practice/" + id + "/mistakes", owner.token(), null, 200);
+        assertEquals(2, review.path("questions").size());
+        assertEquals("Two", review.path("questions").get(0).path("text").asText());
+        assertTrue(review.path("questions").get(0).path("correctIndex").isNull());
+        var perfect = call(
+            "POST",
+            "/api/practice/" + review.path("id").asText() + "/submit",
+            owner.token(),
+            Map.of("answers", List.of(1, 0)),
+            200
+        );
+        assertEquals(2, perfect.path("correctCount").asInt());
+        call(
+            "POST",
+            "/api/practice/" + review.path("id").asText() + "/mistakes",
+            owner.token(),
+            null,
+            409
+        );
+        assertEquals(2, call("GET", "/api/practice", owner.token(), null, 200).size());
+        assertEquals(0, call("GET", "/api/practice", stranger.token(), null, 200).size());
+        call("GET", "/api/practice", null, null, 401);
+    }
+
     record Match(Account a, Account b, UUID id, UUID quiz) {}
 
     Match match() throws Exception {

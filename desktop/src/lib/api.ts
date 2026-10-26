@@ -27,7 +27,12 @@ export type ChatMessage = {
   requestId: string;
   createdAt: string;
 };
-export type Question = { text: string; options: string[]; correctIndex: number };
+export type Question = {
+  text: string;
+  options: string[];
+  correctIndex: number;
+  explanation?: string | null;
+};
 export type Quiz = {
   id: string;
   ownerId: string | null;
@@ -101,3 +106,29 @@ export async function request<T = any>(action: string, body?: unknown): Promise<
   return result.data as T;
 }
 export const errorMessage = (e: unknown) => (e instanceof Error ? e.message : 'Có lỗi xảy ra');
+
+export type PracticeQuestion = {
+  text: string;
+  options: string[];
+  correctIndex: number | null;
+  explanation: string | null;
+};
+export type PracticeAttempt = {
+  id: string;
+  questionSetId: string;
+  title: string;
+  questions: PracticeQuestion[];
+  answers: number[];
+  correctCount: number | null;
+  startedAt: string;
+  finishedAt: string | null;
+};
+export type PracticeHistory = {
+  id: string;
+  questionSetId: string;
+  title: string;
+  questionCount: number;
+  correctCount: number | null;
+  startedAt: string;
+  finishedAt: string | null;
+};
