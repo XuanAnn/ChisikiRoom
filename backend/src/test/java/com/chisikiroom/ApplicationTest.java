@@ -694,6 +694,102 @@ class ApplicationTest {
         call("GET", "/api/practice", null, null, 401);
     }
 
+    @Test
+    void learningProgressCountsOnlySubmittedAnswersAndKeepsGoalsPrivate() throws Exception {
+        var owner = account();
+        var other = account();
+        var empty = call("GET", "/api/learning-progress", owner.token(), null, 200);
+        assertEquals(0, empty.path("completedAttempts").asLong());
+        assertEquals(20, empty.path("dailyGoal").asInt());
+        call("PUT", "/api/learning-progress/goal", owner.token(), Map.of("dailyQuestions", 0), 400);
+        call(
+            "PUT",
+            "/api/learning-progress/goal",
+            owner.token(),
+            Map.of("dailyQuestions", 201),
+            400
+        );
+        assertEquals(
+            5,
+            call(
+                "PUT",
+                "/api/learning-progress/goal",
+                owner.token(),
+                Map.of("dailyQuestions", 5),
+                200
+            )
+                .path("dailyGoal")
+                .asInt()
+        );
+        assertEquals(
+            20,
+            call("GET", "/api/learning-progress", other.token(), null, 200)
+                .path("dailyGoal")
+                .asInt()
+        );
+        var attempt = call(
+            "POST",
+            "/api/practice",
+            owner.token(),
+            Map.of("questionSetId", "9e590000-0000-4000-8000-000000000001"),
+            200
+        );
+        String id = attempt.path("id").asText();
+        List<Integer> answers = new ArrayList<>(Collections.nCopies(10, -1));
+        answers.set(0, 0);
+        call(
+            "PUT",
+            "/api/practice/" + id + "/answers",
+            owner.token(),
+            Map.of("answers", answers),
+            200
+        );
+        assertEquals(
+            0,
+            call("GET", "/api/learning-progress", owner.token(), null, 200)
+                .path("todayAnswered")
+                .asLong()
+        );
+        call(
+            "POST",
+            "/api/practice/" + id + "/submit",
+            owner.token(),
+            Map.of("answers", answers),
+            200
+        );
+        var progress = call("GET", "/api/learning-progress", owner.token(), null, 200);
+        assertEquals(1, progress.path("completedAttempts").asLong());
+        assertEquals(10, progress.path("totalQuestions").asLong());
+        assertEquals(1, progress.path("correctAnswers").asLong());
+        assertEquals(10.0, progress.path("accuracy").asDouble());
+        assertEquals(1, progress.path("todayAnswered").asLong());
+        call(
+            "POST",
+            "/api/practice/" + id + "/submit",
+            owner.token(),
+            Map.of("answers", answers),
+            200
+        );
+        assertEquals(progress, call("GET", "/api/learning-progress", owner.token(), null, 200));
+        assertEquals(
+            0,
+            call("GET", "/api/learning-progress", other.token(), null, 200)
+                .path("totalQuestions")
+                .asLong()
+        );
+        var originalTime = clock.time.get();
+        try {
+            clock.advance(86400);
+            var tomorrow = call("GET", "/api/learning-progress", owner.token(), null, 200);
+            assertEquals(0, tomorrow.path("todayAnswered").asLong());
+            assertEquals(1, tomorrow.path("completedAttempts").asLong());
+            assertNotEquals(progress.path("date"), tomorrow.path("date"));
+        } finally {
+            clock.time.set(originalTime);
+        }
+        call("GET", "/api/learning-progress", null, null, 401);
+    }
+
     record Match(Account a, Account b, UUID id, UUID quiz) {}
 
     Match match() throws Exception {

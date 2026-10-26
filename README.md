@@ -1,6 +1,6 @@
 # ChisikiRoom
 
-Ứng dụng desktop học tập theo đặc tả v1.1. Bản desktop **0.5.0 cho Windows/LAN** bố trí lại giao diện với trang tổng quan, sidebar bạn bè/nhóm, chat ở giữa và công cụ phòng bên phải. Cân bằng trò chuyện/gọi video với quiz, Battle và tài liệu. Cuộc gọi 1–1 ưu tiên video đối phương, camera cá nhân thu nhỏ; nhóm dùng lưới tự co giãn và ô camera cá nhân nhỏ. Battle bố trí camera phía trên và bên phải, tự thu gọn trên cửa sổ nhỏ. Video tự phát khi nhận được luồng, kể cả luồng đến chậm hoặc kết nối lại; không cần bấm Phát video. Có sẵn 10 bộ tiếng Nhật N5–N4 (100 câu) dùng chung, chọn ngay cho Battle hoặc lưu bản sao cá nhân. Backend hiện tại 0.5.0, schema V9.
+Ứng dụng desktop học tập theo đặc tả v1.1. Bản desktop **0.6.0 cho Windows/LAN** bố trí lại giao diện với trang tổng quan, sidebar bạn bè/nhóm, chat ở giữa và công cụ phòng bên phải. Cân bằng trò chuyện/gọi video với quiz, Battle và tài liệu. Cuộc gọi 1–1 ưu tiên video đối phương, camera cá nhân thu nhỏ; nhóm dùng lưới tự co giãn và ô camera cá nhân nhỏ. Battle bố trí camera phía trên và bên phải, tự thu gọn trên cửa sổ nhỏ. Video tự phát khi nhận được luồng, kể cả luồng đến chậm hoặc kết nối lại; không cần bấm Phát video. Có sẵn 10 bộ tiếng Nhật N5–N4 (100 câu) dùng chung, chọn ngay cho Battle hoặc lưu bản sao cá nhân. Backend hiện tại 0.6.0, schema V11.
 
 Chức năng mới: tìm tin nhắn trong lịch sử phòng, lọc bạn bè/nhóm/quiz/tài liệu, sắp xếp quiz, bộ đếm tin mới và bản nháp riêng theo phòng trong phiên hiện tại, mời thành viên từ danh sách bạn bè. `Ctrl+K` tìm bạn bè/nhóm; `Ctrl+F` tìm tin nhắn trong phòng đang mở.
 
@@ -80,3 +80,12 @@ Hai bài kiểm thử tích hợp tạo tài khoản, phòng và trận thử ng
 - File tải qua API có xác thực, tên lưu trên đĩa là UUID. Server kiểm tra kích thước/định dạng; DOCX/PPTX kiểm tra cấu trúc ZIP và giới hạn giải nén. Cần sao lưu cả PostgreSQL và thư mục upload.
 
 Chi tiết bộ câu hỏi có sẵn: [Danh mục tiếng Nhật](docs/JAPANESE_QUIZ_CATALOG.md).
+
+
+## Luyện tập và tiến độ (0.6.0)
+
+Mở Bộ câu hỏi → Luyện tập. Không cần camera hoặc người chơi khác. Mỗi lựa chọn được lưu trên server; đóng cửa sổ rồi vào Lịch sử luyện tập → Làm tiếp. Khi nộp bài, server chấm từ bản chụp câu hỏi lúc bắt đầu và khóa kết quả, nộp lại không cộng thêm lượt. Bài đã nộp hiển thị đáp án/giải thích, có nút Ôn câu sai / bỏ qua. 100 câu có sẵn đã bổ sung giải thích; bộ cá nhân có thể nhập giải thích trong trình soạn.
+
+Thư viện có thống kê số bài hoàn thành, câu đúng/tổng câu đã nộp, tỷ lệ đúng và mục tiêu ngày (mặc định 20 câu, chỉnh 1–200). Câu bỏ qua tính sai trong tỷ lệ đúng, không tính vào mục tiêu ngày. Mục tiêu chỉ tính câu đã chọn ở bài đã nộp, theo ngày giờ Việt Nam. Bài ôn cũng là lượt học; các số liệu này không làm tăng ranking. Lịch sử hiển thị 50 lượt gần nhất, thống kê tổng hợp tính toàn bộ bài đã nộp của tài khoản.
+
+Các phần chưa triển khai được theo dõi tại [lộ trình](docs/IMPLEMENTATION_ROADMAP.md).

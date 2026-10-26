@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Button, Empty, Input, Select } from 'antd';
 import { ArrowRightOutlined, BookOutlined, PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import { request, errorMessage, type PracticeAttempt, type Quiz } from '../../lib/api';
+import { LearningProgressPanel } from '../practice/LearningProgressPanel';
 import { PracticeHistoryPanel } from '../practice/PracticeHistoryPanel';
 import { Alert } from 'antd';
 import { matchesSearch } from '../../lib/search';
@@ -46,6 +47,7 @@ export function QuizLibrary({ quizzes }: { quizzes: Quiz[] }) {
           trong Battle.
         </p>
       </div>
+      <LearningProgressPanel />
       <PracticeHistoryPanel />
       {error && <Alert type="error" message={error} closable onClose={() => setError('')} />}
       <div className="library-filters">

@@ -33,6 +33,11 @@ test('personal practice autosaves, resumes, grades and reviews mistakes', async 
     await main.getByLabel('Mật khẩu', { exact: true }).fill(password);
     await main.getByRole('button', { name: 'Đăng nhập', exact: true }).click();
     await main.getByRole('button', { name: 'book Bộ câu hỏi', exact: true }).click();
+    await main.getByLabel('Mục tiêu số câu mỗi ngày', { exact: true }).fill('5');
+    await main.getByRole('button', { name: 'Lưu mục tiêu', exact: true }).click();
+    await expect(
+      main.getByRole('heading', { name: 'Mục tiêu hôm nay · 0/5 câu', exact: true }),
+    ).toBeVisible();
     await main.getByPlaceholder('Tìm bộ câu hỏi…').fill('Hiragana');
     const promise = app.waitForEvent('window');
     await main.getByRole('button', { name: 'Luyện tập', exact: true }).click();
@@ -58,6 +63,11 @@ test('personal practice autosaves, resumes, grades and reviews mistakes', async 
     const review = await reviewPromise;
     await expect(review.getByRole('heading', { name: /âm “ho”/ })).toBeVisible();
     await expect(review.locator('.practice-numbers button')).toHaveCount(9);
+    const progress = await api('/api/learning-progress', account.token);
+    expect(progress.dailyGoal).toBe(5);
+    expect(progress.completedAttempts).toBe(1);
+    expect(progress.todayAnswered).toBe(1);
+    expect(progress.accuracy).toBe(10);
     const history = await api('/api/practice', account.token);
     expect(history).toHaveLength(2);
     expect(history.filter((item) => item.finishedAt)).toHaveLength(1);

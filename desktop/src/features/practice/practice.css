@@ -138,3 +138,37 @@
   width: 100%;
   text-align: left;
 }
+
+.practice-question .ant-radio-wrapper-disabled {
+  color: #cbd2e6;
+}
+.learning-progress {
+  margin: 20px 0;
+  padding: 22px;
+  border: 1px solid #3b3a51;
+  background: #222332;
+  border-radius: 16px;
+}
+.learning-statistics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+.learning-goal {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  margin-top: 18px;
+}
+.learning-goal > div:first-child {
+  flex: 1;
+}
+.learning-goal p {
+  color: #9da5be;
+  font-size: 12px;
+}
+@media (max-width: 900px) {
+  .learning-goal {
+    flex-wrap: wrap;
+  }
+}

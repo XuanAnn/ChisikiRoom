@@ -100,6 +100,8 @@ function route(action, body) {
     createQuiz: ['POST', '/api/question-sets'],
     startPractice: ['POST', '/api/practice'],
     practiceHistory: ['GET', '/api/practice'],
+    learningProgress: ['GET', '/api/learning-progress'],
+    saveLearningGoal: ['PUT', '/api/learning-progress/goal'],
   };
   fixed.createBattle = ['POST', '/api/battles'];
   fixed.openDirect = ['POST', '/api/chat-rooms/direct'];

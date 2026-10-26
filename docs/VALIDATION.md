@@ -137,3 +137,12 @@ Lỗi video một chiều được khắc phục bằng cách để một peer t
 - PostgreSQL 17: áp dụng V9 trên database kiểm thử sạch và database thật V8; ORM nạp thành công 10 bộ. Database thật vẫn giữ đủ 2 bộ cá nhân đã có; có bản pg_dump trước cập nhật trong .runtime.
 - Electron desktop.spec đạt (17,1 giây): lọc 5 bộ N5, mở 10 câu mẫu, chỉnh tên và lưu bản sao, kiểm tra mẫu vẫn đủ 10 và bản sao thuộc đúng người dùng. Luồng chat/quiz/Battle cũ vẫn đạt.
 - TypeScript/Vite build và format:check đạt. Backend 0.5.0 chạy trên 8080.
+
+
+## 0.6.0 — luyện tập cá nhân và tiến độ
+
+- 31 kiểm thử backend đạt: bài lưu/tiếp tục được, đáp án chưa lộ trong snapshot đang làm, quyền sở hữu, số lựa chọn hợp lệ, chấm snapshot gốc khi quiz đã thay đổi, kết quả bất biến và nộp lặp không tính hai lần, chỉ ôn câu sai/bỏ qua, mục tiêu riêng tài khoản 1–200, chỉ bài đã nộp tính thống kê, đổi ngày đúng theo giờ Việt Nam.
+- PostgreSQL: migration V10 tạo practice_attempts; V11 tạo learning_goals. Nâng database kiểm thử V10 lên V11 giữ lịch sử đã có. Dữ liệu qua JPA/repository, không dùng SQL thao tác nghiệp vụ.
+- Electron: desktop.spec và practice.spec đạt (22,4 giây). Thử chọn đáp án, đóng cửa sổ rồi mở lại từ lịch sử, nộp bài một câu đúng được 10%, hiện giải thích và tạo bài ôn 9 câu còn lại. Đổi mục tiêu 5 câu và kiểm tra API thống kê 1 lượt/1 câu đã chọn.
+- TypeScript/Vite build, format:check đạt. Đã xem ảnh cửa sổ luyện tập trong .runtime/practice-preview.png.
+- Bản 0.6.0 chỉ hoàn thành hai phần đầu của lộ trình; ranking/chat nâng cao/quản lý nhóm và các phần tiếp theo chưa được triển khai trong bản này.

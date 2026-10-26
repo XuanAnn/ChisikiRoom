@@ -132,3 +132,14 @@ export type PracticeHistory = {
   startedAt: string;
   finishedAt: string | null;
 };
+
+export type LearningProgress = {
+  completedAttempts: number;
+  totalQuestions: number;
+  correctAnswers: number;
+  accuracy: number;
+  todayAnswered: number;
+  dailyGoal: number;
+  date: string;
+  timezone: string;
+};

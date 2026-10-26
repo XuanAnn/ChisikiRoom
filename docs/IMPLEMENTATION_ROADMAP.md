@@ -4,8 +4,8 @@
 
 | Thứ tự | Chức năng | Trạng thái |
 | --- | --- | --- |
-| 1 | Luyện tập cá nhân, chấm điểm, giải thích, lưu bài và ôn câu sai | Đã kiểm thử API và Electron |
-| 2 | Tiến độ, lịch sử và mục tiêu mỗi ngày | Tiếp theo |
+| 1 | Luyện tập cá nhân, chấm điểm, giải thích, lưu bài và ôn câu sai | Đã triển khai trong 0.6.0 |
+| 2 | Tiến độ, lịch sử và mục tiêu mỗi ngày | Đã triển khai trong 0.6.0 |
 | 3 | Ranking toàn hệ thống, Glicko-2, ghép 1–1, hai bảng N5/N4 | Chưa triển khai |
 | 4 | Chat: sửa/xóa, trả lời, ghim, lưu trạng thái đọc và bản nháp | Chưa triển khai |
 | 5 | Nhóm: thông tin, vai trò, loại thành viên, kiểm duyệt | Chưa triển khai |
