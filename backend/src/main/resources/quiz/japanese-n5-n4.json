@@ -1,0 +1,1082 @@
+[
+  {
+    "id": "9e590000-0000-4000-8000-000000000001",
+    "quiz": {
+      "title": "N5 · 01 · Hiragana và Katakana",
+      "questions": [
+        {
+          "text": "Chọn hiragana tương ứng với âm “nu”.",
+          "options": [
+            "ぬ",
+            "め",
+            "ね",
+            "れ"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "Chọn hiragana tương ứng với âm “ho”.",
+          "options": [
+            "も",
+            "ほ",
+            "は",
+            "ま"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "text": "Chọn hiragana tương ứng với âm “kyo”.",
+          "options": [
+            "きゅ",
+            "しょ",
+            "きょ",
+            "きよ"
+          ],
+          "correctIndex": 2
+        },
+        {
+          "text": "Chọn hiragana tương ứng với âm “tsu”.",
+          "options": [
+            "し",
+            "そ",
+            "す",
+            "つ"
+          ],
+          "correctIndex": 3
+        },
+        {
+          "text": "Chọn cách đọc của シャツ.",
+          "options": [
+            "shatsu",
+            "satsu",
+            "shiyatsu",
+            "chatsu"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "Chọn katakana tương ứng với âm “te”.",
+          "options": [
+            "ナ",
+            "テ",
+            "ト",
+            "チ"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "text": "Chọn katakana tương ứng với từ “kamera”.",
+          "options": [
+            "カモラ",
+            "タメラ",
+            "カメラ",
+            "カラメ"
+          ],
+          "correctIndex": 2
+        },
+        {
+          "text": "Chọn cách viết đúng của “gakkou” (trường học).",
+          "options": [
+            "がこう",
+            "がっこ",
+            "がこお",
+            "がっこう"
+          ],
+          "correctIndex": 3
+        },
+        {
+          "text": "Chọn hiragana tương ứng với âm “pyo”.",
+          "options": [
+            "ぴょ",
+            "びょ",
+            "ひょ",
+            "ぴよ"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "Chọn cách viết đúng của “koohii” (cà phê).",
+          "options": [
+            "コヒー",
+            "コーヒー",
+            "コヒ",
+            "コーヒ"
+          ],
+          "correctIndex": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "9e590000-0000-4000-8000-000000000002",
+    "quiz": {
+      "title": "N5 · 02 · Từ vựng sinh hoạt",
+      "questions": [
+        {
+          "text": "あさごはん có nghĩa là gì?",
+          "options": [
+            "Bữa sáng",
+            "Bữa trưa",
+            "Bữa tối",
+            "Đồ uống"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "Từ nào có nghĩa là “thư viện”?",
+          "options": [
+            "ゆうびんきょく",
+            "としょかん",
+            "びょういん",
+            "ぎんこう"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "text": "Từ nào có nghĩa là “hôm qua”?",
+          "options": [
+            "あした",
+            "あさって",
+            "きのう",
+            "きょう"
+          ],
+          "correctIndex": 2
+        },
+        {
+          "text": "Từ nào chỉ “ô / dù”?",
+          "options": [
+            "くつ",
+            "かばん",
+            "ぼうし",
+            "かさ"
+          ],
+          "correctIndex": 3
+        },
+        {
+          "text": "Từ nào có nghĩa là “rẻ”?",
+          "options": [
+            "やすい",
+            "たかい",
+            "おおきい",
+            "あつい"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "Từ nào có nghĩa là “anh trai của tôi”?",
+          "options": [
+            "いもうと",
+            "あに",
+            "あね",
+            "おとうと"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "text": "Trong lớp học, つくえ là vật gì?",
+          "options": [
+            "Cửa sổ",
+            "Đồng hồ",
+            "Bàn",
+            "Ghế"
+          ],
+          "correctIndex": 2
+        },
+        {
+          "text": "Từ nào có nghĩa là “thứ hai”?",
+          "options": [
+            "かようび",
+            "すいようび",
+            "きんようび",
+            "げつようび"
+          ],
+          "correctIndex": 3
+        },
+        {
+          "text": "Từ trái nghĩa với あたらしい (mới) là gì?",
+          "options": [
+            "ふるい",
+            "ながい",
+            "はやい",
+            "わかい"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "Từ nào có nghĩa là “uống”?",
+          "options": [
+            "かきます",
+            "のみます",
+            "たべます",
+            "よみます"
+          ],
+          "correctIndex": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "9e590000-0000-4000-8000-000000000003",
+    "quiz": {
+      "title": "N5 · 03 · Kanji cơ bản",
+      "questions": [
+        {
+          "text": "Chọn cách đọc của 学生.",
+          "options": [
+            "がくせい",
+            "がっこう",
+            "せんせい",
+            "がくこう"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "Chọn cách đọc của 水曜日.",
+          "options": [
+            "げつようび",
+            "すいようび",
+            "もくようび",
+            "にちようび"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "text": "Chọn cách đọc của 山.",
+          "options": [
+            "そら",
+            "うみ",
+            "やま",
+            "かわ"
+          ],
+          "correctIndex": 2
+        },
+        {
+          "text": "Chọn cách đọc của 七時 (bảy giờ).",
+          "options": [
+            "ななにち",
+            "しちにん",
+            "しちがつ",
+            "しちじ"
+          ],
+          "correctIndex": 3
+        },
+        {
+          "text": "Chọn cách đọc của 入口.",
+          "options": [
+            "いりぐち",
+            "でぐち",
+            "いれくち",
+            "はいる"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "Chọn kanji của でんしゃ.",
+          "options": [
+            "天気",
+            "電車",
+            "電話",
+            "自転車"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "text": "Chọn cách đọc của 毎日.",
+          "options": [
+            "まいとし",
+            "まいあさ",
+            "まいにち",
+            "まいげつ"
+          ],
+          "correctIndex": 2
+        },
+        {
+          "text": "Chọn cách đọc của 百円.",
+          "options": [
+            "せんえん",
+            "びゃくえん",
+            "ひゃっえん",
+            "ひゃくえん"
+          ],
+          "correctIndex": 3
+        },
+        {
+          "text": "Chọn cách đọc của 大きい.",
+          "options": [
+            "おおきい",
+            "ちいさい",
+            "おきい",
+            "おおい"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "Chọn cách đọc của 日本語.",
+          "options": [
+            "にほんがく",
+            "にほんご",
+            "にほんじん",
+            "にちほんご"
+          ],
+          "correctIndex": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "9e590000-0000-4000-8000-000000000004",
+    "quiz": {
+      "title": "N5 · 04 · Trợ từ và chia động từ",
+      "questions": [
+        {
+          "text": "Điền trợ từ: わたしは ベトナム（　）来ました。",
+          "options": [
+            "から",
+            "まで",
+            "を",
+            "で"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "Điền trợ từ: 毎朝、パン（　）食べます。",
+          "options": [
+            "へ",
+            "を",
+            "が",
+            "に"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "text": "Điền trợ từ: 図書館（　）本を読みます。",
+          "options": [
+            "へ",
+            "を",
+            "で",
+            "に"
+          ],
+          "correctIndex": 2
+        },
+        {
+          "text": "Điền trợ từ: つくえの上（　）ねこがいます。",
+          "options": [
+            "で",
+            "を",
+            "へ",
+            "に"
+          ],
+          "correctIndex": 3
+        },
+        {
+          "text": "Điền trợ từ chỉ thời điểm: 毎朝、七時（　）起きます。",
+          "options": [
+            "に",
+            "で",
+            "を",
+            "と"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "Điền trợ từ: これは わたし（　）本です。",
+          "options": [
+            "へ",
+            "の",
+            "を",
+            "で"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "text": "Chọn dạng quá khứ khẳng định của 行きます.",
+          "options": [
+            "行きませんでした",
+            "行きたいです",
+            "行きました",
+            "行きません"
+          ],
+          "correctIndex": 2
+        },
+        {
+          "text": "Chọn dạng phủ định lịch sự của 食べます.",
+          "options": [
+            "食べました",
+            "食べています",
+            "食べましょう",
+            "食べません"
+          ],
+          "correctIndex": 3
+        },
+        {
+          "text": "Chọn dạng quá khứ của tính từ おいしい.",
+          "options": [
+            "おいしかった",
+            "おいしいだった",
+            "おいしくない",
+            "おいしいでした"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "Chọn từ phù hợp: この町は（　）です。",
+          "options": [
+            "しずかく",
+            "しずか",
+            "しずかな",
+            "しずかに"
+          ],
+          "correctIndex": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "9e590000-0000-4000-8000-000000000005",
+    "quiz": {
+      "title": "N5 · 05 · Hội thoại và đọc hiểu ngắn",
+      "questions": [
+        {
+          "text": "A: ありがとうございます。 B:（　）。",
+          "options": [
+            "どういたしまして",
+            "いただきます",
+            "いってきます",
+            "おやすみなさい"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "A: お名前は何ですか。 Chọn câu trả lời phù hợp.",
+          "options": [
+            "学生です。",
+            "リンです。",
+            "二十歳です。",
+            "ベトナムです。"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "text": "Tại cửa hàng: このパンはいくらですか。 Người nói hỏi điều gì?",
+          "options": [
+            "Giờ đóng cửa",
+            "Số người mua",
+            "Giá của bánh mì",
+            "Tên cửa hàng"
+          ],
+          "correctIndex": 2
+        },
+        {
+          "text": "Đọc: わたしは毎朝六時に起きます。七時に学校へ行きます。 Người này thức dậy lúc mấy giờ?",
+          "options": [
+            "7 giờ",
+            "8 giờ",
+            "9 giờ",
+            "6 giờ"
+          ],
+          "correctIndex": 3
+        },
+        {
+          "text": "Đọc: つくえの上に本があります。かばんはつくえの下です。 Cặp ở đâu?",
+          "options": [
+            "Dưới bàn",
+            "Trên bàn",
+            "Trong cặp",
+            "Trên ghế"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "Đọc: 日曜日は休みです。月曜日から金曜日まで働きます。 Người này nghỉ vào ngày nào được nêu trong đoạn?",
+          "options": [
+            "Thứ sáu",
+            "Chủ nhật",
+            "Thứ hai",
+            "Thứ tư"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "text": "Đọc: 田中さんは先生です。山田さんは学生です。 Ai là học sinh / sinh viên?",
+          "options": [
+            "Cả hai đều là giáo viên",
+            "Không có ai",
+            "山田さん",
+            "田中さん"
+          ],
+          "correctIndex": 2
+        },
+        {
+          "text": "Đọc: りんごを二つとバナナを三本買いました。 Đã mua mấy quả táo?",
+          "options": [
+            "3 quả",
+            "5 quả",
+            "1 quả",
+            "2 quả"
+          ],
+          "correctIndex": 3
+        },
+        {
+          "text": "Đọc: 今日は雨です。かさを持って行きます。 Vì sao người nói mang ô?",
+          "options": [
+            "Vì trời mưa",
+            "Vì trời nóng",
+            "Vì trời có tuyết",
+            "Vì ô rẻ"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "A: いっしょに昼ごはんを食べませんか。 B: ええ、（　）。",
+          "options": [
+            "おかえりなさい",
+            "食べましょう",
+            "食べませんでした",
+            "ごちそうさまでした"
+          ],
+          "correctIndex": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "9e590000-0000-4000-8000-000000000006",
+    "quiz": {
+      "title": "N4 · 06 · Từ vựng đời sống",
+      "questions": [
+        {
+          "text": "Từ nào có nghĩa là “đặt trước / đặt chỗ”?",
+          "options": [
+            "予約",
+            "約束",
+            "用事",
+            "準備"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "Chọn từ phù hợp: 電車に乗る前に、（　）を買います。",
+          "options": [
+            "くすり",
+            "きっぷ",
+            "てぶくろ",
+            "はがき"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "text": "Từ nào có nghĩa là “chuyển nhà”?",
+          "options": [
+            "見物",
+            "復習",
+            "引っ越し",
+            "散歩"
+          ],
+          "correctIndex": 2
+        },
+        {
+          "text": "Chọn từ phù hợp: この問題は（　）ので、一人ではできません。",
+          "options": [
+            "やさしい",
+            "ひくい",
+            "うすい",
+            "むずかしい"
+          ],
+          "correctIndex": 3
+        },
+        {
+          "text": "Từ nào có nghĩa là “kịp giờ”?",
+          "options": [
+            "間に合う",
+            "乗り換える",
+            "片付ける",
+            "見つける"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "Từ nào có nghĩa là “chuẩn bị”?",
+          "options": [
+            "遠慮",
+            "準備",
+            "失敗",
+            "反対"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "text": "Chọn từ phù hợp: 風邪をひいたので、今日は学校を（　）。",
+          "options": [
+            "運びます",
+            "直します",
+            "休みます",
+            "貸します"
+          ],
+          "correctIndex": 2
+        },
+        {
+          "text": "Từ nào có nghĩa là “quên”?",
+          "options": [
+            "覚える",
+            "始める",
+            "続ける",
+            "忘れる"
+          ],
+          "correctIndex": 3
+        },
+        {
+          "text": "Chọn từ phù hợp: 駅で友達を三十分も（　）。",
+          "options": [
+            "待ちました",
+            "貸しました",
+            "習いました",
+            "送りました"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "Từ nào có nghĩa là “tiện lợi”?",
+          "options": [
+            "必要",
+            "便利",
+            "残念",
+            "危険"
+          ],
+          "correctIndex": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "9e590000-0000-4000-8000-000000000007",
+    "quiz": {
+      "title": "N4 · 07 · Kanji và cách đọc",
+      "questions": [
+        {
+          "text": "Chọn cách đọc của 住所.",
+          "options": [
+            "じゅうしょ",
+            "じゅしょ",
+            "じょうしょ",
+            "じゅうしょう"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "Chọn cách đọc của 病院.",
+          "options": [
+            "びょいん",
+            "びょういん",
+            "びよういん",
+            "びょうき"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "text": "Chọn cách đọc của 運転.",
+          "options": [
+            "うてん",
+            "うんでん",
+            "うんてん",
+            "うんどう"
+          ],
+          "correctIndex": 2
+        },
+        {
+          "text": "Chọn cách đọc của 料理.",
+          "options": [
+            "りょり",
+            "りようり",
+            "りゅうり",
+            "りょうり"
+          ],
+          "correctIndex": 3
+        },
+        {
+          "text": "Chọn cách đọc của 親切.",
+          "options": [
+            "しんせつ",
+            "しんさい",
+            "おやきり",
+            "しんせい"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "Chọn kanji tương ứng với けいけん (kinh nghiệm).",
+          "options": [
+            "危険",
+            "経験",
+            "試験",
+            "意見"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "text": "Chọn cách đọc của 急行.",
+          "options": [
+            "きょうこう",
+            "きゅうぎょう",
+            "きゅうこう",
+            "きゅこう"
+          ],
+          "correctIndex": 2
+        },
+        {
+          "text": "Chọn cách đọc của 地下鉄.",
+          "options": [
+            "じかてつ",
+            "ちがてつ",
+            "ちかでん",
+            "ちかてつ"
+          ],
+          "correctIndex": 3
+        },
+        {
+          "text": "Chọn kanji tương ứng với しゅくだい (bài tập về nhà).",
+          "options": [
+            "宿題",
+            "問題",
+            "答え",
+            "質問"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "Chọn cách đọc của 生活.",
+          "options": [
+            "せいがつ",
+            "せいかつ",
+            "せかつ",
+            "しょうかつ"
+          ],
+          "correctIndex": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "9e590000-0000-4000-8000-000000000008",
+    "quiz": {
+      "title": "N4 · 08 · Các thể động từ",
+      "questions": [
+        {
+          "text": "Chọn thể て của 書く.",
+          "options": [
+            "書いて",
+            "書って",
+            "書きて",
+            "書んで"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "Chọn thể て của 泳ぐ.",
+          "options": [
+            "泳ぎて",
+            "泳いで",
+            "泳いて",
+            "泳って"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "text": "Chọn thể て của 待つ.",
+          "options": [
+            "待ちて",
+            "待んで",
+            "待って",
+            "待いて"
+          ],
+          "correctIndex": 2
+        },
+        {
+          "text": "Chọn thể ない của 飲む.",
+          "options": [
+            "飲みない",
+            "飲めない",
+            "飲むない",
+            "飲まない"
+          ],
+          "correctIndex": 3
+        },
+        {
+          "text": "Chọn thể khả năng của 話す.",
+          "options": [
+            "話せる",
+            "話される",
+            "話させる",
+            "話そう"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "Chọn thể khả năng của 食べる.",
+          "options": [
+            "食べさせる",
+            "食べられる",
+            "食べれるる",
+            "食べよう"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "text": "Chọn thể ý chí của 行く.",
+          "options": [
+            "行った",
+            "行かない",
+            "行こう",
+            "行ける"
+          ],
+          "correctIndex": 2
+        },
+        {
+          "text": "Chọn thể điều kiện ば của 読む.",
+          "options": [
+            "読むば",
+            "読んだば",
+            "読もうば",
+            "読めば"
+          ],
+          "correctIndex": 3
+        },
+        {
+          "text": "Chọn dạng quá khứ thông thường của 来る.",
+          "options": [
+            "来た（きた）",
+            "来るた（くるた）",
+            "来った（きった）",
+            "来いた（きいた）"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "Chọn thể た của する.",
+          "options": [
+            "しった",
+            "した",
+            "すった",
+            "して"
+          ],
+          "correctIndex": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "9e590000-0000-4000-8000-000000000009",
+    "quiz": {
+      "title": "N4 · 09 · Ngữ pháp ứng dụng",
+      "questions": [
+        {
+          "text": "Điền từ: 日本へ行った（　）があります。",
+          "options": [
+            "こと",
+            "もの",
+            "ところ",
+            "ため"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "Điền từ: 明日は早く起き（　）なりません。",
+          "options": [
+            "なくてはない",
+            "なければ",
+            "なくても",
+            "ないで"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "text": "Điền từ: この部屋で写真を（　）はいけません。",
+          "options": [
+            "撮った",
+            "撮り",
+            "撮って",
+            "撮る"
+          ],
+          "correctIndex": 2
+        },
+        {
+          "text": "Điền từ: もう薬を飲んだので、今は（　）もいいです。",
+          "options": [
+            "飲まないで",
+            "飲まない",
+            "飲まなかった",
+            "飲まなくて"
+          ],
+          "correctIndex": 3
+        },
+        {
+          "text": "Điền từ: 寝る前に、歯を（　）ようにしています。",
+          "options": [
+            "みがく",
+            "みがいて",
+            "みがこう",
+            "みがいた"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "Điền từ: 来年、日本へ留学する（　）です。",
+          "options": [
+            "てしまう",
+            "つもり",
+            "ことがある",
+            "ながら"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "text": "Điền từ: 音楽を（　）ながら、料理をします。",
+          "options": [
+            "聞いて",
+            "聞いた",
+            "聞き",
+            "聞く"
+          ],
+          "correctIndex": 2
+        },
+        {
+          "text": "Điền từ: このケーキは（　）そうです。",
+          "options": [
+            "おいしい",
+            "おいしく",
+            "おいしくて",
+            "おいし"
+          ],
+          "correctIndex": 3
+        },
+        {
+          "text": "Điền từ: 忙しく（　）、毎日少し運動します。",
+          "options": [
+            "ても",
+            "ながら",
+            "ため",
+            "よう"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "Điền từ: 道に迷ったら、駅員に（　）ください。",
+          "options": [
+            "聞こう",
+            "聞いて",
+            "聞く",
+            "聞いた"
+          ],
+          "correctIndex": 1
+        }
+      ]
+    }
+  },
+  {
+    "id": "9e590000-0000-4000-8000-000000000010",
+    "quiz": {
+      "title": "N4 · 10 · Đọc hiểu tình huống",
+      "questions": [
+        {
+          "text": "Đọc: 図書館は月曜日が休みです。火曜日から日曜日までは、午前九時から午後六時まで開いています。 Khi nào thư viện đóng cửa cả ngày?",
+          "options": [
+            "Thứ hai",
+            "Thứ ba",
+            "Thứ bảy",
+            "Chủ nhật"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "Đọc: 明日の会議は十時からでしたが、十一時に変わりました。場所は同じです。 Cuộc họp ngày mai bắt đầu lúc nào?",
+          "options": [
+            "12 giờ",
+            "11 giờ",
+            "10 giờ",
+            "9 giờ"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "text": "Đọc: このバスは駅まで行きません。駅へ行く人は、次のバスに乗ってください。 Muốn đến ga thì nên làm gì?",
+          "options": [
+            "Xuống ở bến cuối của xe này",
+            "Đợi ở nhà ga",
+            "Đi xe buýt tiếp theo",
+            "Lên xe buýt này"
+          ],
+          "correctIndex": 2
+        },
+        {
+          "text": "Đọc: 冷蔵庫にケーキがあります。まだ食べないでください。みんなが帰ってから、いっしょに食べましょう。 Khi nào nên ăn bánh?",
+          "options": [
+            "Ngay lập tức",
+            "Trước khi mọi người về",
+            "Sáng ngày kia",
+            "Sau khi mọi người về"
+          ],
+          "correctIndex": 3
+        },
+        {
+          "text": "Đọc: 田中さんへ。先にレストランに入っています。駅を出て右へ曲がると、左側にあります。 Nhà hàng ở đâu sau khi ra ga và rẽ phải?",
+          "options": [
+            "Bên trái",
+            "Bên phải",
+            "Trong ga",
+            "Phía sau ga"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "Đọc: この店では、三千円以上買うと、配達が無料になります。千円の本を三冊買いました。 Phí giao hàng là bao nhiêu?",
+          "options": [
+            "3.000 yên",
+            "Miễn phí",
+            "1.000 yên",
+            "2.000 yên"
+          ],
+          "correctIndex": 1
+        },
+        {
+          "text": "Đọc: 日曜日に山へ行くつもりでしたが、雨だったので、家で映画を見ました。 Chủ nhật người này đã làm gì?",
+          "options": [
+            "Đi làm",
+            "Đến trường",
+            "Xem phim ở nhà",
+            "Đi leo núi"
+          ],
+          "correctIndex": 2
+        },
+        {
+          "text": "Đọc: 母の誕生日に花を買おうと思いました。でも、母は花より本が好きなので、本を買いました。 Người nói đã mua món gì?",
+          "options": [
+            "Hoa",
+            "Bánh",
+            "Quần áo",
+            "Sách"
+          ],
+          "correctIndex": 3
+        },
+        {
+          "text": "Đọc: レポートは金曜日までにメールで送ってください。紙で出す必要はありません。 Phải nộp báo cáo bằng cách nào?",
+          "options": [
+            "Gửi email",
+            "Nộp bản giấy",
+            "Gọi điện đọc nội dung",
+            "Gửi qua bưu điện"
+          ],
+          "correctIndex": 0
+        },
+        {
+          "text": "Đọc: 昨日は電車が止まっていたので、会社まで歩きました。一時間かかって、大変でした。 Vì sao người này đi bộ đến công ty?",
+          "options": [
+            "Vì quên tiền",
+            "Vì tàu ngừng chạy",
+            "Vì muốn tập thể dục",
+            "Vì công ty ở rất gần"
+          ],
+          "correctIndex": 1
+        }
+      ]
+    }
+  }
+]

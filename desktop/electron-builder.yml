@@ -1,0 +1,15 @@
+appId: com.chisikiroom.desktop
+productName: ChisikiRoom
+asar: true
+directories:
+  output: ../release
+files:
+  - dist/**/*
+  - electron/**/*
+  - package.json
+win:
+  target:
+    - target: portable
+      arch: [x64]
+  signAndEditExecutable: false
+artifactName: ChisikiRoom-${version}-Windows-${arch}.${ext}

@@ -1,0 +1,19 @@
+node_modules/
+dist/
+target/
+.env
+*.log
+.idea/
+.vscode/
+data/
+.runtime/
+release/
+playwright-report/
+test-results/
+
+# Generated report previews and temporary analysis
+docs/report-work/
+__pycache__/
+*.pyc
+.env.*
+!.env.example

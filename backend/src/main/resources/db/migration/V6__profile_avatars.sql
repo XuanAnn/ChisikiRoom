@@ -1,0 +1,2 @@
+ALTER TABLE users ADD COLUMN avatar_id UUID;
+ALTER TABLE users ADD COLUMN avatar_type VARCHAR(30);

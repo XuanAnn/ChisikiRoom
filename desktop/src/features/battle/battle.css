@@ -1,0 +1,293 @@
+.battle-window {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.battle-window > header {
+  height: 95px;
+  flex-shrink: 0;
+}
+.battle-window header h2 {
+  font-size: 20px;
+  margin: 6px 0;
+}
+.battle-window > .ant-alert {
+  margin: 8px 20px;
+}
+.battle-layout {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+}
+.battle-stage {
+  padding: 25px 35px;
+  overflow: auto;
+}
+.video-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+}
+.video-tile {
+  position: relative;
+  aspect-ratio: 16/10;
+  background: #252938;
+  border: 1px solid #353c52;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.video-tile video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.video-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 9px 10px;
+  background: #111a;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+}
+.video-caption .ant-tag {
+  font-size: 9px;
+  margin: 0;
+}
+.media-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 18px 0 30px;
+}
+.media-controls small {
+  font-size: 10px;
+  color: #747f99;
+}
+.score-panel {
+  width: 240px;
+  flex-shrink: 0;
+  padding: 25px 20px;
+  background: #1c1f2a;
+  overflow: auto;
+}
+.score-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 23px 0;
+  font-size: 12px;
+}
+.score-row > span {
+  flex: 1;
+}
+.score-row > b {
+  color: #b6a1ff;
+  font-size: 20px;
+}
+.score-panel > .muted {
+  font-size: 11px;
+  margin-top: 40px;
+}
+.lobby-panel {
+  text-align: center;
+  padding: 30px 10px;
+}
+.lobby-panel > .anticon {
+  font-size: 38px;
+  color: #b39bff;
+}
+.lobby-panel h1 {
+  font-size: 34px;
+  letter-spacing: -1px;
+}
+.lobby-panel .ant-space {
+  margin-top: 15px;
+}
+.round-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+}
+.round-top > b {
+  font-size: 22px;
+  color: #b8a2fa;
+}
+.round-panel h1 {
+  font-size: 30px;
+  letter-spacing: -0.7px;
+  line-height: 1.5;
+  margin: 20px 0;
+}
+.answer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin: 20px 0;
+}
+.answer-option.ant-btn {
+  height: auto;
+  min-height: 65px;
+  padding: 18px;
+  justify-content: flex-start;
+  white-space: normal;
+  text-align: left;
+}
+.answer-option b {
+  color: #ad99e3;
+  margin-right: 10px;
+}
+.answer-option span {
+  overflow-wrap: anywhere;
+}
+.answer-option.correct.ant-btn {
+  border-color: #71b590;
+  background: #20382d;
+  color: #b6e3ca;
+}
+.results h1 {
+  font-size: 32px;
+}
+.result-row {
+  display: flex;
+  gap: 20px;
+  padding: 18px;
+  border-bottom: 1px solid #30374a;
+}
+.result-row > span {
+  flex: 1;
+}
+.result-row > b,
+.result-row > strong {
+  color: #b8a4ff;
+}
+.global-error {
+  position: fixed;
+  bottom: 20px;
+  left: 280px;
+  right: 30px;
+  z-index: 1000;
+}
+.battle-invites {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 24px;
+  border-bottom: 1px solid #2b3143;
+  overflow-x: auto;
+  flex-shrink: 0;
+}
+.battle-invite {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: #30283f;
+  color: #d6c4ff;
+  border: 1px solid #584071;
+  border-radius: 9px;
+  padding: 9px 12px;
+  white-space: nowrap;
+}
+.battle-invite .ant-tag {
+  margin: 0;
+  font-size: 10px;
+}
+
+/* Keep the question central while cameras use the top and right edges. */
+.battle-stage {
+  flex: 1;
+  min-width: 0;
+}
+.battle-top-videos {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 680px;
+  margin: 0 auto;
+}
+.battle-top-videos:empty {
+  display: none;
+}
+.battle-top-videos .video-tile {
+  aspect-ratio: 16 / 9;
+  max-height: 180px;
+}
+.battle-top-videos .video-tile:only-child {
+  grid-column: 1 / -1;
+  width: min(100%, 340px);
+  justify-self: center;
+}
+.battle-side-videos {
+  grid-template-columns: minmax(0, 1fr);
+  margin-bottom: 24px;
+}
+.battle-side-videos .battle-self-preview {
+  width: 80%;
+  justify-self: end;
+  border-color: #a490ef;
+}
+.battle-camera-off {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: #292b3d;
+  color: #afa0ff;
+  font-size: 32px;
+}
+.battle-window .video-caption > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.battle-window .media-controls {
+  flex-wrap: wrap;
+  margin: 14px 0 22px;
+}
+@media (max-height: 740px) {
+  .battle-top-videos .video-tile {
+    max-height: 115px;
+  }
+  .battle-side-videos .video-tile {
+    max-height: 110px;
+  }
+  .battle-stage {
+    padding: 16px 22px;
+  }
+}
+@media (max-width: 850px) {
+  .battle-layout {
+    overflow: auto;
+    flex-direction: column;
+  }
+  .battle-stage {
+    flex: none;
+    overflow: visible;
+    padding: 16px;
+  }
+  .battle-window .score-panel {
+    width: auto;
+    overflow: visible;
+    padding: 16px;
+  }
+  .battle-side-videos {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .battle-side-videos .video-tile {
+    max-height: 130px;
+  }
+  .battle-side-videos .battle-self-preview {
+    width: 75%;
+  }
+  .battle-window .answer-grid {
+    gap: 8px;
+  }
+  .battle-window .round-panel h1 {
+    font-size: 24px;
+  }
+}

@@ -1,0 +1,28 @@
+server:
+  address: ${SERVER_ADDRESS:0.0.0.0}
+  port: ${SERVER_PORT:8080}
+spring:
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 21MB
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:${DB_PORT:5433}/chisikiroom}
+    username: ${DB_USER:chisikiroom}
+    password: ${DB_PASSWORD}
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health

@@ -1,0 +1,17 @@
+CREATE TABLE room_calls (
+    id UUID PRIMARY KEY,
+    room_id UUID NOT NULL UNIQUE REFERENCES chat_rooms(id) ON DELETE CASCADE,
+    caller_id UUID NOT NULL REFERENCES users(id),
+    status VARCHAR(12) NOT NULL CHECK (status IN ('ACTIVE','ENDED')),
+    sequence BIGINT NOT NULL DEFAULT 1,
+    answered BOOLEAN NOT NULL DEFAULT FALSE,
+    started_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL
+);
+CREATE TABLE call_participants (
+    call_id UUID NOT NULL REFERENCES room_calls(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    camera BOOLEAN NOT NULL DEFAULT FALSE,
+    last_seen TIMESTAMP WITH TIME ZONE NOT NULL,
+    PRIMARY KEY (call_id,user_id)
+);

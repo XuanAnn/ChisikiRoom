@@ -1,0 +1,26 @@
+{
+  "name": "chisikiroom",
+  "version": "0.5.0",
+  "private": true,
+  "scripts": {
+    "format": "prettier --write \"backend/src/**/*.java\" \"backend/src/**/*.yml\" \"desktop/src/**/*.{ts,tsx,css}\" \"desktop/electron/**/*.cjs\" \"desktop/tests/**/*.cjs\" \"desktop/*.{ts,json,html,yml}\" \"scripts/**/*.cjs\" package.json .prettierrc.json compose.yaml",
+    "format:check": "prettier --check \"backend/src/**/*.java\" \"backend/src/**/*.yml\" \"desktop/src/**/*.{ts,tsx,css}\" \"desktop/electron/**/*.cjs\" \"desktop/tests/**/*.cjs\" \"desktop/*.{ts,json,html,yml}\" \"scripts/**/*.cjs\" package.json .prettierrc.json compose.yaml",
+    "postinstall": "npm --prefix desktop install",
+    "db": "node scripts/run.cjs db",
+    "backend": "node scripts/run.cjs backend",
+    "build": "npm --prefix desktop run build",
+    "desktop": "node scripts/run.cjs desktop",
+    "start": "npm run desktop",
+    "test:backend": "mvn -f backend/pom.xml test",
+    "test:integration": "node scripts/verify-lan.cjs",
+    "test:desktop": "npm --prefix desktop run test:e2e",
+    "package:win": "npm --prefix desktop run package:win"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.9.10",
+    "prettier-plugin-java": "^2.11.0"
+  }
+}
