@@ -303,6 +303,34 @@ async function eventually(check) {
     'PASS PostgreSQL: simultaneous friend chat opens reuse one room; call last-seat contention admits one player; one account cannot join two calls concurrently; signaling remains participant-only.',
   );
 
+  const draftState = (await api('/api/chat-rooms/state', b.token)).find(
+    (state) => state.roomId === room.id,
+  );
+  const writes = await Promise.all(
+    ['Device A', 'Device B'].map((content) =>
+      fetch(`${base}/api/chat-rooms/${room.id}/state/draft`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${b.token}` },
+        body: JSON.stringify({ content, version: draftState.draftVersion }),
+        signal: AbortSignal.timeout(15000),
+      }),
+    ),
+  );
+  assert.equal(writes.filter((response) => response.status === 200).length, 1);
+  assert.equal(writes.filter((response) => response.status === 409).length, 1);
+  const persisted = (await api('/api/chat-rooms/state', b.token)).find(
+    (state) => state.roomId === room.id,
+  );
+  assert.equal(persisted.draftVersion, draftState.draftVersion + 1);
+  assert.ok(['Device A', 'Device B'].includes(persisted.draft));
+  assert.equal(
+    (await api('/api/chat-rooms/state', a.token)).find((state) => state.roomId === room.id).draft,
+    '',
+  );
+  console.log(
+    'PASS PostgreSQL chat state: two concurrent draft writes accept exactly one version; account drafts remain private.',
+  );
+
   await api('/api/auth/logout', outsider.token, {}, 'POST', 204);
   await api('/api/auth/me', outsider.token, undefined, 'GET', 401);
   console.log(

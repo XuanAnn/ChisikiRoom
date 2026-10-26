@@ -30,6 +30,7 @@ import { GroupInvitationsPanel } from '../community/GroupInvitationsPanel';
 import { RankingPanel } from '../ranking/RankingPanel';
 import { QuizLibrary } from '../quiz/QuizLibrary';
 import { RoomContextPanel } from './RoomContextPanel';
+import { latestMessage, mergeMessages } from './messageState';
 import { MessageTimeline } from './MessageTimeline';
 import { MessageSearchPanel } from './MessageSearchPanel';
 import { useWorkspaceActivity, type WorkspaceTab } from './useWorkspaceActivity';
@@ -39,6 +40,10 @@ export function ChatWorkspace({ user, onLogout }: { user: User; onLogout: () => 
   const [roomId, setRoomId] = useState('');
   const [members, setMembers] = useState<Member[]>([]);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [replyTarget, setReplyTarget] = useState<ChatMessage | null>(null);
+  useEffect(() => {
+    setReplyTarget(null);
+  }, [roomId]);
   const [friends, setFriends] = useState<Member[]>([]);
   const [openingFriend, setOpeningFriend] = useState<string | null>(null);
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
@@ -60,7 +65,12 @@ export function ChatWorkspace({ user, onLogout }: { user: User; onLogout: () => 
   }, [tab]);
   const [manualInvite, setManualInvite] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const activity = useWorkspaceActivity(user.id, roomId, tab);
+  const activity = useWorkspaceActivity(
+    user.id,
+    roomId,
+    tab,
+    messages.at(-1)?.roomId === roomId ? messages.at(-1)!.id : 0,
+  );
   const text = activity.drafts[roomId] || '';
   function setText(content: string) {
     activity.setDraft(roomId, content);
@@ -96,7 +106,7 @@ export function ChatWorkspace({ user, onLogout }: { user: User; onLogout: () => 
   const isDirect = active?.kind === 'DIRECT';
   const reactions = useRoomReactions(roomId, Boolean(active?.joined));
   const currentRoom = useRef(roomId);
-  const pending = useRef(new Map<string, { text: string; id: string }>());
+  const pending = useRef(new Map<string, { text: string; id: string; replyToId: number | null }>());
   currentRoom.current = roomId;
   const loadRooms = useCallback(async () => {
     const list = await request<Room[]>('rooms');
@@ -116,11 +126,10 @@ export function ChatWorkspace({ user, onLogout }: { user: User; onLogout: () => 
     ]);
     if (currentRoom.current === id) {
       setMessages((previous) =>
-        [
-          ...new Map(
-            [...history, ...previous.filter((m) => m.roomId === id)].map((m) => [m.id, m]),
-          ).values(),
-        ].sort((a, b) => a.id - b.id),
+        mergeMessages(
+          previous.filter((message) => message.roomId === id),
+          history,
+        ),
       );
       setMembers(people);
       setMore(history.length === 50);
@@ -168,12 +177,11 @@ export function ChatWorkspace({ user, onLogout }: { user: User; onLogout: () => 
           });
         }
       }
+      if (event.type === 'MESSAGE_CHANGED') {
+        applyMessageChange(event.data as ChatMessage);
+      }
       if (event.type === 'MESSAGE_CREATED' && event.data.roomId === currentRoom.current) {
-        setMessages((previous) =>
-          [...previous.filter((m) => m.id !== event.data.id), event.data].sort(
-            (a, b) => a.id - b.id,
-          ),
-        );
+        setMessages((previous) => mergeMessages(previous, [event.data]));
       }
     });
   }, [loadRooms, loadRoom, loadQuizzes, loadFriends]);
@@ -185,6 +193,43 @@ export function ChatWorkspace({ user, onLogout }: { user: User; onLogout: () => 
       loadRoom(roomId).catch((e) => setError(errorMessage(e)));
     }
   }, [roomId, active?.joined, loadRoom]);
+  function applyMessageChange(updated: ChatMessage) {
+    if (updated.roomId !== currentRoom.current) {
+      return;
+    }
+    setMessages((previous) =>
+      previous.map((message) => {
+        if (message.id === updated.id) {
+          return latestMessage(message, updated);
+        }
+        if (
+          message.reply?.id === updated.id &&
+          (updated.revision || 0) >= (message.reply.revision || 0)
+        ) {
+          return {
+            ...message,
+            reply: {
+              id: updated.id,
+              displayName: updated.displayName,
+              content: updated.content,
+              deleted: Boolean(updated.deletedAt),
+              revision: updated.revision,
+            },
+          };
+        }
+        return message;
+      }),
+    );
+    setReplyTarget((current) => {
+      if (current?.id !== updated.id) {
+        return current;
+      }
+      if (updated.deletedAt) {
+        return null;
+      }
+      return updated;
+    });
+  }
   async function act(fn: () => Promise<void>) {
     setBusy(true);
     setError('');
@@ -195,6 +240,20 @@ export function ChatWorkspace({ user, onLogout }: { user: User; onLogout: () => 
     } finally {
       setBusy(false);
     }
+  }
+  async function logoutWithDrafts() {
+    if (await activity.flushDrafts()) {
+      onLogout();
+      return;
+    }
+    Modal.confirm({
+      title: 'Bản nháp chưa lưu',
+      content:
+        'Máy chủ chưa lưu được bản nháp hoặc đang có xung đột. Bạn có thể ở lại để giữ nội dung đang gõ.',
+      okText: 'Bỏ bản nháp và đăng xuất',
+      cancelText: 'Ở lại',
+      onOk: onLogout,
+    });
   }
   async function openFriend(friend: Member) {
     setOpeningFriend(friend.id);
@@ -216,24 +275,24 @@ export function ChatWorkspace({ user, onLogout }: { user: User; onLogout: () => 
     }
     const targetRoomId = roomId;
     const sentText = text;
+    const replyToId = replyTarget?.id || null;
     await act(async () => {
-      if (pending.current.get(targetRoomId)?.text !== sentText) {
-        pending.current.set(targetRoomId, { text: sentText, id: crypto.randomUUID() });
+      const previousRequest = pending.current.get(targetRoomId);
+      if (previousRequest?.text !== sentText || previousRequest.replyToId !== replyToId) {
+        pending.current.set(targetRoomId, { text: sentText, id: crypto.randomUUID(), replyToId });
       }
       const message = await request<ChatMessage>('sendMessage', {
         id: targetRoomId,
         content: sentText,
+        replyToId,
         requestId: pending.current.get(targetRoomId)!.id,
       });
       if (currentRoom.current === targetRoomId) {
-        setMessages((previous) =>
-          [...previous.filter((existing) => existing.id !== message.id), message].sort(
-            (first, second) => first.id - second.id,
-          ),
-        );
+        setMessages((previous) => mergeMessages(previous, [message]));
       }
       pending.current.delete(targetRoomId);
       activity.clearSentDraft(targetRoomId, sentText);
+      setReplyTarget((current) => (current?.id === replyToId ? null : current));
     });
   }
 
@@ -363,7 +422,33 @@ export function ChatWorkspace({ user, onLogout }: { user: User; onLogout: () => 
             busy={busy}
             onLoadMore={loadOlder}
             reactions={reactions}
+            onReply={setReplyTarget}
+            onChanged={applyMessageChange}
           />
+          {activity.conflict && (
+            <Alert
+              type="warning"
+              message="Bản nháp đã thay đổi trên máy khác"
+              description="Nội dung bạn đang gõ vẫn được giữ. Chọn bản nháp cần tiếp tục dùng."
+              action={
+                <Space>
+                  <Button onClick={() => activity.resolveDraft(true)}>Giữ bản này</Button>
+                  <Button onClick={() => activity.resolveDraft(false)}>Dùng bản máy chủ</Button>
+                </Space>
+              }
+            />
+          )}
+          {replyTarget && (
+            <div className="reply-composer">
+              <div>
+                <strong>Trả lời {replyTarget.displayName}</strong>
+                <span>{replyTarget.content}</span>
+              </div>
+              <Button aria-label="Hủy trả lời" onClick={() => setReplyTarget(null)}>
+                Hủy
+              </Button>
+            </div>
+          )}
           <div className="composer">
             <Tooltip title="Đính kèm tài liệu">
               <Button
@@ -402,7 +487,9 @@ export function ChatWorkspace({ user, onLogout }: { user: User; onLogout: () => 
           <div className="composer-hint">
             <span>Enter để gửi · Shift + Enter để xuống dòng</span>
             <span>
-              {text.length > 0 ? `${text.length}/4000` : 'Bản nháp riêng cho từng cuộc trò chuyện'}
+              {text.length > 0
+                ? `${text.length}/4000 · ${activity.status}`
+                : activity.status || 'Bản nháp được lưu theo tài khoản'}
             </span>
           </div>
         </section>
@@ -471,7 +558,7 @@ export function ChatWorkspace({ user, onLogout }: { user: User; onLogout: () => 
         onCreateGroup={() => setCreateOpen(true)}
         onSelectRoom={selectRoom}
         onOpenFriend={openFriend}
-        onLogout={onLogout}
+        onLogout={() => void logoutWithDrafts()}
       />
       <main className="workspace-main">
         <header className="workspace-header">

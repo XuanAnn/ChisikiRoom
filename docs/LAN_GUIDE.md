@@ -1,4 +1,4 @@
-# ChisikiRoom Windows LAN 0.7.0
+# ChisikiRoom Windows LAN 0.8.0
 
 ## Chạy máy chủ
 
@@ -52,7 +52,7 @@ Với bản mã nguồn, có thể nhấp đúp `Start-Desktop.cmd` để build 
 
 ## Gọi bạn bè và nhóm ngoài Battle
 
-1. Cập nhật backend và client cùng bản 0.7.0. Dừng backend cũ trước khi khởi động lại; schema hiện tại là V13. Khởi động backend sẽ nạp 10 bộ câu hỏi N5–N4 dùng chung qua ORM, không tạo trùng khi khởi động lại.
+1. Cập nhật backend và client cùng bản 0.8.0. Dừng backend cũ trước khi khởi động lại; schema hiện tại là V16. Khởi động backend sẽ nạp 10 bộ câu hỏi N5–N4 dùng chung qua ORM, không tạo trùng khi khởi động lại.
 2. Mở chat bạn bè hoặc nhóm đã tham gia, bấm **Gọi video**. Cửa sổ cuộc gọi mở riêng, không cần tạo Battle hay quiz.
 3. Người được mời thấy **hộp thoại cuộc gọi đến riêng**, có tên người gọi/nhóm, chuông hai âm và các nút **Nhận cuộc gọi**, **Từ chối**, **Tắt chuông**. Hoạt động khi cửa sổ chat thu nhỏ; đóng bằng X cũng bỏ qua/từ chối lời mời. Hộp thoại kết thúc khi bên gọi hủy hoặc hết thời gian. Có thể tham gia nhóm đang gọi bằng nút **Tham gia cuộc gọi**.
 4. Camera/mic mặc định tắt. Bấm bật thiết bị cần dùng; tắt camera không buộc rời cuộc gọi. Dùng tai nghe khi thử nhiều máy gần nhau để tránh vọng âm.
@@ -67,7 +67,7 @@ Với bản mã nguồn, có thể nhấp đúp `Start-Desktop.cmd` để build 
 - **Công cụ phòng**: thành viên, mời bạn bè, tài liệu có lọc tên và tạo/tham gia Battle ở bên phải. Nút thông tin trên header mở/đóng vùng này; cửa sổ nhỏ tự thu gọn. Nút kẹp giấy ở ô chat tải file lên.
 - **Tìm lịch sử**: bấm kính lúp hoặc `Ctrl+F`, nhập từ 2–100 ký tự. Server tìm trong phòng được phép truy cập, không chỉ các tin đang tải; mỗi trang tối đa 50 kết quả mới nhất. Tìm không phân biệt hoa/thường, có giữ dấu tiếng Việt.
 - **Quiz**: lọc theo tên, sắp xếp theo lần cập nhật hoặc tên; trình soạn vẫn mở riêng.
-- Tin mới và bản nháp là dữ liệu trong bộ nhớ của phiên mở ứng dụng, chưa có đồng bộ trạng thái đọc/bản nháp giữa các máy hoặc sau khi khởi động lại. Tin nhắn đã gửi vẫn được lưu ở PostgreSQL.
+- Tin chưa đọc và bản nháp văn bản được lưu trong PostgreSQL từ 0.8.0. Bản nháp có phiên bản để phát hiện xung đột giữa các máy; trạng thái đọc tăng đơn điệu. Chờ báo Đã lưu bản nháp trước khi thoát cưỡng bức.
 
 ## WebRTC trong LAN
 
@@ -83,6 +83,8 @@ PostgreSQL lưu tài khoản, chat, quiz, trạng thái/điểm Battle và outbo
 
 Khi backend khởi động lại, worker đọc trạng thái trận/deadline đã lưu và xử lý tiếp; các lần chốt điểm được khóa và có ràng buộc chống trùng. Client reconnect lấy snapshot và lịch sử mới. Thời gian gián đoạn vẫn được tính vào deadline và grace, không tự dừng đồng hồ trận.
 
-Chưa triển khai: public hosting/HTTPS, TURN thực tế, SFU, quản trị kiểm duyệt, chỉnh sửa/xóa tin nhắn, trình xem nội dung tài liệu inline, quét malware, quota tổng dung lượng và tự cập nhật ứng dụng. Trước khi đưa public cần rate limiting, quản lý secrets/backup/monitoring và kiểm thử tải. Không coi bản LAN này là bản production trên Internet.
+Chưa triển khai: public hosting/HTTPS, TURN thực tế, SFU, quản trị kiểm duyệt, trình xem nội dung tài liệu inline, quét malware, quota tổng dung lượng và tự cập nhật ứng dụng. Trước khi đưa public cần rate limiting, quản lý secrets/backup/monitoring và kiểm thử tải. Không coi bản LAN này là bản production trên Internet.
 
 Lời mời nhóm: người nhận mở nút Lời mời nhóm và Chấp nhận/Từ chối. Trước khi chấp nhận, lời mời không cấp quyền truy cập phòng.
+
+Chat 0.8.0: Trả lời để trích dẫn; menu ba chấm sửa/xóa tin của mình. Chủ nhóm (hoặc cả hai trong chat riêng) ghim tối đa năm tin; bấm Tin ghim để xem. Tin xóa giữ dấu trong lịch sử, trích dẫn không tiếp tục lộ nội dung gốc.

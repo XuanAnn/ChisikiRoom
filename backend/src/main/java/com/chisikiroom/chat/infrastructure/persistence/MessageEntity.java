@@ -23,6 +23,21 @@ public class MessageEntity {
     @Column(name = "content", nullable = false, length = 4000)
     public String content;
 
+    @Column(nullable = false)
+    public Long revision = 0L;
+
+    @Column(name = "reply_to_id")
+    public Long replyToId;
+
+    @Column(name = "edited_at")
+    public OffsetDateTime editedAt;
+
+    @Column(name = "deleted_at")
+    public OffsetDateTime deletedAt;
+
+    @Column(name = "pinned_at")
+    public OffsetDateTime pinnedAt;
+
     @Column(name = "request_id", nullable = false)
     public UUID requestId;
 

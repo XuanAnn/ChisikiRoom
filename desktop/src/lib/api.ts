@@ -19,6 +19,17 @@ export type RoomCall = {
   participants: { id: string; displayName: string; camera: boolean }[];
 };
 export type ChatMessage = {
+  revision?: number;
+  editedAt?: string | null;
+  deletedAt?: string | null;
+  pinnedAt?: string | null;
+  reply?: {
+    id: number;
+    displayName: string;
+    content: string;
+    deleted: boolean;
+    revision?: number;
+  } | null;
   id: number;
   roomId: string;
   senderId: string;
@@ -179,4 +190,12 @@ export type RankedHistory = {
   before: number | null;
   after: number | null;
   createdAt: string;
+};
+
+export type ChatState = {
+  roomId: string;
+  draft: string;
+  draftVersion: number;
+  lastReadId: number;
+  unreadCount: number;
 };

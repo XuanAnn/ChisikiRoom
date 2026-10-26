@@ -20,7 +20,7 @@ public class ReactionRepository {
             ReactionEntity.class,
             """
             select reaction from ReactionEntity reaction, MessageEntity message
-            where message.id = reaction.messageId and message.roomId = :room
+            where message.id = reaction.messageId and message.roomId = :room and message.deletedAt is null
             order by message.id desc
             """,
             5000,
@@ -32,7 +32,7 @@ public class ReactionRepository {
     public boolean messageBelongsToRoom(long messageId, UUID roomId) {
         return persistence
             .find(MessageEntity.class, messageId)
-            .filter(message -> message.roomId.equals(roomId))
+            .filter(message -> message.roomId.equals(roomId) && message.deletedAt == null)
             .isPresent();
     }
 

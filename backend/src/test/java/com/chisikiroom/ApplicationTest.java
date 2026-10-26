@@ -1071,6 +1071,290 @@ class ApplicationTest {
         }
     }
 
+    @Test
+    void messageActionsKeepOwnershipQuotesAndDeletionConsistent() throws Exception {
+        var owner = account();
+        var guest = account();
+        var outsider = account();
+        String room = room(owner, false);
+        call("POST", "/api/chat-rooms/" + room + "/join", guest.token(), null, 200);
+        String base = "/api/chat-rooms/" + room;
+        var original = call(
+            "POST",
+            base + "/messages",
+            owner.token(),
+            Map.of("content", "Original secret", "requestId", UUID.randomUUID()),
+            200
+        );
+        long messageId = original.path("id").asLong();
+        UUID replyRequest = UUID.randomUUID();
+        var reply = call(
+            "POST",
+            base + "/messages",
+            guest.token(),
+            Map.of("content", "Reply", "requestId", replyRequest, "replyToId", messageId),
+            200
+        );
+        assertEquals("Original secret", reply.path("reply").path("content").asText());
+        call(
+            "POST",
+            base + "/messages",
+            guest.token(),
+            Map.of("content", "Reply", "requestId", replyRequest),
+            409
+        );
+        String otherRoom = room(owner, true);
+        call(
+            "POST",
+            "/api/chat-rooms/" + otherRoom + "/messages",
+            owner.token(),
+            Map.of("content", "Cross room", "requestId", UUID.randomUUID(), "replyToId", messageId),
+            404
+        );
+        call(
+            "PUT",
+            base + "/messages/" + messageId,
+            guest.token(),
+            Map.of("content", "Hijack"),
+            403
+        );
+        call("DELETE", base + "/messages/" + messageId, guest.token(), null, 403);
+        call(
+            "PUT",
+            base + "/messages/" + messageId,
+            outsider.token(),
+            Map.of("content", "Hijack"),
+            403
+        );
+        call(
+            "PUT",
+            base + "/messages/" + messageId,
+            owner.token(),
+            Map.of("content", "Edited text"),
+            200
+        );
+        var history = call("GET", base + "/messages", guest.token(), null, 200);
+        assertEquals("Edited text", history.get(1).path("reply").path("content").asText());
+        call(
+            "PUT",
+            base + "/messages/" + messageId + "/pin",
+            guest.token(),
+            Map.of("pinned", true),
+            403
+        );
+        call(
+            "PUT",
+            base + "/messages/" + messageId + "/pin",
+            owner.token(),
+            Map.of("pinned", true),
+            200
+        );
+        assertEquals(1, call("GET", base + "/pinned", guest.token(), null, 200).size());
+        call("GET", base + "/pinned", outsider.token(), null, 403);
+        var deleted = call("DELETE", base + "/messages/" + messageId, owner.token(), null, 200);
+        assertFalse(deleted.path("deletedAt").isNull());
+        assertEquals("", deleted.path("content").asText());
+        assertEquals(
+            deleted,
+            call("DELETE", base + "/messages/" + messageId, owner.token(), null, 200)
+        );
+        call(
+            "PUT",
+            base + "/messages/" + messageId,
+            owner.token(),
+            Map.of("content", "Restore"),
+            409
+        );
+        call(
+            "PUT",
+            base + "/messages/" + messageId + "/pin",
+            owner.token(),
+            Map.of("pinned", true),
+            409
+        );
+        call(
+            "POST",
+            base + "/messages",
+            guest.token(),
+            Map.of(
+                "content",
+                "Reply deleted",
+                "requestId",
+                UUID.randomUUID(),
+                "replyToId",
+                messageId
+            ),
+            409
+        );
+        assertEquals(0, call("GET", base + "/pinned", guest.token(), null, 200).size());
+        var after = call("GET", base + "/messages", guest.token(), null, 200);
+        assertTrue(after.get(1).path("reply").path("deleted").asBoolean());
+        assertEquals("", after.get(1).path("reply").path("content").asText());
+        assertEquals(
+            0,
+            call("GET", base + "/messages/search?q=Edited", guest.token(), null, 200).size()
+        );
+    }
+
+    @Test
+    void pinnedMessageLimitIsEnforcedAndUnpinFreesASeat() throws Exception {
+        var owner = account();
+        String base = "/api/chat-rooms/" + room(owner, true);
+        List<Long> messages = new ArrayList<>();
+        for (int index = 0; index < 6; index++) {
+            long id = call(
+                "POST",
+                base + "/messages",
+                owner.token(),
+                Map.of("content", "Pin " + index, "requestId", UUID.randomUUID()),
+                200
+            )
+                .path("id")
+                .asLong();
+            messages.add(id);
+            call(
+                "PUT",
+                base + "/messages/" + id + "/pin",
+                owner.token(),
+                Map.of("pinned", true),
+                index < 5 ? 200 : 409
+            );
+        }
+        call(
+            "PUT",
+            base + "/messages/" + messages.getFirst() + "/pin",
+            owner.token(),
+            Map.of("pinned", false),
+            200
+        );
+        call(
+            "PUT",
+            base + "/messages/" + messages.getLast() + "/pin",
+            owner.token(),
+            Map.of("pinned", true),
+            200
+        );
+        assertEquals(5, call("GET", base + "/pinned", owner.token(), null, 200).size());
+    }
+
+    @Test
+    void chatStatePersistsDraftsRejectsStaleWritesAndTracksReadMonotonically() throws Exception {
+        var owner = account();
+        var guest = account();
+        var outsider = account();
+        String room = room(owner, false);
+        call("POST", "/api/chat-rooms/" + room + "/join", guest.token(), null, 200);
+        String base = "/api/chat-rooms/" + room;
+        long first = call(
+            "POST",
+            base + "/messages",
+            owner.token(),
+            Map.of("content", "One", "requestId", UUID.randomUUID()),
+            200
+        )
+            .path("id")
+            .asLong();
+        long second = call(
+            "POST",
+            base + "/messages",
+            owner.token(),
+            Map.of("content", "Two", "requestId", UUID.randomUUID()),
+            200
+        )
+            .path("id")
+            .asLong();
+        var initial = call("GET", "/api/chat-rooms/state", guest.token(), null, 200).get(0);
+        assertEquals(2, initial.path("unreadCount").asInt());
+        var saved = call(
+            "PUT",
+            base + "/state/draft",
+            guest.token(),
+            Map.of("content", "Draft on first device", "version", 0),
+            200
+        );
+        assertEquals(1, saved.path("draftVersion").asInt());
+        call(
+            "PUT",
+            base + "/state/draft",
+            guest.token(),
+            Map.of("content", "Stale other device", "version", 0),
+            409
+        );
+        var restored = call("GET", "/api/chat-rooms/state", guest.token(), null, 200).get(0);
+        assertEquals("Draft on first device", restored.path("draft").asText());
+        assertEquals(
+            "",
+            call("GET", "/api/chat-rooms/state", owner.token(), null, 200)
+                .get(0)
+                .path("draft")
+                .asText()
+        );
+        call(
+            "PUT",
+            base + "/state/draft",
+            outsider.token(),
+            Map.of("content", "Intrusion", "version", 0),
+            403
+        );
+        call("PUT", base + "/state/read", outsider.token(), Map.of("lastReadId", second), 403);
+        assertEquals(
+            1,
+            call("PUT", base + "/state/read", guest.token(), Map.of("lastReadId", first), 200)
+                .path("unreadCount")
+                .asInt()
+        );
+        assertEquals(
+            first,
+            call("PUT", base + "/state/read", guest.token(), Map.of("lastReadId", 0), 200)
+                .path("lastReadId")
+                .asLong()
+        );
+        call("PUT", base + "/state/read", guest.token(), Map.of("lastReadId", second), 200);
+        assertEquals(
+            0,
+            call("GET", "/api/chat-rooms/state", guest.token(), null, 200)
+                .get(0)
+                .path("unreadCount")
+                .asInt()
+        );
+        String other = room(owner, true);
+        long foreignId = call(
+            "POST",
+            "/api/chat-rooms/" + other + "/messages",
+            owner.token(),
+            Map.of("content", "Other room", "requestId", UUID.randomUUID()),
+            200
+        )
+            .path("id")
+            .asLong();
+        call("PUT", base + "/state/read", guest.token(), Map.of("lastReadId", foreignId), 400);
+        long unread = call(
+            "POST",
+            base + "/messages",
+            owner.token(),
+            Map.of("content", "Delete unread", "requestId", UUID.randomUUID()),
+            200
+        )
+            .path("id")
+            .asLong();
+        assertEquals(
+            1,
+            call("GET", "/api/chat-rooms/state", guest.token(), null, 200)
+                .get(0)
+                .path("unreadCount")
+                .asInt()
+        );
+        call("DELETE", base + "/messages/" + unread, owner.token(), null, 200);
+        assertEquals(
+            0,
+            call("GET", "/api/chat-rooms/state", guest.token(), null, 200)
+                .get(0)
+                .path("unreadCount")
+                .asInt()
+        );
+        call("GET", "/api/chat-rooms/state", null, null, 401);
+    }
+
     record Match(Account a, Account b, UUID id, UUID quiz) {}
 
     Match match() throws Exception {

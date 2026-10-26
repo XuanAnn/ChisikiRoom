@@ -95,6 +95,7 @@ function route(action, body) {
     me: ['GET', '/api/auth/me'],
     logout: ['POST', '/api/auth/logout'],
     rooms: ['GET', '/api/chat-rooms'],
+    chatStates: ['GET', '/api/chat-rooms/state'],
     groupInvitations: ['GET', '/api/group-invitations'],
     createRoom: ['POST', '/api/chat-rooms'],
     quizzes: ['GET', '/api/question-sets'],
@@ -149,6 +150,9 @@ function route(action, body) {
     leaveRoom: ['POST', `/api/chat-rooms/${id}/leave`],
     inviteMember: ['POST', `/api/chat-rooms/${id}/invite`],
     members: ['GET', `/api/chat-rooms/${id}/members`],
+    saveDraft: ['PUT', `/api/chat-rooms/${id}/state/draft`],
+    markRead: ['PUT', `/api/chat-rooms/${id}/state/read`],
+    pinnedMessages: ['GET', `/api/chat-rooms/${id}/pinned`],
     messages: [
       'GET',
       `/api/chat-rooms/${id}/messages${body.before && /^\d+$/.test(String(body.before)) ? '?before=' + body.before : ''}`,
@@ -181,6 +185,18 @@ function route(action, body) {
     callSignal: ['POST', `/api/calls/${id}/signal`],
     callIce: ['GET', `/api/calls/${id}/ice-servers`],
   });
+  if (['editMessage', 'deleteMessage', 'pinMessage'].includes(action)) {
+    if (!Number.isSafeInteger(body.messageId) || body.messageId <= 0) {
+      throw new Error('ID tin nhắn không hợp lệ');
+    }
+    if (action === 'editMessage') {
+      return ['PUT', `/api/chat-rooms/${id}/messages/${body.messageId}`];
+    }
+    if (action === 'deleteMessage') {
+      return ['DELETE', `/api/chat-rooms/${id}/messages/${body.messageId}`];
+    }
+    return ['PUT', `/api/chat-rooms/${id}/messages/${body.messageId}/pin`];
+  }
   dynamic.reactions = ['GET', `/api/chat-rooms/${id}/reactions`];
   if (action === 'toggleReaction' && Number.isSafeInteger(body.messageId) && body.messageId > 0) {
     return ['POST', `/api/chat-rooms/${id}/messages/${body.messageId}/reactions`];
@@ -576,7 +592,10 @@ function openWindow(kind = 'main', id) {
         buttons: ['Tiếp tục chỉnh sửa', 'Bỏ thay đổi'],
         defaultId: 0,
         cancelId: 0,
-        message: 'Bộ câu hỏi chưa được lưu. Bạn muốn đóng cửa sổ?',
+        message:
+          kind === 'quiz'
+            ? 'Bộ câu hỏi chưa được lưu. Bạn muốn đóng cửa sổ?'
+            : 'Bản nháp chưa lưu lên máy chủ. Bạn muốn đóng cửa sổ và bỏ thay đổi?',
       }) === 0
     ) {
       event.preventDefault();

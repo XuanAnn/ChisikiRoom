@@ -34,6 +34,14 @@ public class ChatService {
 
     public record Member(UUID id, String displayName) {}
 
+    public record Reply(
+        long id,
+        String displayName,
+        String content,
+        boolean deleted,
+        long revision
+    ) {}
+
     public record ChatMessage(
         long id,
         UUID roomId,
@@ -41,7 +49,12 @@ public class ChatService {
         String displayName,
         String content,
         UUID requestId,
-        OffsetDateTime createdAt
+        OffsetDateTime createdAt,
+        OffsetDateTime editedAt,
+        OffsetDateTime deletedAt,
+        OffsetDateTime pinnedAt,
+        Reply reply,
+        long revision
     ) {}
 
     public List<Room> rooms(UUID user) {
@@ -303,8 +316,31 @@ public class ChatService {
             repository.findUser(messageEntity.senderId).orElseThrow().displayName,
             messageEntity.content,
             messageEntity.requestId,
-            messageEntity.createdAt
+            messageEntity.createdAt,
+            messageEntity.editedAt,
+            messageEntity.deletedAt,
+            messageEntity.pinnedAt,
+            messageEntity.deletedAt == null ? reply(messageEntity) : null,
+            messageEntity.revision
         );
+    }
+
+    private Reply reply(MessageEntity message) {
+        if (message.replyToId == null) {
+            return null;
+        }
+        return repository
+            .findMessage(message.replyToId, message.roomId)
+            .map(parent ->
+                new Reply(
+                    parent.id,
+                    repository.findUser(parent.senderId).orElseThrow().displayName,
+                    parent.deletedAt == null ? parent.content : "",
+                    parent.deletedAt != null,
+                    parent.revision
+                )
+            )
+            .orElse(null);
     }
 
     public List<ChatMessage> history(UUID room, UUID user, long before) {
@@ -318,11 +354,20 @@ public class ChatService {
 
     @Transactional
     public ChatMessage post(UUID room, UUID user, String content, UUID requestId) {
+        return post(room, user, content, requestId, null);
+    }
+
+    @Transactional
+    public ChatMessage post(UUID room, UUID user, String content, UUID requestId, Long replyToId) {
         lockRoom(room, user);
         requireMember(room, user);
         var prior = repository.findMessageByRequest(user, requestId);
         if (prior.isPresent()) {
-            if (!prior.get().roomId.equals(room) || !prior.get().content.equals(content.strip())) {
+            if (
+                !prior.get().roomId.equals(room) ||
+                !prior.get().content.equals(content.strip()) ||
+                !Objects.equals(prior.get().replyToId, replyToId)
+            ) {
                 throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
                     "Request ID đã được sử dụng"
@@ -330,7 +375,24 @@ public class ChatService {
             }
             return message(prior.get());
         }
+        if (replyToId != null) {
+            MessageEntity parent = repository
+                .findMessage(replyToId, room)
+                .orElseThrow(() ->
+                    new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Không tìm thấy tin được trả lời"
+                    )
+                );
+            if (parent.deletedAt != null) {
+                throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "Tin được trả lời đã bị xóa"
+                );
+            }
+        }
         var messageEntity = new MessageEntity();
+        messageEntity.replyToId = replyToId;
         messageEntity.roomId = room;
         messageEntity.senderId = user;
         messageEntity.content = content.strip();
@@ -340,6 +402,151 @@ public class ChatService {
         var result = message(messageEntity);
         events.send(memberIds(room), "MESSAGE_CREATED", result);
         return result;
+    }
+
+    private MessageEntity editable(UUID room, UUID user, long id) {
+        lockRoom(room, user);
+        requireMember(room, user);
+        MessageEntity message = repository
+            .findMessage(id, room)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        if (!message.senderId.equals(user)) {
+            throw new ResponseStatusException(
+                HttpStatus.FORBIDDEN,
+                "Chỉ được sửa hoặc xóa tin của mình"
+            );
+        }
+        return message;
+    }
+
+    @Transactional
+    public ChatMessage edit(UUID room, UUID user, long id, String content) {
+        MessageEntity message = editable(room, user, id);
+        if (message.deletedAt != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Tin nhắn đã bị xóa");
+        }
+        if (content == null || content.isBlank() || content.strip().length() > 4000) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        if (!message.content.equals(content.strip())) {
+            message.content = content.strip();
+            message.revision++;
+            message.editedAt = OffsetDateTime.now().truncatedTo(
+                java.time.temporal.ChronoUnit.MICROS
+            );
+            events.send(memberIds(room), "MESSAGE_CHANGED", message(message));
+        }
+        return message(message);
+    }
+
+    @Transactional
+    public ChatMessage delete(UUID room, UUID user, long id) {
+        MessageEntity message = editable(room, user, id);
+        if (message.deletedAt == null) {
+            message.content = "";
+            message.revision++;
+            message.deletedAt = OffsetDateTime.now().truncatedTo(
+                java.time.temporal.ChronoUnit.MICROS
+            );
+            message.pinnedAt = null;
+            events.send(memberIds(room), "MESSAGE_CHANGED", message(message));
+        }
+        return message(message);
+    }
+
+    public List<ChatMessage> pinned(UUID room, UUID user) {
+        requireMember(room, user);
+        return repository.pinned(room).stream().map(this::message).toList();
+    }
+
+    @Transactional
+    public ChatMessage pin(UUID room, UUID user, long id, boolean pinned) {
+        Room target = lockRoom(room, user);
+        requireMember(room, user);
+        if (!target.kind().equals("DIRECT") && !target.ownerId().equals(user)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Chỉ chủ nhóm được ghim tin");
+        }
+        MessageEntity message = repository
+            .findMessage(id, room)
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        if (message.deletedAt != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Không thể ghim tin đã xóa");
+        }
+        if (pinned == (message.pinnedAt != null)) {
+            return message(message);
+        }
+        message.revision++;
+        if (pinned && message.pinnedAt == null && repository.pinned(room).size() >= 5) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Mỗi phòng tối đa 5 tin ghim");
+        }
+        if (pinned && message.pinnedAt == null) {
+            message.pinnedAt = OffsetDateTime.now().truncatedTo(
+                java.time.temporal.ChronoUnit.MICROS
+            );
+        }
+        if (!pinned) {
+            message.pinnedAt = null;
+        }
+        events.send(memberIds(room), "MESSAGE_CHANGED", message(message));
+        return message(message);
+    }
+
+    public record State(
+        UUID roomId,
+        String draft,
+        long draftVersion,
+        long lastReadId,
+        long unreadCount
+    ) {}
+
+    private State state(RoomMemberEntity member) {
+        return new State(
+            member.roomId,
+            member.draft,
+            member.draftVersion,
+            member.lastReadId,
+            repository.unread(member.roomId, member.userId, member.lastReadId)
+        );
+    }
+
+    public List<State> states(UUID user) {
+        return repository.memberships(user).stream().map(this::state).toList();
+    }
+
+    @Transactional
+    public State saveDraft(UUID room, UUID user, String content, long expectedVersion) {
+        lockRoom(room, user);
+        requireMember(room, user);
+        RoomMemberEntity member = repository.findMembership(room, user).orElseThrow();
+        if (member.draftVersion != expectedVersion) {
+            throw new ResponseStatusException(
+                HttpStatus.CONFLICT,
+                "DRAFT_CONFLICT: Bản nháp đã thay đổi trên máy khác"
+            );
+        }
+        if (content == null || content.length() > 4000) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        if (!member.draft.equals(content)) {
+            member.draft = content;
+            member.draftVersion++;
+        }
+        return state(member);
+    }
+
+    @Transactional
+    public State markRead(UUID room, UUID user, long lastReadId) {
+        lockRoom(room, user);
+        requireMember(room, user);
+        if (lastReadId > 0 && repository.findMessage(lastReadId, room).isEmpty()) {
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "Tin nhắn không thuộc phòng này"
+            );
+        }
+        RoomMemberEntity member = repository.findMembership(room, user).orElseThrow();
+        member.lastReadId = Math.max(member.lastReadId, lastReadId);
+        return state(member);
     }
 
     public List<ChatMessage> search(UUID roomId, UUID userId, String query, long beforeMessageId) {

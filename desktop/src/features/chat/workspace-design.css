@@ -1331,3 +1331,64 @@
   color: #a2acc4;
   font-size: 13px;
 }
+
+.message-quote {
+  margin: 4px 0 10px;
+  padding: 8px 12px;
+  border-left: 3px solid #b5a1ef;
+  background: #1115;
+  border-radius: 6px;
+}
+.message-quote strong,
+.message-quote span {
+  display: block;
+}
+.message-quote span {
+  max-height: 60px;
+  overflow: hidden;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+}
+.message-deleted,
+.message-edited {
+  color: #a2a8bd;
+  font-style: italic;
+}
+.message-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+}
+.pinned-banner {
+  align-self: stretch;
+  margin: 8px 18px;
+  flex-shrink: 0;
+}
+.pinned-message {
+  border-bottom: 1px solid #3b435b;
+  padding: 15px 0;
+}
+.pinned-message p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.reply-composer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 24px;
+  border-top: 1px solid #3f3b55;
+  background: #282338;
+}
+.reply-composer > div {
+  flex: 1;
+  min-width: 0;
+}
+.reply-composer span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #aeb5cc;
+}

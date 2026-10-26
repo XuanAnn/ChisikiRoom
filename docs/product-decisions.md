@@ -24,3 +24,5 @@ Ngày 26/10/2026, người dùng yêu cầu bổ sung chức năng chính và b�
 Ngày 26/10/2026, người dùng đồng ý tiếp tục ranking toàn hệ thống theo phương án N5/N4, tự ghép 1–1. Bản 0.7.0 triển khai bản đầu Glicko-2/mùa/phân hạng; giới hạn chống lặp và thời gian lobby/hàng chờ là mặc định triển khai, mô tả trong RANKING.md.
 
 Cùng đợt, người dùng yêu cầu người được mời vào nhóm phải chấp nhận mới vào. Yêu cầu này thay thế hành vi mời là thêm trực tiếp trước đây. Bản 0.7.0 lưu lời mời chờ, cho chấp nhận/từ chối và chỉ thêm membership sau khi chấp nhận.
+
+Ngày 26/10/2026, tiếp tục lộ trình chat nâng cao trong 0.8.0. Mặc định triển khai: mỗi người sửa/xóa tin của mình; chủ nhóm ghim, hai bên chat riêng đều được ghim; giới hạn năm tin ghim. Bản nháp văn bản và mốc đọc lưu server, lựa chọn reply đang soạn chỉ giữ trong phiên.

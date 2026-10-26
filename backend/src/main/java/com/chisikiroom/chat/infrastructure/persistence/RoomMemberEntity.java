@@ -18,6 +18,15 @@ public class RoomMemberEntity {
     @Column(name = "user_id", nullable = false)
     public UUID userId;
 
+    @Column(name = "last_read_id", nullable = false)
+    public Long lastReadId = 0L;
+
+    @Column(nullable = false, columnDefinition = "text")
+    public String draft = "";
+
+    @Column(name = "draft_version", nullable = false)
+    public Long draftVersion = 0L;
+
     @Column(name = "joined_at", nullable = false)
     public OffsetDateTime joinedAt = OffsetDateTime.now();
 

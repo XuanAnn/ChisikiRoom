@@ -21,7 +21,11 @@ public class ChatController {
 
     public record Create(@NotBlank @Size(max = 80) String name, boolean privateRoom) {}
 
-    public record Send(@NotBlank @Size(max = 4000) String content, @NotNull UUID requestId) {}
+    public record Send(
+        @NotBlank @Size(max = 4000) String content,
+        @NotNull UUID requestId,
+        @Positive Long replyToId
+    ) {}
 
     public record Invite(@NotNull UUID userId) {}
 
@@ -79,7 +83,81 @@ public class ChatController {
         @PathVariable UUID id,
         @Valid @RequestBody Send input
     ) {
-        return chat.post(id, CurrentUser.id(auth), input.content(), input.requestId());
+        return chat.post(
+            id,
+            CurrentUser.id(auth),
+            input.content(),
+            input.requestId(),
+            input.replyToId()
+        );
+    }
+
+    public record DraftInput(
+        @NotNull @Size(max = 4000) String content,
+        @NotNull @PositiveOrZero Long version
+    ) {}
+
+    public record ReadInput(@NotNull @PositiveOrZero Long lastReadId) {}
+
+    @GetMapping("/state")
+    public List<ChatService.State> states(Authentication auth) {
+        return chat.states(CurrentUser.id(auth));
+    }
+
+    @PutMapping("/{id}/state/draft")
+    public ChatService.State draft(
+        Authentication auth,
+        @PathVariable UUID id,
+        @Valid @RequestBody DraftInput input
+    ) {
+        return chat.saveDraft(id, CurrentUser.id(auth), input.content(), input.version());
+    }
+
+    @PutMapping("/{id}/state/read")
+    public ChatService.State read(
+        Authentication auth,
+        @PathVariable UUID id,
+        @Valid @RequestBody ReadInput input
+    ) {
+        return chat.markRead(id, CurrentUser.id(auth), input.lastReadId());
+    }
+
+    public record EditInput(@NotBlank @Size(max = 4000) String content) {}
+
+    public record PinInput(@NotNull Boolean pinned) {}
+
+    @PutMapping("/{id}/messages/{messageId}")
+    public ChatService.ChatMessage edit(
+        Authentication auth,
+        @PathVariable UUID id,
+        @PathVariable long messageId,
+        @Valid @RequestBody EditInput input
+    ) {
+        return chat.edit(id, CurrentUser.id(auth), messageId, input.content());
+    }
+
+    @DeleteMapping("/{id}/messages/{messageId}")
+    public ChatService.ChatMessage delete(
+        Authentication auth,
+        @PathVariable UUID id,
+        @PathVariable long messageId
+    ) {
+        return chat.delete(id, CurrentUser.id(auth), messageId);
+    }
+
+    @PutMapping("/{id}/messages/{messageId}/pin")
+    public ChatService.ChatMessage pin(
+        Authentication auth,
+        @PathVariable UUID id,
+        @PathVariable long messageId,
+        @Valid @RequestBody PinInput input
+    ) {
+        return chat.pin(id, CurrentUser.id(auth), messageId, input.pinned());
+    }
+
+    @GetMapping("/{id}/pinned")
+    public List<ChatService.ChatMessage> pinned(Authentication auth, @PathVariable UUID id) {
+        return chat.pinned(id, CurrentUser.id(auth));
     }
 
     @GetMapping("/{id}/messages/search")

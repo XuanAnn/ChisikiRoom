@@ -1,7 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button } from 'antd';
-import { ArrowDownOutlined, MessageOutlined } from '@ant-design/icons';
-import { type ChatMessage, type Room } from '../../lib/api';
+import { Alert, Button, Dropdown, Input, Modal } from 'antd';
+import {
+  ArrowDownOutlined,
+  MessageOutlined,
+  MoreOutlined,
+  PushpinOutlined,
+} from '@ant-design/icons';
+import { request, errorMessage, type ChatMessage, type Room } from '../../lib/api';
 import { UserAvatar } from '../../components/UserAvatar';
 import { ReactionBar, useRoomReactions } from './Reactions';
 
@@ -14,6 +19,8 @@ export function MessageTimeline({
   busy,
   onLoadMore,
   reactions,
+  onReply,
+  onChanged,
 }: {
   room: Room;
   messages: ChatMessage[];
@@ -22,7 +29,63 @@ export function MessageTimeline({
   busy: boolean;
   onLoadMore: () => void;
   reactions: Reactions;
+  onReply: (message: ChatMessage) => void;
+  onChanged: (message: ChatMessage) => void;
 }) {
+  const [editing, setEditing] = useState<ChatMessage | null>(null);
+  const [editText, setEditText] = useState('');
+  const [deleting, setDeleting] = useState<ChatMessage | null>(null);
+  const [actionBusy, setActionBusy] = useState(false);
+  const [error, setError] = useState('');
+  const [pins, setPins] = useState<ChatMessage[]>([]);
+  const [pinsOpen, setPinsOpen] = useState(false);
+  const canPin = room.kind === 'DIRECT' || room.ownerId === userId;
+  useEffect(() => {
+    let current = true;
+    async function refreshPins() {
+      try {
+        const rows = await request<ChatMessage[]>('pinnedMessages', { id: room.id });
+        if (current) {
+          setPins(rows);
+        }
+      } catch (exception) {
+        if (current) {
+          setError(errorMessage(exception));
+        }
+      }
+    }
+    void refreshPins();
+    const timer = window.setInterval(refreshPins, 15000);
+    const unsubscribe = window.chisiki?.onEvent((event) => {
+      if (event.type === 'MESSAGE_CHANGED' && event.data.roomId === room.id) {
+        void refreshPins();
+      }
+    });
+    return () => {
+      current = false;
+      window.clearInterval(timer);
+      unsubscribe?.();
+    };
+  }, [room.id]);
+  async function mutate(action: string, message: ChatMessage, extra: Record<string, unknown> = {}) {
+    setActionBusy(true);
+    setError('');
+    try {
+      const updated = await request<ChatMessage>(action, {
+        id: room.id,
+        messageId: message.id,
+        ...extra,
+      });
+      onChanged(updated);
+      setEditing(null);
+      setDeleting(null);
+      setPins(await request<ChatMessage[]>('pinnedMessages', { id: room.id }));
+    } catch (exception) {
+      setError(errorMessage(exception));
+    } finally {
+      setActionBusy(false);
+    }
+  }
   const container = useRef<HTMLDivElement>(null);
   const bottom = useRef<HTMLDivElement>(null);
   const follow = useRef(true);
@@ -41,6 +104,75 @@ export function MessageTimeline({
   }
   return (
     <div className="timeline-container">
+      {error && <Alert type="error" message={error} closable onClose={() => setError('')} />}
+      {pins.length > 0 && (
+        <Button
+          className="pinned-banner"
+          icon={<PushpinOutlined />}
+          onClick={() => setPinsOpen(true)}
+        >
+          Tin ghim ({pins.length})
+        </Button>
+      )}
+      <Modal
+        title="Tin nhắn đã ghim"
+        open={pinsOpen}
+        footer={null}
+        onCancel={() => setPinsOpen(false)}
+      >
+        {pins.map((message) => (
+          <section className="pinned-message" key={message.id}>
+            <strong>{message.displayName}</strong>
+            <p>{message.content}</p>
+            {canPin && (
+              <Button
+                disabled={actionBusy}
+                onClick={() => void mutate('pinMessage', message, { pinned: false })}
+              >
+                Bỏ ghim
+              </Button>
+            )}
+          </section>
+        ))}
+      </Modal>
+      <Modal
+        title="Sửa tin nhắn"
+        open={editing !== null}
+        confirmLoading={actionBusy}
+        okText="Lưu thay đổi"
+        cancelText="Hủy"
+        okButtonProps={{ disabled: !editText.trim() }}
+        onCancel={() => setEditing(null)}
+        onOk={() => {
+          if (editing) {
+            void mutate('editMessage', editing, { content: editText });
+          }
+        }}
+      >
+        <Input.TextArea
+          aria-label="Nội dung chỉnh sửa"
+          value={editText}
+          maxLength={4000}
+          autoSize={{ minRows: 3, maxRows: 8 }}
+          onChange={(event) => setEditText(event.target.value)}
+        />
+      </Modal>
+      <Modal
+        title="Xóa tin nhắn?"
+        open={deleting !== null}
+        confirmLoading={actionBusy}
+        okText="Xóa tin nhắn"
+        cancelText="Giữ lại"
+        okButtonProps={{ danger: true }}
+        onCancel={() => setDeleting(null)}
+        onOk={() => {
+          if (deleting) {
+            void mutate('deleteMessage', deleting);
+          }
+        }}
+      >
+        <p>Nội dung sẽ được thay bằng dấu tin nhắn đã xóa, kể cả trong trích dẫn.</p>
+      </Modal>
       <div
         className="message-list"
         ref={container}
@@ -83,7 +215,10 @@ export function MessageTimeline({
                   <span>{date}</span>
                 </div>
               )}
-              <article className={ownMessage ? 'message message-mine' : 'message'}>
+              <article
+                data-message-id={message.id}
+                className={ownMessage ? 'message message-mine' : 'message'}
+              >
                 <UserAvatar id={message.senderId} name={message.displayName} />
                 <div className="message-content">
                   <div className="message-meta">
@@ -95,13 +230,78 @@ export function MessageTimeline({
                       })}
                     </time>
                   </div>
-                  <p>{message.content}</p>
-                  <ReactionBar
-                    rows={reactions.rows}
-                    messageId={message.id}
-                    userId={userId}
-                    onToggle={reactions.toggle}
-                  />
+                  {message.reply && (
+                    <blockquote className="message-quote">
+                      <strong>{message.reply.displayName}</strong>
+                      <span>
+                        {message.reply.deleted ? 'Tin nhắn đã xóa' : message.reply.content}
+                      </span>
+                    </blockquote>
+                  )}
+                  <p className={message.deletedAt ? 'message-deleted' : undefined}>
+                    {message.deletedAt ? 'Tin nhắn đã xóa' : message.content}
+                  </p>
+                  {message.editedAt && !message.deletedAt && (
+                    <small className="message-edited">Đã chỉnh sửa</small>
+                  )}
+                  {!message.deletedAt && (
+                    <div className="message-actions">
+                      <Button
+                        type="text"
+                        size="small"
+                        aria-label="Trả lời tin nhắn"
+                        onClick={() => onReply(message)}
+                      >
+                        Trả lời
+                      </Button>
+                      <Dropdown
+                        trigger={['click']}
+                        menu={{
+                          items: [
+                            ...(ownMessage
+                              ? [
+                                  { key: 'edit', label: 'Sửa tin nhắn' },
+                                  { key: 'delete', label: 'Xóa tin nhắn', danger: true },
+                                ]
+                              : []),
+                            ...(canPin
+                              ? [
+                                  {
+                                    key: 'pin',
+                                    label: message.pinnedAt ? 'Bỏ ghim' : 'Ghim tin nhắn',
+                                  },
+                                ]
+                              : []),
+                          ],
+                          onClick: ({ key }) => {
+                            if (key === 'edit') {
+                              setEditText(message.content);
+                              setEditing(message);
+                            } else if (key === 'delete') {
+                              setDeleting(message);
+                            } else if (key === 'pin') {
+                              void mutate('pinMessage', message, { pinned: !message.pinnedAt });
+                            }
+                          },
+                        }}
+                      >
+                        <Button
+                          type="text"
+                          size="small"
+                          aria-label="Thao tác tin nhắn"
+                          icon={<MoreOutlined />}
+                        />
+                      </Dropdown>
+                    </div>
+                  )}
+                  {!message.deletedAt && (
+                    <ReactionBar
+                      rows={reactions.rows}
+                      messageId={message.id}
+                      userId={userId}
+                      onToggle={reactions.toggle}
+                    />
+                  )}
                 </div>
               </article>
             </div>

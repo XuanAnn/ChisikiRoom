@@ -75,6 +75,30 @@ public class ChatRepository {
             .toList();
     }
 
+    public List<RoomMemberEntity> memberships(UUID userId) {
+        return persistence.list(
+            RoomMemberEntity.class,
+            "from RoomMemberEntity m where m.userId=:user",
+            "user",
+            userId
+        );
+    }
+
+    public long unread(UUID roomId, UUID userId, long afterId) {
+        return persistence
+            .one(
+                Long.class,
+                "select count(m) from MessageEntity m where m.roomId=:room and m.senderId<>:user and m.deletedAt is null and m.id>:after",
+                "room",
+                roomId,
+                "user",
+                userId,
+                "after",
+                afterId
+            )
+            .orElse(0L);
+    }
+
     public Optional<RoomMemberEntity> findMembership(UUID roomId, UUID userId) {
         return persistence.find(RoomMemberEntity.class, new RoomMemberEntity.Key(roomId, userId));
     }
@@ -186,6 +210,26 @@ public class ChatRepository {
         );
     }
 
+    public Optional<MessageEntity> findMessage(long messageId, UUID roomId) {
+        return persistence.one(
+            MessageEntity.class,
+            "from MessageEntity m where m.id=:id and m.roomId=:room",
+            "id",
+            messageId,
+            "room",
+            roomId
+        );
+    }
+
+    public List<MessageEntity> pinned(UUID roomId) {
+        return persistence.list(
+            MessageEntity.class,
+            "from MessageEntity m where m.roomId=:room and m.pinnedAt is not null and m.deletedAt is null order by m.pinnedAt desc,m.id desc",
+            "room",
+            roomId
+        );
+    }
+
     public void insertMessage(MessageEntity message) {
         persistence.insert(message);
     }
@@ -200,6 +244,7 @@ public class ChatRepository {
             """
             from MessageEntity message
             where message.roomId = :roomId and message.id < :before
+              and message.deletedAt is null
               and lower(message.content) like :query escape '!'
             order by message.id desc
             """,

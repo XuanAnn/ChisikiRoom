@@ -158,3 +158,14 @@ Lỗi video một chiều được khắc phục bằng cách để một peer t
 - Chưa nghiệm thu ranking/camera trên nhiều máy vật lý. Ngân hàng 40 câu là bản đầu, cần mở rộng để giảm học thuộc và đánh giá chất lượng ghép trận khi có đủ người chơi.
 
 - Bản đóng gói Windows 0.7.0: ranking.spec gồm hai luồng ranking/lời mời nhóm đạt trực tiếp trên release/win-unpacked/ChisikiRoom.exe (14,2 giây). Database thật V13 có đúng 20 câu ranking N5 và 20 câu N4.
+
+
+## 0.8.0 — chat nâng cao và trạng thái bền vững
+
+- 41 kiểm thử backend đạt: quyền sửa/xóa, cấm trích dẫn khác phòng/tin đã xóa, replay request phải cùng replyToId, cập nhật trích dẫn khi sửa/xóa, xóa bỏ ghim và loại nội dung khỏi tìm kiếm, giới hạn năm tin ghim, bản nháp riêng tài khoản với optimistic version, mốc đọc chỉ tăng và chỉ chấp nhận ID cùng phòng.
+- Năm kiểm thử desktop unit đạt: session cũ và hai bất biến mới (history đến trễ không khôi phục tin đã sửa/xóa; revision tin trả lời và tin được trích dẫn tiến độc lập).
+- Ba bài Electron chat-actions.spec, desktop.spec, sidebar.spec đạt (31,0 giây). Chat-actions kiểm tra hai người trả lời/ghim/sửa/xóa realtime, quote cập nhật, reload không lùi nội dung, lưu bản nháp, khởi động lại phục hồi, tin chưa đọc được giữ khi đóng app rồi đánh dấu đọc khi mở lại, xung đột giữ bản cục bộ theo lựa chọn người dùng. Đã xem ảnh chat-advanced-preview.png.
+- PostgreSQL integration đạt, gồm hai PUT bản nháp đồng thời với cùng version: đúng một thành công và một 409, không ghi đè giữa tài khoản.
+- Migration V14/V15/V16; database kiểm thử nâng V15 → V16 giữ dữ liệu. Build và format:check đạt. V1–V13 giữ nguyên.
+
+- Bản Windows đóng gói 0.8.0 chạy chat-actions.spec đạt (12,1 giây). Database thật đã nâng V16 và health UP.

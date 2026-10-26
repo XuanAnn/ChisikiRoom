@@ -1,6 +1,6 @@
 {
   "name": "chisikiroom-desktop",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "ChisikiRoom desktop chat, quizzes and realtime battles",
   "author": "ChisikiRoom",
   "private": true,
@@ -11,6 +11,7 @@
     "desktop": "electron .",
     "build": "tsc --noEmit && vite build",
     "test:e2e": "playwright test",
+    "test:unit": "node --test tests/*.test.cjs",
     "test:session": "node --test tests/session.test.cjs",
     "package:win": "npm run build && electron-builder --win portable --x64"
   },
