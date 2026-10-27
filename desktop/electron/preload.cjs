@@ -8,6 +8,7 @@ contextBridge.exposeInMainWorld('chisiki', {
   avatar: (userId) => ipcRenderer.invoke('avatar', userId),
   uploadAvatar: () => ipcRenderer.invoke('upload-avatar'),
   serverSettings: (value) => ipcRenderer.invoke('server-settings', value),
+  checkServer: (value) => ipcRenderer.invoke('server-check', value),
   uploadDocument: (roomId) => ipcRenderer.invoke('upload-document', roomId),
   downloadDocument: (id, filename) => ipcRenderer.invoke('download-document', id, filename),
   setDirty: (dirty) => ipcRenderer.send('dirty', Boolean(dirty)),

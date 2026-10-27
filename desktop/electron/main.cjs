@@ -4,6 +4,7 @@ const fs = require('node:fs/promises');
 const { Client } = require('@stomp/stompjs');
 const WebSocket = require('ws');
 const { sessionExpired } = require('./session.cjs');
+const { normalizeServerUrl, checkServerConnection } = require('./server-connection.cjs');
 const { createIncomingCalls } = require('./incoming-calls.cjs');
 let apiUrl = process.env.CHISIKI_API_URL || 'http://localhost:8080';
 let token;
@@ -415,6 +416,13 @@ ipcMain.handle('upload-avatar', async (event) => {
     return { error: 'Không tải được avatar lên' };
   }
 });
+ipcMain.handle('server-check', async (event, value) => {
+  if (!authorized(event) || token) {
+    return { error: 'Hãy đăng xuất trước khi kiểm tra máy chủ khác' };
+  }
+
+  return checkServerConnection(value);
+});
 ipcMain.handle('server-settings', async (event, value) => {
   if (!authorized(event)) {
     return { error: 'Yêu cầu không hợp lệ' };
@@ -426,26 +434,13 @@ ipcMain.handle('server-settings', async (event, value) => {
     return { error: 'Hãy đăng xuất trước khi đổi máy chủ' };
   }
   try {
-    if (typeof value !== 'string') {
-      throw new Error();
-    }
-    const parsed = new URL(value.trim());
-    if (
-      !['http:', 'https:'].includes(parsed.protocol) ||
-      parsed.username ||
-      parsed.password ||
-      parsed.pathname !== '/' ||
-      parsed.search ||
-      parsed.hash
-    ) {
-      throw new Error();
-    }
+    const serverUrl = normalizeServerUrl(value);
     await fs.mkdir(app.getPath('userData'), { recursive: true });
     await fs.writeFile(
       path.join(app.getPath('userData'), 'server.json'),
-      JSON.stringify({ apiUrl: parsed.origin }),
+      JSON.stringify({ apiUrl: serverUrl }),
     );
-    apiUrl = parsed.origin;
+    apiUrl = serverUrl;
     return { data: apiUrl };
   } catch {
     return { error: 'Nhập địa chỉ dạng http://IP-máy-chủ:8080 hoặc https://tên-miền' };

@@ -107,6 +107,10 @@ declare global {
       avatar(userId: string): Promise<string | null>;
       uploadAvatar(): Promise<{ data?: unknown; error?: string }>;
       serverSettings(value?: string): Promise<{ data?: string; error?: string }>;
+      checkServer(value: string): Promise<{
+        data?: { url: string; latencyMs: number };
+        error?: string;
+      }>;
       uploadDocument(roomId: string): Promise<{ data?: unknown; error?: string }>;
       downloadDocument(id: string, filename: string): Promise<{ data?: unknown; error?: string }>;
       setDirty(dirty: boolean): void;

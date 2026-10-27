@@ -52,6 +52,8 @@ Phát triển giao diện: chạy `npm run dev`; terminal khác đặt `$env:CHI
 
 Trước khi đăng nhập, nút **Máy chủ** cho phép lưu địa chỉ backend ngay trong ứng dụng. `CHISIKI_API_URL` nếu đặt sẽ được ưu tiên khi mở lại ứng dụng.
 
+Trong **Máy chủ**, chọn nhanh máy này hoặc máy chủ Internet `https://api.nguyenxuanan.id.vn`, hoặc nhập địa chỉ LAN riêng. Nút **Kiểm tra kết nối** gọi health của backend với giới hạn 8 giây, không lưu địa chỉ và không gửi token đăng nhập. Kết quả UP chỉ xác nhận backend phản hồi; cần thử riêng chat/WebSocket và cuộc gọi/TURN. Bấm **Lưu địa chỉ** để đổi máy chủ; những người dùng muốn trò chuyện cần cùng máy chủ.
+
 Đóng gói Windows x64: `npm run package:win`. Bản portable được tạo trong `release`. Máy client chạy bản portable không cần Node.js, Java hay Docker; chỉ máy chủ cần chạy backend/database. Bản phát triển chưa ký số.
 
 ## Kiểm tra
