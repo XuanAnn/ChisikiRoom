@@ -47,6 +47,8 @@ Nút **Quay về trò chuyện** lưu ý bộ quiz chưa lưu và gửi leave ch
 4. Trỏ DNS của tên miền web đến EC2, mở 80/443 và cấp HTTPS bằng Certbot.
 5. Mở website, giữ backend cùng origin của website; kiểm tra đăng nhập, realtime và gọi từ hai thiết bị.
 
+Trong `.env` của backend trên EC2, giữ nguyên mật khẩu và thêm `SERVER_ADDRESS=127.0.0.1`, `SERVER_FORWARD_HEADERS_STRATEGY=framework`, sau đó `sudo systemctl restart chisikiroom`. Spring Boot cần nhận scheme HTTPS từ Nginx để kiểm tra Origin của WebSocket đúng. Chỉ bật xử lý forwarded headers khi backend được giữ sau proxy tin cậy; không mở public cổng 8080. Mẫu Nginx gửi lại Host và X-Forwarded-Proto cho API/WebSocket. Sau khi Certbot thêm HTTPS, giữ các proxy header này trong server block HTTPS.
+
 Không ghi đè cấu hình Nginx đang dùng cho `api.nguyenxuanan.id.vn`. Mẫu là server block riêng cho tên miền chính. Static frontend không cần Node.js chạy liên tục trên EC2. Không cần tạo database mới hay chuyển dữ liệu lại.
 
 ## Kiểm tra
