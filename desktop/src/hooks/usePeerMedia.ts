@@ -22,9 +22,11 @@ export function usePeerMedia(
   const [mediaError, setMediaError] = useState('');
   const [online, setOnline] = useState(false);
   const [epoch, setEpoch] = useState(0);
+  const [iceReady, setIceReady] = useState(false);
   const localRef = useRef<MediaStream | null>(null);
   const peers = useRef(new Map<string, Peer>());
   const ice = useRef<RTCIceServer[]>([]);
+  const iceConfigured = useRef(false);
   const activeRef = useRef(true);
   // Advertise a stable stream identity even while local capture is off, so a
   // receive-only participant can later publish without changing SDP stream IDs.
@@ -101,6 +103,10 @@ export function usePeerMedia(
     return peer;
   }
   useEffect(() => {
+    let disposed = false;
+    let signalingGeneration = 0;
+    setIceReady(false);
+    iceConfigured.current = false;
     activeRef.current = Boolean(userId);
     if (!userId) {
       return;
@@ -110,13 +116,29 @@ export function usePeerMedia(
         setOnline(value === 'online');
       }
     });
-    request<{ iceServers: RTCIceServer[] }>(call ? 'callIce' : 'ice', { id: battleId })
+    const configurationReady = request<{ iceServers: RTCIceServer[] }>(call ? 'callIce' : 'ice', {
+      id: battleId,
+    })
       .then((config) => {
+        if (disposed) {
+          return false;
+        }
         ice.current = config.iceServers;
+        iceConfigured.current = true;
+        setIceReady(true);
+        return true;
       })
-      .catch((e) => setMediaError(errorMessage(e)));
+      .catch((e) => {
+        if (!disposed) {
+          setMediaError(
+            'Không tải được cấu hình kết nối. Hãy đóng và mở lại cuộc gọi: ' + errorMessage(e),
+          );
+        }
+        return false;
+      });
     const unsubscribe = window.chisiki?.onEvent((event) => {
       if (event.type === 'CONNECTION') {
+        signalingGeneration += 1;
         setOnline(event.data === 'online');
         for (const peer of peers.current.values()) {
           peer.pc.close();
@@ -133,56 +155,62 @@ export function usePeerMedia(
         return;
       }
       const { senderId, kind, payload } = event.data;
-      const peer = getPeer(senderId);
-      const pc = peer.pc;
-      peer.chain = peer.chain
-        .then(async () => {
-          if (kind === 'offer' || kind === 'answer') {
-            if (
-              (kind === 'offer' && userId < senderId) ||
-              (kind === 'answer' && userId > senderId)
-            ) {
-              return;
-            }
-            await pc.setRemoteDescription(payload);
-            if (kind === 'offer') {
-              // Bind local tracks to the transceivers created by the incoming
-              // offer. Creating separate transceivers here leaves them outside
-              // the answer and produces one-way video.
-              for (const transceiver of pc.getTransceivers()) {
-                const track = localRef.current
-                  ?.getTracks()
-                  .find((t) => t.kind === transceiver.receiver.track.kind);
-                transceiver.direction = 'sendrecv';
-                transceiver.sender.setStreams(outgoing.current!);
-                if (track) {
-                  await transceiver.sender.replaceTrack(track);
+      const receivedGeneration = signalingGeneration;
+      void configurationReady.then((ready) => {
+        if (!ready || disposed || receivedGeneration !== signalingGeneration) {
+          return;
+        }
+        const peer = getPeer(senderId);
+        const pc = peer.pc;
+        peer.chain = peer.chain
+          .then(async () => {
+            if (kind === 'offer' || kind === 'answer') {
+              if (
+                (kind === 'offer' && userId < senderId) ||
+                (kind === 'answer' && userId > senderId)
+              ) {
+                return;
+              }
+              await pc.setRemoteDescription(payload);
+              if (kind === 'offer') {
+                // Bind local tracks to the transceivers created by the incoming
+                // offer. Creating separate transceivers here leaves them outside
+                // the answer and produces one-way video.
+                for (const transceiver of pc.getTransceivers()) {
+                  const track = localRef.current
+                    ?.getTracks()
+                    .find((t) => t.kind === transceiver.receiver.track.kind);
+                  transceiver.direction = 'sendrecv';
+                  transceiver.sender.setStreams(outgoing.current!);
+                  if (track) {
+                    await transceiver.sender.replaceTrack(track);
+                  }
                 }
               }
+              for (const candidate of peer.candidates) {
+                await pc.addIceCandidate(candidate);
+              }
+              peer.candidates = [];
+              if (kind === 'offer') {
+                await pc.setLocalDescription();
+                await send(senderId, 'answer', pc.localDescription!.toJSON());
+              }
+            } else if (kind === 'ice') {
+              if (pc.remoteDescription) {
+                await pc.addIceCandidate(payload);
+              } else {
+                peer.candidates.push(payload);
+              }
+            } else if (kind === 'restart' && userId < senderId) {
+              pc.restartIce();
             }
-            for (const candidate of peer.candidates) {
-              await pc.addIceCandidate(candidate);
+          })
+          .catch((e) => {
+            if (activeRef.current && pc.signalingState !== 'closed') {
+              setMediaError(errorMessage(e));
             }
-            peer.candidates = [];
-            if (kind === 'offer') {
-              await pc.setLocalDescription();
-              await send(senderId, 'answer', pc.localDescription!.toJSON());
-            }
-          } else if (kind === 'ice') {
-            if (pc.remoteDescription) {
-              await pc.addIceCandidate(payload);
-            } else {
-              peer.candidates.push(payload);
-            }
-          } else if (kind === 'restart' && userId < senderId) {
-            pc.restartIce();
-          }
-        })
-        .catch((e) => {
-          if (activeRef.current && pc.signalingState !== 'closed') {
-            setMediaError(errorMessage(e));
-          }
-        });
+          });
+      });
     });
     // The caller may offer before the invitee's window has subscribed. Signaling
     // is ephemeral: resend an unanswered offer until the other window is ready.
@@ -197,6 +225,7 @@ export function usePeerMedia(
       }
     }, 2000);
     return () => {
+      disposed = true;
       activeRef.current = false;
       clearInterval(retry);
       unsubscribe?.();
@@ -224,7 +253,7 @@ export function usePeerMedia(
         });
       }
     }
-    if ((local || call) && online) {
+    if ((local || call) && online && iceReady && iceConfigured.current) {
       for (const p of active.filter((player) => call || player.camera)) {
         getPeer(p.id);
       }
@@ -235,6 +264,7 @@ export function usePeerMedia(
     userId,
     online,
     epoch,
+    iceReady,
   ]);
   async function enableCamera() {
     try {
@@ -325,5 +355,17 @@ export function usePeerMedia(
     }
     setCamera(false);
   }
-  return { local, remote, camera, mic, mediaError, enableCamera, disableCamera, toggleMic, online };
+  return {
+    local,
+    remote,
+    camera,
+    mic,
+    mediaError,
+    enableCamera,
+    disableCamera,
+    toggleMic,
+    online,
+    peers,
+    iceReady,
+  };
 }

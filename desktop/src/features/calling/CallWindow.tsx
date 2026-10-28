@@ -9,6 +9,7 @@ import {
 import { request, errorMessage, type User, type RoomCall, type Room } from '../../lib/api';
 import { usePeerMedia } from '../../hooks/usePeerMedia';
 import { Video } from '../../components/Video';
+import { ConnectionStatus } from './ConnectionStatus';
 import './calling.css';
 
 export function CallWindow({ id }: { id: string }) {
@@ -224,8 +225,14 @@ export function CallWindow({ id }: { id: string }) {
             </Button>
           </Space>
           <p className="muted">
-            Camera và mic tùy chọn · Không ghi hình/âm thanh · P2P trong mạng LAN
+            Camera và mic tùy chọn · Không ghi hình/âm thanh · Kết nối trực tiếp hoặc qua TURN
           </p>
+          <ConnectionStatus
+            peers={media.peers}
+            participants={remoteParticipants}
+            online={media.online}
+            iceReady={media.iceReady}
+          />
         </>
       )}
     </div>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Alert, Button, Input, Modal, Space } from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
 export function ServerSettings() {
+  const isWeb = window.chisiki?.platform === 'web';
   const [open, setOpen] = useState(false);
   const [url, setUrl] = useState('');
   const [error, setError] = useState('');
@@ -88,6 +89,14 @@ export function ServerSettings() {
             chủ.
           </p>
           <Space wrap>
+            {isWeb && (
+              <Button
+                disabled={checking || saving}
+                onClick={() => changeUrl(window.location.origin)}
+              >
+                Máy chủ website
+              </Button>
+            )}
             <Button
               disabled={checking || saving}
               onClick={() => changeUrl('http://localhost:8080')}
@@ -118,6 +127,12 @@ export function ServerSettings() {
             địa chỉ HTTPS. Địa chỉ được lưu riêng trên máy này; kiểm tra kết nối không thay đổi máy
             chủ đang lưu.
           </small>
+          {isWeb && (
+            <small>
+              Bản web nên dùng Máy chủ website. Máy chủ khác tên miền cần cho phép CORS và
+              WebSocket. Camera/mic cần HTTPS hoặc localhost.
+            </small>
+          )}
         </Space>
       </Modal>
     </>

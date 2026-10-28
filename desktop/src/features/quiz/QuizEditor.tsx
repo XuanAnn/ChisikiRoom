@@ -26,8 +26,8 @@ export function QuizEditor({ quizId }: { quizId?: string }) {
     }
   }, [quizId]);
   useEffect(() => {
-    window.chisiki?.setDirty(dirty);
-    return () => window.chisiki?.setDirty(false);
+    window.chisiki?.setDirty(dirty, 'quiz');
+    return () => window.chisiki?.setDirty(false, 'quiz');
   }, [dirty]);
   const edit = (values: Partial<Question>) => {
     setQuestions((qs) => qs.map((q, i) => (i === selected ? { ...q, ...values } : q)));

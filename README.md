@@ -1,5 +1,7 @@
 # ChisikiRoom
 
+Có thêm package **`frontend/` cùng cấp `desktop/`** để chạy trên trình duyệt. Hai bản dùng chung màn hình React, hooks, kiểu dữ liệu và bảng route API; web có adapter HTTP/STOMP và chọn file riêng. Chạy `npm install` rồi `npm run web`, mở `http://localhost:5174`. Build web bằng `npm run build:web`; kết quả trong `frontend/dist`. Hướng dẫn chạy và triển khai cùng backend AWS: [frontend/README.md](frontend/README.md).
+
 Ứng dụng desktop học tập theo đặc tả v1.1. Bản desktop **0.9.0 cho Windows/LAN** bố trí lại giao diện với trang tổng quan, sidebar bạn bè/nhóm, chat ở giữa và công cụ phòng bên phải. Cân bằng trò chuyện/gọi video với quiz, Battle và tài liệu. Cuộc gọi 1–1 ưu tiên video đối phương, camera cá nhân thu nhỏ; nhóm dùng lưới tự co giãn và ô camera cá nhân nhỏ. Battle bố trí camera phía trên và bên phải, tự thu gọn trên cửa sổ nhỏ. Video tự phát khi nhận được luồng, kể cả luồng đến chậm hoặc kết nối lại; không cần bấm Phát video. Có sẵn 10 bộ tiếng Nhật N5–N4 (100 câu) dùng chung, chọn ngay cho Battle hoặc lưu bản sao cá nhân. Backend hiện tại 0.9.0, schema V17.
 
 Chức năng mới: tìm tin nhắn trong lịch sử phòng, lọc bạn bè/nhóm/quiz/tài liệu, sắp xếp quiz, bộ đếm tin chưa đọc và bản nháp riêng theo phòng được lưu vào database, mời thành viên từ danh sách bạn bè. `Ctrl+K` tìm bạn bè/nhóm; `Ctrl+F` tìm tin nhắn trong phòng đang mở.

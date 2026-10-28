@@ -1,0 +1,23 @@
+.web-tool {
+  min-height: 100vh;
+}
+
+.web-tool-navigation {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  gap: 16px;
+  padding: 12px 20px;
+  background: #111113;
+  border-bottom: 1px solid #3f4147;
+}
+
+.web-tool .call-window,
+.web-tool .battle-window {
+  min-height: calc(100vh - 58px);
+}
+
+[hidden] {
+  display: none !important;
+}

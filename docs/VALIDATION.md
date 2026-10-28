@@ -1,5 +1,14 @@
 # Kiểm tra ChisikiRoom LAN
 
+## Web frontend và kết nối media — 29/10/2026
+
+- Thêm package frontend cùng cấp desktop; tái sử dụng App, features và hooks. Bảng API route dùng chung ESM được nạp bởi Electron main và browser adapter.
+- TypeScript/Vite build của cả web và desktop đạt. 11 unit test đạt, gồm route validation, thống kê candidate pair đã chọn và không lộ địa chỉ candidate.
+- Chrome E2E dùng backend HTTP/STOMP giả lập riêng: health, đăng nhập Bearer, WebSocket qua proxy Vite, gửi/nhận chat, quiz trong trang, upload/download, modal nhận cuộc gọi, leave khi quay về chat và reload mất phiên đều đạt.
+- Ba bài Electron đạt: cấu hình ICE tải chậm/offer sớm/đóng sớm/lỗi cấu hình; server settings; sidebar và hồi quy chat riêng với phiên hợp lệ. Chưa nghiệm thu gọi media giữa web và desktop trên hai thiết bị thật qua Internet.
+- Media chờ tải ICE configuration trước khi tạo peer; cửa sổ gọi có thống kê đường truyền trực tiếp/TURN, giao thức và độ trễ khứ hồi khi trình duyệt cung cấp. Không thay backend hoặc schema.
+- Có mẫu Nginx phục vụ static frontend và proxy API/WS cùng origin; chưa áp dụng mẫu này lên EC2 thật. Không thay chính sách CORS của backend.
+
 ## Bản 0.4.0 — giao diện, chức năng chính và hộp thoại có chuông
 
 Ngày 26/10/2026:

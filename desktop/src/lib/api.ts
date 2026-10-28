@@ -96,6 +96,8 @@ export type Battle = {
 declare global {
   interface Window {
     chisiki?: {
+      platform?: 'web' | 'desktop';
+      closeTool?(): Promise<{ error?: string }>;
       request(action: string, body?: unknown): Promise<{ data?: any; error?: string }>;
       openWindow(kind: string, id?: string): Promise<void>;
       connection(): Promise<string>;
@@ -113,7 +115,7 @@ declare global {
       }>;
       uploadDocument(roomId: string): Promise<{ data?: unknown; error?: string }>;
       downloadDocument(id: string, filename: string): Promise<{ data?: unknown; error?: string }>;
-      setDirty(dirty: boolean): void;
+      setDirty(dirty: boolean, scope?: string): void;
       onEvent(callback: (event: ServerEvent) => void): () => void;
     };
   }

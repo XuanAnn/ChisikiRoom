@@ -5,6 +5,9 @@
 ChisikiRoom is a modular monolith: one Spring Boot process and PostgreSQL database, with feature packages rather than separate deployable business services. The Electron desktop application uses REST for commands/snapshots and authenticated STOMP user queues for realtime notifications and WebRTC signaling. Audio/video travels directly between participants, not through the message broker.
 
 ```text
+frontend/
+  src/                    Browser adapter and web workspace; imports desktop/src shared UI
+  dist/                   Generated static web build, ignored by Git
 desktop/src/
   app/                    Entry point, layouts, shared app styles
   features/
@@ -28,6 +31,8 @@ backend/src/main/java/com/chisikiroom/
   common/                 Error mapping, authenticated user helper
   ranking/                Global N5/N4 rating, matchmaking, seasons and settlement
 ```
+
+The web and Electron clients share `desktop/src/app/App.tsx`, feature components and hooks. `desktop/src/app/main.tsx` remains the Electron renderer entry; `frontend/src/main.tsx` installs a browser bridge before importing shared components. The common API action mapping lives in `desktop/electron/api-routes.mjs`, imported by Electron main and the web adapter. Browser requests use native fetch and STOMP over native WebSocket; Electron uses IPC to its main process. Web tools are in-page views and incoming calls use a modal, while Electron retains native windows. Browser tokens are memory-only and independent per tab. Production web hosting should proxy REST and WebSocket on the web origin; no permissive backend CORS policy was added.
 
 Inside a feature, `presentation` contains HTTP adapters, `application` orchestrates use cases and transactions, `domain` holds transport-independent policy, and `infrastructure` contains background workers and framework configuration. Authentication and quiz use cases are separate from controllers; Battle calls the quiz application service rather than its REST adapter. Shared media has no Battle scoring/readiness dependency.
 
