@@ -13,6 +13,10 @@ npm run web
 
 Mở `http://localhost:5174`. Backend/database chạy như trước bằng `npm run db` và `npm run backend`. Vite chuyển tiếp `/api`, `/ws` và `/actuator/health` đến `http://127.0.0.1:8080`. Có thể sao chép `.env.example` của package này thành `frontend/.env` và đổi `BACKEND_URL` khi backend ở máy khác. Thay `.env` xong cần khởi động lại Vite.
 
+Nếu dùng backend AWS thay cho backend local, đặt `BACKEND_URL=https://api.nguyenxuanan.id.vn` và để `VITE_API_URL=` trống trong `frontend/.env`. Trên giao diện chọn **Máy chủ website** rồi **Lưu địa chỉ** để bỏ địa chỉ khác origin đã lưu trước đó. Web local sẽ gọi cùng origin của Vite, còn Vite gửi request đến AWS. Proxy đổi Host theo upstream, và kết nối WS upstream xác thực STOMP Bearer như Electron, không chuyển Origin của trang local sang AWS. Chỉ chạy dev server trên loopback như cấu hình mặc định.
+
+Kiểm tra `http://localhost:5174/actuator/health`: phải trả về JSON `{"status":"UP"}`. HTTP 500 kèm `ECONNREFUSED` trong terminal Vite thường là backend đích chưa chạy/sai cổng. Trang HTML thay cho JSON thường là cấu hình proxy thiếu. Nếu gọi trực tiếp backend khác origin, trình duyệt có thể chặn CORS dù mở URL health ở tab mới vẫn được. Nút kiểm tra ghi endpoint, HTTP status hoặc loại lỗi vào F12 → Console, không ghi token/mật khẩu.
+
 ## Build
 
 ```powershell
@@ -53,4 +57,4 @@ Không ghi đè cấu hình Nginx đang dùng cho `api.nguyenxuanan.id.vn`. Mẫ
 
 ## Kiểm tra
 
-`npm run test:web` tại thư mục gốc chạy Chrome headless với backend HTTP/STOMP giả lập riêng cổng 18190, dev server 5174. Kiểm tra REST có Bearer, STOMP qua proxy, mở/đóng quiz, upload/download, modal nhận cuộc gọi, leave và mất phiên khi reload. Không ghi dữ liệu vào backend thật. Cần Chrome đã cài trên máy; đóng dev server 5174 trước khi chạy test.
+`npm run test:web` tại thư mục gốc chạy Chrome headless với backend HTTP/STOMP giả lập riêng cổng 18190, dev server 5184 (đổi bằng WEB_TEST_PORT). Kiểm tra REST có Bearer, STOMP qua proxy, mở/đóng quiz, upload/download, modal nhận cuộc gọi, leave và mất phiên khi reload. Không ghi dữ liệu vào backend thật. Cần Chrome đã cài trên máy; không cần dừng dev server 5174 đang sử dụng.

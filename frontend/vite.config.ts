@@ -14,9 +14,19 @@ export default defineConfig(({ mode }) => {
       strictPort: true,
       fs: { allow: ['..'] },
       proxy: {
-        '/api': { target: backend },
-        '/actuator/health': { target: backend },
-        '/ws': { target: backend, ws: true },
+        '/api': { target: backend, changeOrigin: true },
+        '/actuator/health': { target: backend, changeOrigin: true },
+        '/ws': {
+          target: backend,
+          ws: true,
+          changeOrigin: true,
+          configure(proxy) {
+            // The loopback dev server is the browser's same-origin gateway.
+            // Authenticate upstream through STOMP Bearer, as Electron does;
+            // do not forward the local browser Origin to a remote backend.
+            proxy.on('proxyReqWs', (request) => request.removeHeader('origin'));
+          },
+        },
       },
     },
   };

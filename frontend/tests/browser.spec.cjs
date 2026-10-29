@@ -164,6 +164,31 @@ test.afterAll(async () => {
   await new Promise((resolve) => server.close(resolve));
 });
 
+test('health diagnostics distinguish HTTP failures, HTML and cross-origin network failures', async ({
+  page,
+}) => {
+  await page.goto('/');
+  await expect(page.getByRole('button', { name: /Máy chủ$/ })).toBeVisible();
+  await page.route('**/actuator/health', (route) => route.fulfill({ status: 500, body: '' }));
+  const failed = await page.evaluate(() => window.chisiki.checkServer(location.origin));
+  expect(failed.error).toContain('HTTP 500');
+  expect(failed.error).toContain('BACKEND_URL');
+  await page.unroute('**/actuator/health');
+
+  await page.route('**/actuator/health', (route) =>
+    route.fulfill({ status: 200, contentType: 'text/html', body: '<html>App</html>' }),
+  );
+  const html = await page.evaluate(() => window.chisiki.checkServer(location.origin));
+  expect(html.error).toContain('không trả về JSON');
+  await page.unroute('**/actuator/health');
+
+  await page.route('https://unreachable.example/actuator/health', (route) => route.abort('failed'));
+  const blocked = await page.evaluate(() =>
+    window.chisiki.checkServer('https://unreachable.example'),
+  );
+  expect(blocked.error).toContain('Máy chủ website');
+});
+
 test('browser reuses desktop UI with REST, STOMP, tools, files and incoming calls', async ({
   page,
 }) => {

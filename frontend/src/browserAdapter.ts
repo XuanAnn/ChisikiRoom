@@ -375,23 +375,60 @@ export function installBrowserAdapter() {
       }
     },
     checkServer: async (value) => {
+      let url: string;
       try {
-        const url = normalizeUrl(value);
+        url = normalizeUrl(value);
+      } catch (error) {
+        return { error: error instanceof Error ? error.message : 'Địa chỉ không hợp lệ.' };
+      }
+      const endpoint = url + '/actuator/health';
+      try {
         const started = performance.now();
-        const response = await fetch(url + '/actuator/health', {
+        const response = await fetch(endpoint, {
           credentials: 'omit',
           redirect: 'error',
           signal: AbortSignal.timeout(8000),
         });
-        const health = await response.json();
-        if (!response.ok || health.status !== 'UP') {
+        if (!response.ok) {
+          console.warn('[ChisikiRoom] Backend health failed', {
+            endpoint,
+            status: response.status,
+          });
+          return {
+            error: `Backend trả về HTTP ${response.status}. Nếu chạy web local, kiểm tra BACKEND_URL trong frontend/.env và log terminal Vite.`,
+          };
+        }
+        let health;
+        try {
+          health = await response.json();
+        } catch {
+          console.warn('[ChisikiRoom] Health endpoint did not return JSON', {
+            endpoint,
+            status: response.status,
+          });
+          return {
+            error:
+              'Địa chỉ health không trả về JSON. Kiểm tra cấu hình proxy; có thể đang nhận trang HTML.',
+          };
+        }
+        if (health?.status !== 'UP') {
           return { error: 'Backend chưa sẵn sàng.' };
         }
         return { data: { url, latencyMs: Math.round(performance.now() - started) } };
-      } catch {
+      } catch (error) {
+        const reason = error instanceof Error ? error.name + ': ' + error.message : 'Unknown error';
+        console.warn('[ChisikiRoom] Backend health request failed', { endpoint, reason });
+        if (error instanceof Error && ['TimeoutError', 'AbortError'].includes(error.name)) {
+          return { error: 'Backend chưa phản hồi sau 8 giây. Kiểm tra mạng và địa chỉ máy chủ.' };
+        }
+        if (url !== window.location.origin) {
+          return {
+            error:
+              'Không kết nối được backend khác tên miền. Chọn Máy chủ website và cấu hình BACKEND_URL trong frontend/.env để dùng proxy; xem F12 → Console/Network để kiểm tra CORS hoặc HTTPS.',
+          };
+        }
         return {
-          error:
-            'Không kiểm tra được backend. Kiểm tra URL, HTTPS và chính sách CORS nếu khác tên miền.',
+          error: 'Không kết nối được máy chủ website. Kiểm tra mạng, proxy và log terminal Vite.',
         };
       }
     },
