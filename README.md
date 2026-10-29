@@ -1,8 +1,10 @@
 # ChisikiRoom
 
-**Ứng dụng chat, gọi video và học tiếng Nhật trên Windows và web.**
+**Ứng dụng học tập cộng đồng, chat và gọi video trên Windows và web.**
 
-ChisikiRoom kết hợp trò chuyện cá nhân/nhóm với luyện quiz N5–N4, ôn câu sai và Battle trắc nghiệm realtime. Desktop và web dùng chung giao diện React, hooks và kiểu dữ liệu; backend Spring Boot quản lý nghiệp vụ, dữ liệu và sự kiện realtime.
+ChisikiRoom là không gian để người dùng lập nhóm học, trao đổi tài liệu, gọi video, tự tạo bộ câu hỏi theo môn/chủ đề và cùng luyện tập hoặc thi đấu trắc nghiệm realtime. Desktop và web dùng chung giao diện React, hooks và kiểu dữ liệu; backend Spring Boot quản lý nghiệp vụ, dữ liệu và sự kiện realtime.
+
+**Tiếng Nhật N5–N4 là nội dung mẫu để minh họa chức năng**, không phải phạm vi duy nhất của ứng dụng. Người dùng có thể tạo quiz, luyện tập và tổ chức Battle cho các chủ đề khác. Riêng chế độ xếp hạng tự ghép hiện vẫn sử dụng hai bảng N5/N4 và ngân hàng câu hỏi mẫu riêng; xếp hạng nhiều môn/chủ đề là hướng mở rộng.
 
 **Công nghệ:** Java 21 · Spring Boot · PostgreSQL · JPA/Hibernate · Flyway · React · TypeScript · Electron · Vite · STOMP/WebSocket · WebRTC · Docker · AWS EC2 · Nginx · Playwright.
 
@@ -40,7 +42,7 @@ Sidebar tách bạn bè/nhóm, khung chat ở giữa và thành viên/công cụ
 
 ### Luyện tập cá nhân
 
-![Kết quả luyện tập tiếng Nhật](docs/screenshots/practice.png)
+![Kết quả luyện tập cá nhân với bộ câu hỏi mẫu](docs/screenshots/practice.png)
 
 <details>
 <summary>Xem thêm: đăng nhập, gọi video, Battle và ranking</summary>
@@ -61,7 +63,7 @@ Sidebar tách bạn bè/nhóm, khung chat ở giữa và thành viên/công cụ
 
 ![Thi đấu trắc nghiệm](docs/screenshots/battle.png)
 
-**Ranking N5/N4**
+**Ranking với nội dung mẫu N5/N4**
 
 ![Xếp hạng và ghép trận](docs/screenshots/ranking.png)
 
@@ -287,7 +289,7 @@ Web E2E cần Chrome, dùng cổng **5184** và mock backend **18190**; đổi c
 - P2P mesh tối đa 4 người; chưa có SFU, chia sẻ màn hình, chọn thiết bị, lịch sử cuộc gọi.
 - Chưa có preview tài liệu, quota/dọn file tự động; đổi/quên mật khẩu và quản lý phiên nâng cao còn trong lộ trình.
 - Chưa tích hợp AI, tự cập nhật hoặc CI/CD deploy tự động.
-- Ngân hàng ranking ban đầu còn nhỏ; chưa dùng để khẳng định trình độ tiếng Nhật thực tế.
+- Mở rộng ranking theo nhiều môn/chủ đề; bản hiện tại dùng ngân hàng mẫu N5/N4 còn nhỏ, chưa phải thước đo năng lực học tập đã được kiểm chứng.
 - Chưa có load test/cam kết hiệu năng hoặc tính sẵn sàng production.
 
 ## Tài liệu liên quan
@@ -297,7 +299,7 @@ Web E2E cần Chrome, dùng cổng **5184** và mock backend **18190**; đổi c
 - [Chạy và nghiệm thu LAN](docs/LAN_GUIDE.md)
 - [Cấu hình/build/triển khai web](frontend/README.md)
 - [Thuật toán và luật ranking](docs/RANKING.md)
-- [Danh mục quiz N5–N4](docs/JAPANESE_QUIZ_CATALOG.md)
+- [Danh mục quiz mẫu N5–N4](docs/JAPANESE_QUIZ_CATALOG.md)
 - [Quyết định sản phẩm](docs/product-decisions.md)
 - [Lộ trình phát triển](docs/IMPLEMENTATION_ROADMAP.md)
 - [Lịch sử kiểm thử](docs/VALIDATION.md)
