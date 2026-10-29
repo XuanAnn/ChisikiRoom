@@ -1,5 +1,7 @@
 # ChisikiRoom
 
+[Tiếng Việt](README.md) | [日本語](README.ja.md)
+
 **Ứng dụng học tập cộng đồng, chat và gọi video trên Windows và web.**
 
 ChisikiRoom là không gian để người dùng lập nhóm học, trao đổi tài liệu, gọi video, tự tạo bộ câu hỏi theo môn/chủ đề và cùng luyện tập hoặc thi đấu trắc nghiệm realtime. Desktop và web dùng chung giao diện React, hooks và kiểu dữ liệu; backend Spring Boot quản lý nghiệp vụ, dữ liệu và sự kiện realtime.
