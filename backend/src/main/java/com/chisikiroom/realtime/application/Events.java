@@ -9,18 +9,25 @@ import org.springframework.transaction.support.*;
 public class Events {
 
     private final SimpMessagingTemplate broker;
+    private final org.springframework.context.ApplicationEventPublisher publisher;
 
-    public Events(SimpMessagingTemplate broker) {
+    public Events(
+        SimpMessagingTemplate broker,
+        org.springframework.context.ApplicationEventPublisher publisher
+    ) {
+        this.publisher = publisher;
         this.broker = broker;
     }
 
     public void send(Collection<UUID> users, String type, Object data) {
         var event = Map.of("eventId", UUID.randomUUID().toString(), "type", type, "data", data);
         var recipients = List.copyOf(users);
-        Runnable publish = () ->
+        Runnable publish = () -> {
+            publisher.publishEvent(new PublishedEvent(recipients, type, data));
             recipients.forEach(id ->
                 broker.convertAndSendToUser(id.toString(), "/queue/events", event)
             );
+        };
         if (TransactionSynchronizationManager.isSynchronizationActive()) {
             TransactionSynchronizationManager.registerSynchronization(
                 new TransactionSynchronization() {

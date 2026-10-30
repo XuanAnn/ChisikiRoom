@@ -305,3 +305,7 @@ Web E2E cần Chrome, dùng cổng **5184** và mock backend **18190**; đổi c
 - [Quyết định sản phẩm](docs/product-decisions.md)
 - [Lộ trình phát triển](docs/IMPLEMENTATION_ROADMAP.md)
 - [Lịch sử kiểm thử](docs/VALIDATION.md)
+
+### Quản trị server
+
+Backend cung cấp trang `/admin.html` để theo dõi người dùng/IP, cuộc gọi, Battle và nhật ký truyền sự kiện; hỗ trợ thu hồi phiên đăng nhập. Cần cấu hình khóa quản trị riêng. Xem [hướng dẫn quản trị server](docs/SERVER_ADMIN.md).

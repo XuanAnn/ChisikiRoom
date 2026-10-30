@@ -1,0 +1,154 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: #17181c;
+  color: #eeeef3;
+  font:
+    14px system-ui,
+    sans-serif;
+}
+header {
+  padding: 24px 4%;
+  background: #202127;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #393b44;
+}
+h1 {
+  margin: 6px 0;
+  font-size: 27px;
+}
+small,
+.muted {
+  color: #aaadbb;
+}
+main {
+  max-width: 1600px;
+  margin: auto;
+  padding: 24px 4%;
+}
+form,
+nav {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+label {
+  display: grid;
+  gap: 6px;
+  min-width: 280px;
+}
+input,
+button {
+  font: inherit;
+  border-radius: 8px;
+  border: 1px solid #484b58;
+  padding: 10px 14px;
+  background: #16171b;
+  color: inherit;
+}
+button {
+  cursor: pointer;
+  background: #5865f2;
+}
+button:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+button.secondary {
+  background: #343640;
+}
+a {
+  color: #c2c7ff;
+  padding: 8px 0;
+  margin-right: 20px;
+}
+.muted {
+  line-height: 1.7;
+}
+section {
+  background: #22242b;
+  border: 1px solid #373943;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px 0;
+  min-width: 0;
+}
+h2 {
+  margin: 0 0 16px;
+  font-size: 19px;
+}
+.scroll {
+  overflow: auto;
+  max-height: 520px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+th,
+td {
+  padding: 12px;
+  border-bottom: 1px solid #383b45;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+  min-width: 120px;
+}
+th {
+  position: sticky;
+  top: 0;
+  background: #292c34;
+}
+td:last-child {
+  max-width: 420px;
+  white-space: pre-wrap;
+}
+#stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+}
+.stat {
+  background: #303344;
+  padding: 16px 22px;
+  border-radius: 10px;
+}
+.activities {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+article {
+  background: #191b21;
+  border-radius: 8px;
+  padding: 14px;
+  margin-top: 12px;
+  overflow-wrap: anywhere;
+}
+article p {
+  line-height: 1.7;
+}
+#status {
+  color: #bcc3ff;
+}
+section > input {
+  width: min(100%, 520px);
+  margin-bottom: 12px;
+}
+@media (max-width: 850px) {
+  .activities {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  header {
+    align-items: start;
+    gap: 12px;
+    flex-direction: column;
+  }
+}

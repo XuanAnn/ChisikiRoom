@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ChisikiRoom · Quản trị server</title>
+    <link rel="stylesheet" href="/admin.css" />
+    <script src="/admin.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <div>
+        <small>CHISIKIROOM SERVER</small>
+        <h1>Quản trị hoạt động</h1>
+      </div>
+      <span id="status" role="status">Chưa kết nối</span>
+    </header>
+    <main>
+      <form id="login">
+        <label
+          >Khóa quản trị<input
+            id="key"
+            type="password"
+            autocomplete="off"
+            required
+            minlength="32"
+            maxlength="256"
+            placeholder="CHISIKI_ADMIN_KEY" /></label
+        ><button>Kết nối</button><button type="button" id="logout">Ngắt kết nối</button>
+      </form>
+      <p class="muted">
+        IP do server quan sát, không hiển thị port. Sau NAT, nhiều người có thể cùng IP. Hoạt động
+        gần đây không đồng nghĩa đang online. Nhật ký tối đa 500 sự kiện từ lúc server khởi động;
+        chỉ ghi việc phát sự kiện, không xác nhận đầu nhận đã nhận. Video P2P không đi qua server
+        này.
+      </p>
+      <nav>
+        <a href="#users">Người dùng</a><a href="#calls">Cuộc gọi</a><a href="#battles">Thi đấu</a
+        ><a href="#traffic">Truyền dữ liệu</a>
+      </nav>
+      <div id="stats"></div>
+      <section id="users">
+        <h2>Người dùng</h2>
+        <input id="search" placeholder="Tìm tên, email hoặc IP" aria-label="Tìm người dùng" />
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Người dùng</th>
+                <th>Email</th>
+                <th>IP gần nhất</th>
+                <th>Hoạt động gần nhất</th>
+                <th>Quản lý phiên</th>
+              </tr>
+            </thead>
+            <tbody id="userRows"></tbody>
+          </table>
+        </div>
+      </section>
+      <div class="activities">
+        <section id="calls">
+          <h2>Cuộc gọi đang mở</h2>
+          <div id="callCards"></div>
+        </section>
+        <section id="battles">
+          <h2>Thi đấu đang chờ / đang diễn ra</h2>
+          <div id="battleCards"></div>
+        </section>
+      </div>
+      <section id="traffic">
+        <h2>Nhật ký truyền dữ liệu</h2>
+        <input
+          id="eventSearch"
+          placeholder="Lọc người gửi, người nhận, IP, sự kiện hoặc nội dung"
+          aria-label="Lọc nhật ký"
+        />
+        <div class="scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Thời gian</th>
+                <th>Người gửi · IP</th>
+                <th>Người nhận · IP</th>
+                <th>Sự kiện</th>
+                <th>Nội dung</th>
+              </tr>
+            </thead>
+            <tbody id="eventRows"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

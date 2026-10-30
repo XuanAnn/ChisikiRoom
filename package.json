@@ -3,8 +3,8 @@
   "version": "0.9.0",
   "private": true,
   "scripts": {
-    "format": "prettier --write \"backend/src/**/*.java\" \"backend/src/**/*.yml\" \"desktop/src/**/*.{ts,tsx,css}\" \"desktop/electron/**/*.{cjs,mjs,mts}\" \"desktop/tests/**/*.cjs\" \"desktop/*.{ts,json,html,yml}\" \"scripts/**/*.cjs\" \"frontend/src/**/*.{ts,tsx,css}\" \"frontend/*.{ts,json,html,cjs}\" \"frontend/tests/**/*.cjs\" package.json .prettierrc.json compose.yaml",
-    "format:check": "prettier --check \"backend/src/**/*.java\" \"backend/src/**/*.yml\" \"desktop/src/**/*.{ts,tsx,css}\" \"desktop/electron/**/*.{cjs,mjs,mts}\" \"desktop/tests/**/*.cjs\" \"desktop/*.{ts,json,html,yml}\" \"scripts/**/*.cjs\" \"frontend/src/**/*.{ts,tsx,css}\" \"frontend/*.{ts,json,html,cjs}\" \"frontend/tests/**/*.cjs\" package.json .prettierrc.json compose.yaml",
+    "format": "prettier --write \"backend/src/**/*.java\" \"backend/src/**/*.yml\" \"backend/src/main/resources/static/*.{html,js,css}\" \"desktop/src/**/*.{ts,tsx,css}\" \"desktop/electron/**/*.{cjs,mjs,mts}\" \"desktop/tests/**/*.cjs\" \"desktop/*.{ts,json,html,yml}\" \"scripts/**/*.cjs\" \"frontend/src/**/*.{ts,tsx,css}\" \"frontend/*.{ts,json,html,cjs}\" \"frontend/tests/**/*.cjs\" package.json .prettierrc.json compose.yaml",
+    "format:check": "prettier --check \"backend/src/**/*.java\" \"backend/src/**/*.yml\" \"backend/src/main/resources/static/*.{html,js,css}\" \"desktop/src/**/*.{ts,tsx,css}\" \"desktop/electron/**/*.{cjs,mjs,mts}\" \"desktop/tests/**/*.cjs\" \"desktop/*.{ts,json,html,yml}\" \"scripts/**/*.cjs\" \"frontend/src/**/*.{ts,tsx,css}\" \"frontend/*.{ts,json,html,cjs}\" \"frontend/tests/**/*.cjs\" package.json .prettierrc.json compose.yaml",
     "postinstall": "npm --prefix desktop install && npm --prefix frontend install",
     "db": "node scripts/run.cjs db",
     "backend": "node scripts/run.cjs backend",

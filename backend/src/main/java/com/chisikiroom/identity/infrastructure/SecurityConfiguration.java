@@ -25,7 +25,12 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    SecurityFilterChain security(HttpSecurity http, AuthService auth) throws Exception {
+    SecurityFilterChain security(
+        HttpSecurity http,
+        AuthService auth,
+        com.chisikiroom.administration.application.TrafficMonitor monitor,
+        com.chisikiroom.administration.infrastructure.ClientAddressResolver addresses
+    ) throws Exception {
         return http
             .csrf(c -> c.disable())
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -37,7 +42,11 @@ public class SecurityConfiguration {
                         "/api/auth/register",
                         "/api/auth/login",
                         "/actuator/health",
-                        "/ws"
+                        "/ws",
+                        "/admin.html",
+                        "/admin.js",
+                        "/admin.css",
+                        "/api/admin/**"
                     )
                     .permitAll()
                     .anyRequest()
@@ -56,15 +65,16 @@ public class SecurityConfiguration {
                     ) throws ServletException, IOException {
                         String value = req.getHeader("Authorization");
                         if (value != null && value.startsWith("Bearer ") && value.length() < 200) {
-                            auth.resolve(value.substring(7)).ifPresent(profile ->
+                            auth.resolve(value.substring(7)).ifPresent(profile -> {
+                                monitor.touch(profile.id(), addresses.resolve(req));
                                 SecurityContextHolder.getContext().setAuthentication(
                                     new UsernamePasswordAuthenticationToken(
                                         profile,
                                         null,
                                         List.of()
                                     )
-                                )
-                            );
+                                );
+                            });
                         }
                         chain.doFilter(req, res);
                     }
